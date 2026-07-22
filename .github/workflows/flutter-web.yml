@@ -42,6 +42,11 @@ jobs:
           ls -la build/web
           test -f build/web/index.html
 
+      - name: Check Token Length
+        run: |
+            echo "Token length:"
+            echo -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" | wc -c
+
       - name: Test Cloudflare Access
         run: |
           curl -s \
