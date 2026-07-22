@@ -27,6 +27,13 @@ jobs:
       - run: |
           flutter build web --release
 
+      - name: Check secrets
+        run: |
+          echo "Account ID length:"
+          echo -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" | wc -c
+          echo "Token length:"
+          echo -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" | wc -c
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
