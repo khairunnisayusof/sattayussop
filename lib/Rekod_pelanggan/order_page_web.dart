@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:notification_center/notification_center.dart';
-import 'package:pdf/pdf.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../DocumentHelper.dart';
 import '../databaseLocal.dart';
 import '../main.dart';
-import '../resit.dart';
 import '../supabaseServer.dart';
 
 // class MenuItemModel {
@@ -38,7 +34,6 @@ class _OrderPageState extends State<OrderPage> {
   final kuantitiController = TextEditingController();
 
   final FocusNode namaFocus = FocusNode();
-
 
   final _formKeyDetail = GlobalKey<FormState>();
   final _formKeyDate = GlobalKey<FormState>();
@@ -108,9 +103,7 @@ class _OrderPageState extends State<OrderPage> {
   Future<void> loadData() async {
     NotificationCenter().subscribe('refreshData', _refreshView);
     final menuListData = await selectTable('Menu Rekod', "");
-    rekod_Menu = menuListData
-        .map((e) => rekodMenu.fromMap(e))
-        .toList();
+    rekod_Menu = menuListData.map((e) => rekodMenu.fromMap(e)).toList();
     rekod_Menu.sort((a, b) => a.jenis.compareTo(b.jenis));
     final list = sortMenuList(rekod_Menu);
     menuList.clear();
@@ -121,7 +114,7 @@ class _OrderPageState extends State<OrderPage> {
       String nama = element.jenis;
       if (nama.toLowerCase().contains("cod")) {
         continue;
-      }else if (nama.toLowerCase().contains("box")) {
+      } else if (nama.toLowerCase().contains("box")) {
         nama = "Box Satay";
       }
       menuList.insert(menuList.length, element);
@@ -129,8 +122,7 @@ class _OrderPageState extends State<OrderPage> {
       dropDownList.add(
         DropdownMenuItem<String>(
           value: "${element.id}",
-          child: Text(
-              "$nama : RM ${element.Harga.toStringAsFixed(2)}"),
+          child: Text("$nama : RM ${element.Harga.toStringAsFixed(2)}"),
         ),
       );
     }
@@ -144,7 +136,6 @@ class _OrderPageState extends State<OrderPage> {
       });
     }
   }
-
 
   void _refreshView(bool refresh) {
     if (mounted) {
@@ -170,7 +161,6 @@ class _OrderPageState extends State<OrderPage> {
     return dark;
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -181,554 +171,513 @@ class _OrderPageState extends State<OrderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.grey.shade100,
-        appBar: AppBar(
-          backgroundColor: color,
-         foregroundColor: Colors.transparent,
-          title: const Text("Selamat Datang ke Satay Ussop! 👋",style: TextStyle(color: Colors.white)),
-          centerTitle: true,
+      backgroundColor: Colors.grey.shade100,
+      appBar: AppBar(
+        backgroundColor: color,
+        foregroundColor: Colors.transparent,
+        title: const Text(
+          "Selamat Datang ke Satay Ussop! 👋",
+          style: TextStyle(color: Colors.white),
         ),
+        centerTitle: true,
+      ),
 
-        bottomNavigationBar: Container(
-          padding: const EdgeInsets.all(15),
-          color: Colors.white,
-          child: GestureDetector(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ListTile(
-                title: Text(
-                  "Hantar Pesanan",
-                  style: textStyleBtn,
-                  textAlign: TextAlign.center,
-                ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(15),
+        color: Colors.white,
+        child: GestureDetector(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ListTile(
+              title: Text(
+                "Hantar Pesanan",
+                style: textStyleBtn,
+                textAlign: TextAlign.center,
               ),
             ),
-            onTap: () async {
-              if (!((_formKeyDetail.currentState!.validate()) || (order.isEmpty && _formKey.currentState!.validate()) || _formKeyDate.currentState!.validate())) {
-                return;
-              }
-              print(total);
-              String nama = namaController.text.isEmpty ? "Customer" : namaController.text;
-              String noTel = phoneController.text;
-              String alamat = alamatController.text;
-
-              insertServer(
-                  rekodPelanggan(
-                    invoice,
-                    epochTime,
-                    tarikhOrder,
-                    tarikhRekod,
-                    masaRekod,
-                    hariRekod,
-                    nama,
-                    noTel,
-                    alamat,
-                    13,
-                    order,
-                    total,
-                    0.00,
-                    0.00,
-                    false,
-                  ));
-
-            },
           ),
+          onTap: () async {
+            if (!((_formKeyDetail.currentState!.validate()) ||
+                (order.isEmpty && _formKey.currentState!.validate()) ||
+                _formKeyDate.currentState!.validate())) {
+              return;
+            }
+            print(total);
+            String nama = namaController.text.isEmpty
+                ? "Customer"
+                : namaController.text;
+            String noTel = phoneController.text;
+            String alamat = alamatController.text;
+
+            insertServer(
+              rekodPelanggan(
+                invoice,
+                epochTime,
+                tarikhOrder,
+                tarikhRekod,
+                masaRekod,
+                hariRekod,
+                nama,
+                noTel,
+                alamat,
+                13,
+                order,
+                total,
+                0.00,
+                0.00,
+                false,
+              ),
+            );
+          },
         ),
-        body: Form(
-          key: _formKeyDetail,
-          child: ListView(
-            padding: const EdgeInsets.all(15),
-            children: [
-              Text( '''
+      ),
+      body: Form(
+        key: _formKeyDetail,
+        child: ListView(
+          padding: const EdgeInsets.all(15),
+          children: [
+            Text(
+              '''
 Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan.
 📌 Harga pesanan tidak termasuk caj penghantaran. Kami akan menghubungi anda melalui WhatsApp selepas pesanan diterima untuk pengesahan dan memaklumkan jumlah bayaran keseluruhan.
 ''',
-                style: textStyle,
-                textAlign: .center,
-              ),
-              Row(
-                children: [
-                  Text(
-                    "Tarikh          : ",
-                    style: textStyle,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                      child:Form(
-                          key: _formKeyDate,
-                          child: Column(
-                            children: [
-                              TextFormField(
-                        controller: dateController,
-                        readOnly: true,
-                        onTap: () => _selectDate(context),
-                                autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Sila pilih tarikh';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                          labelText: "",
+              style: textStyle,
+              textAlign: .center,
+            ),
+            Row(
+              children: [
+                Text("Tarikh          : ", style: textStyle),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Form(
+                    key: _formKeyDate,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: dateController,
+                          readOnly: true,
+                          onTap: () => _selectDate(context),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Sila pilih tarikh';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(labelText: ""),
                         ),
-                      )
-                          ]
-                          )
-                      )
-                  )
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Text(
-                    "Nama          : ",
-                    style: textStyle,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                      child: TextFormField(
-                        controller: namaController,
-                        decoration: const InputDecoration(
-                          labelText: "",
-                        ),
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Sila masukkan nama anda';
-                          }
-                          return null;
-                        },
-                        focusNode: namaFocus,
-                      ))
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Text(
-                    "No Telefon  : ",
-                    style: textStyle,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextFormField(
-                      controller: phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        labelText: "",
-                      ),
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) {
-                        if (value == null || value
-                            .trim()
-                            .isEmpty) {
-                          return "Sila masukkan no. telefon anda untuk kami hubungi.";
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Text(
-                    "Alamat         : ",
-                    style: textStyle,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      controller: alamatController,
-                      keyboardType: TextInputType.multiline,
-                      decoration: const InputDecoration(
-                        labelText: "",
-                      ),
-                    ),
-                  )
-                ],
-              ),
-
-              const SizedBox(height: 10),
-              Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            "Menu Order : ",
-                            style: textStyle,
-                          ),
-
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: DropdownButtonFormField<String>(
-                              initialValue: selectedMenu,
-                              isExpanded: true,
-                              autovalidateMode: AutovalidateMode.onUserInteractionIfError,
-                              validator:  (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return "Sila pilih menu pesanan anda.";
-                                }
-                                return null;
-                              },
-                              hint: Text("Sila pilih menu yang anda ingin pesan"),
-                              items: dropDownList,
-                              onChanged: (value) {
-                                var id = int.parse(value.toString());
-                                final index = menuList.indexWhere((e) => e.id == id);
-
-                                if (index == -1) {
-                                  print("Menu tidak dijumpai: $id");
-                                  return;
-                                }
-                                rekodMenu current = menuList.elementAt(index);
-                                setState(() {
-                                  selectedMenu = value;
-                                  jenis = current.jenis;
-                                  harga = current.Harga;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Text(
-                            "Kuantiti       : ",
-                            style: textStyle,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextFormField(
-                              controller: kuantitiController,
-                              keyboardType: const TextInputType.numberWithOptions(
-                                  decimal: true),
-                              decoration: const InputDecoration(
-                                labelText: "",
-                              ),
-                              autovalidateMode: AutovalidateMode.onUserInteractionIfError,
-                              validator: (value) {
-                                if (value == null || value
-                                    .trim()
-                                    .isEmpty) {
-                                  return "Sila masukkan kuantiti yang ingin dipesan.";
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-              ),
-              const SizedBox(height: 10),
-              GestureDetector(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: ListTile(
-                    title: Text(
-                      "Tambah Pesanan",
-                      style: textStyleBtn,
-                      textAlign: TextAlign.center,
+                      ],
                     ),
                   ),
                 ),
-                onTap: () async {
-                    num kuantiti = 0;
-                    if (_formKey.currentState!.validate()) {
-                    if (kuantitiController.text.contains(".")) {
-                      kuantiti = kuantitiController.text.toDoubleNumberFormat();
-                    } else {
-                      kuantiti = kuantitiController.text.totalIntNumber();
-                    }
-                    if (jenis.isNotEmpty && kuantiti > 0 && harga > 0) {
-                      num jumlah = kuantiti * harga;
-                      order.insert(order.length,
-                          rekodPesananPelanggan(
-                              -1, jenis, kuantiti, harga, jumlah));
-                      setState(() {
-                        kuantitiController.clear();
-                        selectedMenu = null;
-                        jenis = "";
-                        harga = 0;
-                      });
-                    }
-                    }
-                },
-              ),
-              const SizedBox(height: 20),
-              Divider(thickness: 3, height: 13, color: Colors.grey),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Table(
-                    border: TableBorder.all(color: Colors.grey),
-                    columnWidths: const <int, TableColumnWidth>{
-                      0: FlexColumnWidth(),
-                      1: FixedColumnWidth(70),
-                      2: FixedColumnWidth(60),
-                      3: FixedColumnWidth(80),
-                      4: FixedColumnWidth(80),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Text("Nama          : ", style: textStyle),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextFormField(
+                    controller: namaController,
+                    decoration: const InputDecoration(labelText: ""),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Sila masukkan nama anda';
+                      }
+                      return null;
                     },
-                    defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                    focusNode: namaFocus,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Text("No Telefon  : ", style: textStyle),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextFormField(
+                    controller: phoneController,
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(labelText: ""),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Sila masukkan no. telefon anda untuk kami hubungi.";
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Text("Alamat         : ", style: textStyle),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    controller: alamatController,
+                    keyboardType: TextInputType.multiline,
+                    decoration: const InputDecoration(labelText: ""),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 10),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      TableRow(
-                        children: [
-                          headerCell("Produk"),
-                          headerCell("Kuantiti"),
-                          headerCell("Harga"),
-                          headerCell("Jumlah"),
-                          headerCell("Tindakan"),
-                        ],
+                      Text("Menu Order : ", style: textStyle),
+
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          initialValue: selectedMenu,
+                          isExpanded: true,
+                          autovalidateMode:
+                              AutovalidateMode.onUserInteractionIfError,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return "Sila pilih menu pesanan anda.";
+                            }
+                            return null;
+                          },
+                          hint: Text("Sila pilih menu yang anda ingin pesan"),
+                          items: dropDownList,
+                          onChanged: (value) {
+                            var id = int.parse(value.toString());
+                            final index = menuList.indexWhere(
+                              (e) => e.id == id,
+                            );
+
+                            if (index == -1) {
+                              print("Menu tidak dijumpai: $id");
+                              return;
+                            }
+                            rekodMenu current = menuList.elementAt(index);
+                            setState(() {
+                              selectedMenu = value;
+                              jenis = current.jenis;
+                              harga = current.Harga;
+                            });
+                          },
+                        ),
                       ),
-                      // Data
-                      ...order
-                          .asMap()
-                          .entries
-                          .map((entry) {
-                        final index = entry.key;
-                        final current = entry.value;
-
-                        String currentPesanan = current.pesanan.toStringAsFixed(
-                            1);
-                        if (currentPesanan.endsWith(".0")) {
-                          currentPesanan = current.pesanan.toStringAsFixed(0);
-                        }
-
-                        return TableRow(
-                          children: [
-                            tableCell(
-                              current.jenis,
-                              onTap: () {
-                                showDialogTextRequired(
-                                  context,
-                                  "Masukkan data ${current.jenis}",
-                                  index,
-                                );
-                              },
-                            ),
-                            tableCell(currentPesanan),
-                            tableCell(money(current.Harga)),
-                            tableCell(money(current.Jumlah)),
-                            // Actions
-                            SizedBox(
-                              height: 50,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit),
-                                    iconSize: 22,
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(
-                                      minWidth: 24,
-                                      minHeight: 24,
-                                    ),
-                                    splashRadius: 16,
-                                    onPressed: () {
-                                      showDialogTextRequired(
-                                        context,
-                                        "Masukkan data ${current.jenis}",
-                                        index,
-                                      );
-                                    },
-                                  ),
-                                  const SizedBox(width: 8),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.remove_circle,
-                                      color: Colors.red,
-                                    ),
-                                    iconSize: 22,
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(
-                                      minWidth: 24,
-                                      minHeight: 24,
-                                    ),
-                                    splashRadius: 16,
-                                    onPressed: () {
-                                      setState(() {
-                                        order.removeAt(index);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
                     ],
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Text("Kuantiti       : ", style: textStyle),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextFormField(
+                          controller: kuantitiController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          decoration: const InputDecoration(labelText: ""),
+                          autovalidateMode:
+                              AutovalidateMode.onUserInteractionIfError,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return "Sila masukkan kuantiti yang ingin dipesan.";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            GestureDetector(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: ListTile(
+                  title: Text(
+                    "Tambah Pesanan",
+                    style: textStyleBtn,
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
+              onTap: () async {
+                num kuantiti = 0;
+                if (_formKey.currentState!.validate()) {
+                  if (kuantitiController.text.contains(".")) {
+                    kuantiti = kuantitiController.text.toDoubleNumberFormat();
+                  } else {
+                    kuantiti = kuantitiController.text.totalIntNumber();
+                  }
+                  if (jenis.isNotEmpty && kuantiti > 0 && harga > 0) {
+                    num jumlah = kuantiti * harga;
+                    order.insert(
+                      order.length,
+                      rekodPesananPelanggan(-1, jenis, kuantiti, harga, jumlah),
+                    );
+                    setState(() {
+                      kuantitiController.clear();
+                      selectedMenu = null;
+                      jenis = "";
+                      harga = 0;
+                    });
+                  }
+                }
+              },
+            ),
+            const SizedBox(height: 20),
+            Divider(thickness: 3, height: 13, color: Colors.grey),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Table(
+                  border: TableBorder.all(color: Colors.grey),
+                  columnWidths: const <int, TableColumnWidth>{
+                    0: FlexColumnWidth(),
+                    1: FixedColumnWidth(70),
+                    2: FixedColumnWidth(60),
+                    3: FixedColumnWidth(80),
+                    4: FixedColumnWidth(80),
+                  },
+                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                  children: [
+                    TableRow(
+                      children: [
+                        headerCell("Produk"),
+                        headerCell("Kuantiti"),
+                        headerCell("Harga"),
+                        headerCell("Jumlah"),
+                        headerCell("Tindakan"),
+                      ],
+                    ),
+                    // Data
+                    ...order.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final current = entry.value;
 
-              // ...order.asMap().entries.map((entry) {
-              //   final index = entry.key;
-              //   final item = entry.value;
-              //   return Card(
-              //     margin: const EdgeInsets.only(bottom: 10),
-              //     child: Padding(
-              //       padding: const EdgeInsets.all(10),
-              //       child: Row(
-              //         children: [
-              //           Expanded(
-              //             child: Column(
-              //               crossAxisAlignment: CrossAxisAlignment.start,
-              //               children: [
-              //                 Text(
-              //                   item.jenis,
-              //                   style: TextStyle(
-              //                     fontSize: 18,
-              //                     fontWeight: FontWeight.bold,
-              //                   ),
-              //                 ),
-              //                 const SizedBox(height: 5),
-              //                 Text(
-              //                   "${item.pesanan} * ${item.Harga} = RM ${item.Jumlah.toStringAsFixed(2)}"
-              //                 ),
-              //               ],
-              //             ),
-              //           ),
-              //
-              //           IconButton(
-              //
-              //             onPressed: () {
-              //               setState(() {
-              //                 order.removeAt(index);
-              //
-              //               });
-              //             },
-              //
-              //             icon: const Icon(Icons.remove_circle),
-              //
-              //           ),
-              //
-              //           // Text(
-              //           //   item.qty.toString(),
-              //           //   style: const TextStyle(fontSize: 18),
-              //           // ),
-              //
-              //           // IconButton(
-              //           //
-              //           //   onPressed: () {
-              //           //
-              //           //     setState(() {
-              //           //
-              //           //       item.qty++;
-              //           //
-              //           //     });
-              //           //
-              //           //   },
-              //           //
-              //           //   icon: const Icon(Icons.add_circle),
-              //           //
-              //           // ),
-              //
-              //         ],
-              //       ),
-              //     ),
-              //   );
-              // }),
-              const SizedBox(height: 20),
-              Card(
+                      String currentPesanan = current.pesanan.toStringAsFixed(
+                        1,
+                      );
+                      if (currentPesanan.endsWith(".0")) {
+                        currentPesanan = current.pesanan.toStringAsFixed(0);
+                      }
 
-                child: Padding(
-
-                  padding: const EdgeInsets.all(15),
-
-                  child: Column(
-
-                    children: [
-
-                      Row(
-
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
+                      return TableRow(
                         children: [
-
-                          const Text("Jumlah Item"),
-
-                          Text(jumlahItem.toString()),
-
-                        ],
-
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      Row(
-
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-                        children: [
-
-                          const Text(
-                            "Jumlah Bayaran",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                          tableCell(
+                            current.jenis,
+                            onTap: () {
+                              showDialogTextRequired(
+                                context,
+                                "Masukkan data ${current.jenis}",
+                                index,
+                              );
+                            },
+                          ),
+                          tableCell(currentPesanan),
+                          tableCell(money(current.Harga)),
+                          tableCell(money(current.Jumlah)),
+                          // Actions
+                          SizedBox(
+                            height: 50,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  iconSize: 22,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(
+                                    minWidth: 24,
+                                    minHeight: 24,
+                                  ),
+                                  splashRadius: 16,
+                                  onPressed: () {
+                                    showDialogTextRequired(
+                                      context,
+                                      "Masukkan data ${current.jenis}",
+                                      index,
+                                    );
+                                  },
+                                ),
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.remove_circle,
+                                    color: Colors.red,
+                                  ),
+                                  iconSize: 22,
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(
+                                    minWidth: 24,
+                                    minHeight: 24,
+                                  ),
+                                  splashRadius: 16,
+                                  onPressed: () {
+                                    setState(() {
+                                      order.removeAt(index);
+                                    });
+                                  },
+                                ),
+                              ],
                             ),
                           ),
-
-                          Text(
-                            "RM ${total.toStringAsFixed(2)}",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-
                         ],
-
-                      )
-
-                    ],
-                  ),
+                      );
+                    }),
+                  ],
                 ),
-              )
-            ],
-          ),
-        )
+              ),
+            ),
+
+            // ...order.asMap().entries.map((entry) {
+            //   final index = entry.key;
+            //   final item = entry.value;
+            //   return Card(
+            //     margin: const EdgeInsets.only(bottom: 10),
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(10),
+            //       child: Row(
+            //         children: [
+            //           Expanded(
+            //             child: Column(
+            //               crossAxisAlignment: CrossAxisAlignment.start,
+            //               children: [
+            //                 Text(
+            //                   item.jenis,
+            //                   style: TextStyle(
+            //                     fontSize: 18,
+            //                     fontWeight: FontWeight.bold,
+            //                   ),
+            //                 ),
+            //                 const SizedBox(height: 5),
+            //                 Text(
+            //                   "${item.pesanan} * ${item.Harga} = RM ${item.Jumlah.toStringAsFixed(2)}"
+            //                 ),
+            //               ],
+            //             ),
+            //           ),
+            //
+            //           IconButton(
+            //
+            //             onPressed: () {
+            //               setState(() {
+            //                 order.removeAt(index);
+            //
+            //               });
+            //             },
+            //
+            //             icon: const Icon(Icons.remove_circle),
+            //
+            //           ),
+            //
+            //           // Text(
+            //           //   item.qty.toString(),
+            //           //   style: const TextStyle(fontSize: 18),
+            //           // ),
+            //
+            //           // IconButton(
+            //           //
+            //           //   onPressed: () {
+            //           //
+            //           //     setState(() {
+            //           //
+            //           //       item.qty++;
+            //           //
+            //           //     });
+            //           //
+            //           //   },
+            //           //
+            //           //   icon: const Icon(Icons.add_circle),
+            //           //
+            //           // ),
+            //
+            //         ],
+            //       ),
+            //     ),
+            //   );
+            // }),
+            const SizedBox(height: 20),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                      children: [
+                        const Text("Jumlah Item"),
+
+                        Text(jumlahItem.toString()),
+                      ],
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
+                      children: [
+                        const Text(
+                          "Jumlah Bayaran",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+
+                        Text(
+                          "RM ${total.toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Widget headerCell(String text) {
     return SizedBox(
       height: 40,
-      child: Center(
-        child: Text(text, style: textStyle),
-      ),
+      child: Center(child: Text(text, style: textStyle)),
     );
   }
 
   Widget tableCell(String text, {VoidCallback? onTap}) {
     Widget child = SizedBox(
       height: 50,
-      child: Center(
-        child: Text(text, style: textStyleNormal),
-      ),
+      child: Center(child: Text(text, style: textStyleNormal)),
     );
 
     if (onTap != null) {
-      child = GestureDetector(
-        onTap: onTap,
-        child: child,
-      );
+      child = GestureDetector(onTap: onTap, child: child);
     }
 
     return child;
@@ -786,22 +735,17 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
               } else if (hariRekod.contains("Sat")) {
                 hariRekod = "Sabtu";
               }
-                tarikhRekod = DateFormat('dd/MM/yyyy').format(selectedDate);
-                var dateFormat = DateFormat(
-                  "hh:mm a",
-                ); // you can change the format here
-              tarikhOrder = DateFormat(
-                'dd/MM/yyyy',
-              ).format(DateTime.now());
+              tarikhRekod = DateFormat('dd/MM/yyyy').format(selectedDate);
+              var dateFormat = DateFormat(
+                "hh:mm a",
+              ); // you can change the format here
+              tarikhOrder = DateFormat('dd/MM/yyyy').format(DateTime.now());
               int totalOrder = rekod_Pelanggan
-                  .where(
-                    (pelanggan) => pelanggan.tarikhOrder == tarikhOrder,
-              )
+                  .where((pelanggan) => pelanggan.tarikhOrder == tarikhOrder)
                   .length;
-              invoice =
-                  'US${tarikhOrder.replaceAll("/", "")}$totalOrder';
-                masaRekod = dateFormat.format(selectedDateTime).toString();
-                epochTime = selectedDateTime.millisecondsSinceEpoch.toString();
+              invoice = 'US${tarikhOrder.replaceAll("/", "")}$totalOrder';
+              masaRekod = dateFormat.format(selectedDateTime).toString();
+              epochTime = selectedDateTime.millisecondsSinceEpoch.toString();
               TarikhPesanan = '$hariRekod, $tarikhRekod $masaRekod';
               dateController.text = TarikhPesanan;
               FocusScope.of(context).requestFocus(namaFocus);
@@ -813,11 +757,11 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
   }
 
   void showDialogTextRequired(
-      BuildContext context,
-      String title,
-      int index, {
-        bool newMenu = false,
-      }) {
+    BuildContext context,
+    String title,
+    int index, {
+    bool newMenu = false,
+  }) {
     final formKey = GlobalKey<FormState>();
 
     final myController = TextEditingController();
@@ -835,9 +779,7 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
           : pesananValue.toStringAsFixed(1);
       myController2.text = money(current.Harga);
     }
-    final values = dropDownList
-        .map((e) => e.value)
-        .toList();
+    final values = dropDownList.map((e) => e.value).toList();
     bool isNewMenu = newMenu;
 
     showDialog(
@@ -860,57 +802,60 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
                         SizedBox(height: 4),
                         index >= 0
                             ? TextFormField(
-                          enableInteractiveSelection: false,
-                          // will disable paste operation
-                          enabled: false,
-                          autofocus: false,
-                          controller: myController,
-                          decoration: InputDecoration(),
-                          textInputAction:
-                          TextInputAction.next, // Moves focus to ne
-                        )
+                                enableInteractiveSelection: false,
+                                // will disable paste operation
+                                enabled: false,
+                                autofocus: false,
+                                controller: myController,
+                                decoration: InputDecoration(),
+                                textInputAction:
+                                    TextInputAction.next, // Moves focus to ne
+                              )
                             : isNewMenu
                             ? TextFormField(
-                          controller: myController,
-                          focusNode: myFocusNode,
-                          autofocus: true,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Sila masukkan menu anda";
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(),
-                        )
+                                controller: myController,
+                                focusNode: myFocusNode,
+                                autofocus: true,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Sila masukkan menu anda";
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(),
+                              )
                             : DropdownButtonFormField(
-                          isExpanded: true,
-                          items: dropDownList,
-                          onChanged: (item) {
-                            if (item == "") {
-                              // Switch to new menu input
-                              setState(() {
-                                isNewMenu = true;
-                                myController.text = "";
-                                // Focus new menu text field
-                                Future.delayed(
-                                  Duration(milliseconds: 100),
-                                      () => myFocusNode.requestFocus(),
-                                );
-                              });
-                            } else {
-                              myController.text = item ?? "";
-                            }
-                          },
-                          decoration: InputDecoration(),
-                        ),
+                                isExpanded: true,
+                                items: dropDownList,
+                                onChanged: (item) {
+                                  if (item == "") {
+                                    // Switch to new menu input
+                                    setState(() {
+                                      isNewMenu = true;
+                                      myController.text = "";
+                                      // Focus new menu text field
+                                      Future.delayed(
+                                        Duration(milliseconds: 100),
+                                        () => myFocusNode.requestFocus(),
+                                      );
+                                    });
+                                  } else {
+                                    myController.text = item ?? "";
+                                  }
+                                },
+                                decoration: InputDecoration(),
+                              ),
                         SizedBox(height: 2),
                         Text('Pesanan :', style: textStyle),
                         SizedBox(height: 2),
                         TextFormField(
                           autofocus: index >= 0 ? true : false,
                           controller: myController1,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
                           textInputAction: TextInputAction.next,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (value) {
@@ -971,7 +916,9 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
 
   Future<void> insertServer(rekodPelanggan usr) async {
     final result = await insertUpdateTable(
-        'Pelanggan Rekod', usr.toMapServer());
+      'Pelanggan Rekod',
+      usr.toMapServer(),
+    );
     var resultRekod = rekodPelanggan.fromMap(result);
     setState(() {
       usrID = resultRekod.id;
@@ -979,7 +926,7 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
     for (var index = 0; index < order.length; index++) {
       var element = order.elementAt(index);
       element.pelanggan_id = usrID;
-      insertPelagganDetail(element,usr);
+      insertPelagganDetail(element, usr);
     }
     if (!rekod_stok.map((item) => item.tarikh).contains(usr.tarikh)) {
       List<dynamic> rekod = <rekodStokDetail>[];
@@ -989,36 +936,38 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
     }
   }
 
-  Future<void> insertPelagganDetail(rekodPesananPelanggan pesanan,rekodPelanggan usr) async {
+  Future<void> insertPelagganDetail(
+    rekodPesananPelanggan pesanan,
+    rekodPelanggan usr,
+  ) async {
     rekodPesananPelanggan? resultRekod;
     final result = await insertUpdateTable(
-        'Pelanggan Detail Rekod', pesanan.toMapServer());
+      'Pelanggan Detail Rekod',
+      pesanan.toMapServer(),
+    );
     resultRekod = rekodPesananPelanggan.fromMap(result);
     usr.id = resultRekod.id;
     try {
       final res = await supabase.functions.invoke(
         'super-api',
-        body: {
-          "name": usr.nama,
-          "invois": usr.noBil,
-        },
+        body: {"name": usr.nama, "invois": usr.noBil},
       );
 
       print("respond data ${res.data}");
-
-    } catch(e) {
-      print("respond data error ${e}");
+    } catch (e) {
+      print("respond data error $e");
     }
-    ScaffoldMessenger.of(
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Pesanan anda berjaya dihantar.')),
+    );
+    showDialogRequired(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Pesanan anda berjaya dihantar.')));
-    showDialogRequired(context,"Pesanan Berjaya",'Pesanan anda berjaya dihantar.');
+      "Pesanan Berjaya",
+      'Pesanan anda berjaya dihantar.',
+    );
   }
 
-  void showDialogRequired(
-      BuildContext context,
-      String title,
-      String message) {
+  void showDialogRequired(BuildContext context, String title, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1033,9 +982,7 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
                 Navigator.of(context).pop();
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) => OrderPage(),
-                  ),
+                  MaterialPageRoute(builder: (context) => OrderPage()),
                 );
               },
             ),
@@ -1044,6 +991,7 @@ Sila isi pesanan anda di bawah dan tekan Hantar Pesanan untuk menghantar pesanan
       },
     );
   }
+
   void resetAllForm() {
     _formKey.currentState?.reset();
     _formKeyDate.currentState?.reset();

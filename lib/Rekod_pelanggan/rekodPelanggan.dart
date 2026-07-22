@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
-import 'package:sattayussop/rekodRunner.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import 'package:sattayussop/DocumentHelper.dart';
 import 'package:sattayussop/Rekod_pelanggan/rekodPelangganDetail.dart';
-import 'package:sattayussop/Rekod_pelanggan/rekodPelanggan.dart';
-import 'package:sattayussop/RekodMenu.dart';
 import 'package:notification_center/notification_center.dart';
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
@@ -69,7 +60,7 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
     final list = sortMenuList(rekod_Menu);
     for (var index = 0; index < list.length; index++) {
       rekodMenu current = list.elementAt(index);
-      menuList.insert(menuList.length,current);
+      menuList.insert(menuList.length, current);
     }
     for (var index = 0; index < rekod_Runner.length; index++) {
       rekodRunner list = rekod_Runner.elementAt(index);
@@ -77,10 +68,13 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
       var username = list.username;
       runnerList.add(list);
       dropDownListRunner.add(
-        DropdownMenuItem<String>(value: username.isEmpty == true ? '' : username, child: Text(nama)),
+        DropdownMenuItem<String>(
+          value: username.isEmpty == true ? '' : username,
+          child: Text(nama),
+        ),
       );
     }
-    print("runner list >> ${runnerList}");
+    print("runner list >> $runnerList");
     runnerList.sort((a, b) => a.username.compareTo(b.username));
     super.initState();
   }
@@ -126,22 +120,19 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
               children: <Widget>[
                 ListTile(
                   title: Row(
-            children: [
-            Expanded(
-            child: Text(
-              current.nama,
-              style: textStyle,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-          current.noBil,
-          style: const TextStyle(fontSize: 12),
-          ),
-          ],
-          ),
+                    children: [
+                      Expanded(
+                        child: Text(
+                          current.nama,
+                          style: textStyle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(current.noBil, style: const TextStyle(fontSize: 12)),
+                    ],
+                  ),
 
                   subtitle: Text(
                     '${current.tarikh} ${current.masa}',
@@ -414,7 +405,11 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
                       isExpanded: true,
                       onChanged: (item) {
                         var username = item.toString();
-                        var current = rekod_Runner.elementAt(rekod_Runner.indexWhere((e) => e.username == username));
+                        var current = rekod_Runner.elementAt(
+                          rekod_Runner.indexWhere(
+                            (e) => e.username == username,
+                          ),
+                        );
                         runnerID = current.id;
                         myController4.text = username;
                       },
@@ -486,12 +481,13 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
 
   Future<void> insertServer(rekodPelanggan usr) async {
     final result = await insertUpdateTable(
-        'Pelanggan Rekod', usr.toMapServer());
+      'Pelanggan Rekod',
+      usr.toMapServer(),
+    );
     var resultRekod = rekodPelanggan.fromMap(result);
     usr.id = resultRekod.id;
     addItem(usr);
   }
-
 
   // addItem adds our User Class item to list.
   void addItem(rekodPelanggan usr) {
@@ -503,7 +499,7 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
   void removeItemInServer(int index) {
     tarikhRekod = rekod_Pelanggan[index].tarikh;
     var id = rekod_Pelanggan[index].id;
-    deleteRow('Pelanggan Rekod',id);
+    deleteRow('Pelanggan Rekod', id);
     removeItem(index);
   }
 

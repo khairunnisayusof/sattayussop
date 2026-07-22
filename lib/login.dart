@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sattayussop/main.dart';
 import 'package:sattayussop/supabaseServer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_capitalize/string_capitalize.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'databaseLocal.dart';
-import 'main.dart';
 import 'DocumentHelper.dart';
 
 class LoginPage extends StatefulWidget {
@@ -58,17 +55,16 @@ class _LoginPageState extends State<LoginPage> {
                     width: 200,
                     height: 200,
                     child: Image.asset(
-                      dark ? 'image/SATAY_USSOP.png' : 'image/orenBlack_icon.png',
+                      dark
+                          ? 'image/SATAY_USSOP.png'
+                          : 'image/orenBlack_icon.png',
                       fit: BoxFit.contain,
                     ),
                   ),
                   const SizedBox(height: 20),
                   const Text(
                     "Log Masuk",
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 30),
@@ -120,7 +116,6 @@ class _LoginPageState extends State<LoginPage> {
                   //     child: const Text("Lupa Password?"),
                   //   ),
                   // ),
-
                   const SizedBox(height: 10),
                   SizedBox(
                     width: double.infinity,
@@ -130,7 +125,9 @@ class _LoginPageState extends State<LoginPage> {
                         await login();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: dark ? Colors.deepOrange : Colors.orange,
+                        backgroundColor: dark
+                            ? Colors.deepOrange
+                            : Colors.orange,
                         foregroundColor: Colors.white,
                       ),
                       child: const Text(
@@ -158,10 +155,9 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
   Future<void> login() async {
-
     try {
-
       String username = usernameController.text.trim();
       String password = passwordController.text;
 
@@ -171,52 +167,38 @@ class _LoginPageState extends State<LoginPage> {
           .ilike('nama', username.trim())
           .maybeSingle();
 
-      print("nama user >> ${username.trim()} >> ${user}");
+      print("nama user >> ${username.trim()} >> $user");
 
       if (user == null) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("User tidak wujud"),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("User tidak wujud")));
         return;
       }
 
       bool passwordCorrect;
 
       if (user['role'].toString().capitalize() == 'Admin') {
-
-        passwordCorrect =
-            password == adminPassword;
-
-      }else if (user['role'].toString().capitalize() == 'Manager') {
-        passwordCorrect =
-            password == managerPassword;
-
+        passwordCorrect = password == adminPassword;
+      } else if (user['role'].toString().capitalize() == 'Manager') {
+        passwordCorrect = password == managerPassword;
       } else {
-
-        passwordCorrect =
-            password == pekerjaPassword;
-
+        passwordCorrect = password == pekerjaPassword;
       }
-
 
       print("rekod user >>> $username >> $user");
 
-
       if (!passwordCorrect) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Password salah"),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Password salah")));
 
         return;
       }
       var pekerjaList = rekodPekerja.fromJson(user);
-      role = pekerjaList.role ;
+      role = pekerjaList.role;
       user_id = pekerjaList.id;
       bool aktif = pekerjaList.aktif;
 
@@ -224,7 +206,9 @@ class _LoginPageState extends State<LoginPage> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Sila mohon admin daftar anda ke Sistem Sattay Ussop!"),
+            content: Text(
+              "Sila mohon admin daftar anda ke Sistem Sattay Ussop!",
+            ),
           ),
         );
         return;
@@ -233,39 +217,30 @@ class _LoginPageState extends State<LoginPage> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Sila mohon admin mengaktifkan akses anda ke Sistem Sattay Ussop."),
+            content: Text(
+              "Sila mohon admin mengaktifkan akses anda ke Sistem Sattay Ussop.",
+            ),
           ),
         );
         return;
       }
       // final prefs = await sharedPreferences.getInstance();
-      await sharedPreferences?.setInt(
-        "userId",
-        user_id,
-      );
-      await sharedPreferences?.setString(
-        "role",
-        role.capitalize(),
-      );
+      await sharedPreferences?.setInt("userId", user_id);
+      await sharedPreferences?.setString("role", role.capitalize());
 
       // PENTING: check selepas await
       if (!mounted) return;
       loadDataServer();
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => const MyHomePage(),
-        ),
+        MaterialPageRoute(builder: (_) => const MyHomePage()),
       );
     } catch (e) {
       print("error message >> $e");
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Log Masuk gagal!"),
-        ),
-      );
-
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Log Masuk gagal!")));
     }
   }
 }

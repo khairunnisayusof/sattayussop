@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sattayussop/Rekod_Pembekal/rekodPembekalList.dart';
-import 'dart:convert';
 import 'package:string_capitalize/string_capitalize.dart';
 import 'package:sattayussop/DocumentHelper.dart';
 import 'package:notification_center/notification_center.dart';
@@ -110,8 +109,7 @@ class _RekodBarangState extends State<RekodBarang> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      selectRekodBarangList(selectIndex: id),
+                  builder: (context) => selectRekodBarangList(selectIndex: id),
                 ),
               );
             },
@@ -149,19 +147,21 @@ class _RekodBarangState extends State<RekodBarang> {
         centerTitle: true,
       ),
       body: buildCollectionView,
-      floatingActionButton: (role.toString().capitalize() == "Admin") ? FloatingActionButton(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        onPressed: () {
-          showDialogTextRequired(
-            context,
-            "Masukkan Nama Pembekal",
-            "nama Pembekal anda.",
-          );
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ) : null,
+      floatingActionButton: (role.toString().capitalize() == "Admin")
+          ? FloatingActionButton(
+              backgroundColor: color,
+              foregroundColor: Colors.white,
+              onPressed: () {
+                showDialogTextRequired(
+                  context,
+                  "Masukkan Nama Pembekal",
+                  "nama Pembekal anda.",
+                );
+              },
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 
@@ -231,7 +231,7 @@ class _RekodBarangState extends State<RekodBarang> {
                 if (!rekod_Pembekal
                     .map((item) => item.namaPembekal)
                     .contains(nama)) {
-                  insertServer(rekodPembekalList(nama, rekod,[]));
+                  insertServer(rekodPembekalList(nama, rekod, []));
                 }
               },
             ),
@@ -258,7 +258,7 @@ class _RekodBarangState extends State<RekodBarang> {
 
   void removeItemInServer(int index) {
     var id = rekod_Pembekal[index].id;
-    deleteRow('Pembekal Rekod',id);
+    deleteRow('Pembekal Rekod', id);
     removeItem(index);
   }
 

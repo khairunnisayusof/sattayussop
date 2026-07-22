@@ -5,14 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:notification_center/notification_center.dart';
 import '../resit.dart';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../Rekod_Harian/RekodHarian.dart';
 import "../DocumentHelper.dart";
-import 'package:string_capitalize/string_capitalize.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
 
@@ -77,8 +72,12 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
       rekodCawangan currentCawangan = rekod_Cawangan.elementAt(selectIndex);
       cawanganId = currentCawangan.id;
       nama = currentCawangan.nama;
-      selectDetailBarang = List<rekodCawanganDetail>.from(currentCawangan.rekod).toList();
-      rekodBayaran = List<rekodBayaranCawangan>.from(currentCawangan.rekodBayaran).toList();
+      selectDetailBarang = List<rekodCawanganDetail>.from(
+        currentCawangan.rekod,
+      ).toList();
+      rekodBayaran = List<rekodBayaranCawangan>.from(
+        currentCawangan.rekodBayaran,
+      ).toList();
       jumlahBayaran = 0.0;
       jumlahKeseluruhan = 0.0;
       for (var index = 0; index < rekodBayaran.length; index++) {
@@ -266,7 +265,10 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
                           Expanded(
                             child: Text('Baki Bayaran (RM)', style: textStyle),
                           ),
-                          Text(money(jumlahKeseluruhan - jumlahBayaran), style: textStyleNormal),
+                          Text(
+                            money(jumlahKeseluruhan - jumlahBayaran),
+                            style: textStyleNormal,
+                          ),
                         ],
                       ),
                       SizedBox(height: 2),
@@ -372,7 +374,7 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
           epochTime = tempDate1.millisecondsSinceEpoch.toString();
           epochTime = tempDate1.millisecondsSinceEpoch.toString();
           var selectIndex = rekodBayaran.indexWhere(
-                (pelanggan) => pelanggan.tarikh == tarikhRekod,
+            (pelanggan) => pelanggan.tarikh == tarikhRekod,
           );
 
           if (selectIndex >= 0) {
@@ -380,17 +382,9 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
             current.tarikh = tarikhRekod;
             current.hari = hariRekod;
             current.epochTime = epochTime;
-            showDialogBayaranRequired(
-              context,
-              "Masukkan Data",
-              selectIndex,
-            );
-          }else {
-            showDialogBayaranRequired(
-              context,
-              "Masukkan Data",
-              -1,
-            );
+            showDialogBayaranRequired(context, "Masukkan Data", selectIndex);
+          } else {
+            showDialogBayaranRequired(context, "Masukkan Data", -1);
           }
         });
       }
@@ -463,10 +457,15 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
                       autofocus: true,
                       controller: myController1,
                       textInputAction: TextInputAction.next,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
-                        ],
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[0-9+\-*/.]'),
+                        ),
+                      ],
                       // Moves focus to next.
                       decoration: InputDecoration(),
                     ),
@@ -542,8 +541,14 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
   }
 
   Future<void> insertServer(rekodBayaranCawangan usr, int index) async {
-    index >= 0 ? await insertUpdateTable('Cawangan Bayaran Rekod', usr.toMapServer(),id: usr.id) : await insertUpdateTable('Cawangan Bayaran Rekod', usr.toMapServer());
-    addItem(usr,index);
+    index >= 0
+        ? await insertUpdateTable(
+            'Cawangan Bayaran Rekod',
+            usr.toMapServer(),
+            id: usr.id,
+          )
+        : await insertUpdateTable('Cawangan Bayaran Rekod', usr.toMapServer());
+    addItem(usr, index);
   }
 
   // addItem adds our User Class item to list.
@@ -559,11 +564,15 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
   }
 
   void kiraJualan() async {
-    rekodCawangan currentCawangan = rekod_Cawangan.elementAt(rekod_Cawangan.indexWhere((e) => e.id == cawanganId));
+    rekodCawangan currentCawangan = rekod_Cawangan.elementAt(
+      rekod_Cawangan.indexWhere((e) => e.id == cawanganId),
+    );
 
     nama = currentCawangan.nama;
 
-    List<rekodCawanganDetail> selectDetail = List<rekodCawanganDetail>.from(currentCawangan.rekod).toList();
+    List<rekodCawanganDetail> selectDetail = List<rekodCawanganDetail>.from(
+      currentCawangan.rekod,
+    ).toList();
 
     // Total bayaran
     num jumlahBayaranSemua = 0.0;
@@ -600,9 +609,12 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
         current.baki = jumlahJualan;
         current.bayaranPenuh = false;
       }
-      await insertUpdateTable('Cawangan Detail Rekod', current.toMapServer(),id: current.id);
+      await insertUpdateTable(
+        'Cawangan Detail Rekod',
+        current.toMapServer(),
+        id: current.id,
+      );
     }
-
 
     List<String> rekodList = selectDetail
         .map((item) => jsonEncode(item.toMap()))
@@ -614,13 +626,17 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
       currentCawangan.rekod = selectDetail;
       currentCawangan.rekodBayaran = rekodBayaran;
     });
-    await insertUpdateTable('Cawangan Rekod', currentCawangan.toMapServer(),id: cawanganId);
+    await insertUpdateTable(
+      'Cawangan Rekod',
+      currentCawangan.toMapServer(),
+      id: cawanganId,
+    );
     saveData();
   }
 
   void removeItemInServer(int index) {
     var id = rekodBayaran[index].id;
-    deleteRow('Cawangan Bayaran Rekod',id);
+    deleteRow('Cawangan Bayaran Rekod', id);
     removeItem(index);
   }
 

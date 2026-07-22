@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
-import 'package:intl/intl.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import '../DocumentHelper.dart';
-import '../Rekod_Harian/RekodHarian.dart';
-import '../RekodMenu.dart';
 import 'package:notification_center/notification_center.dart';
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
@@ -81,7 +74,7 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
       var nama = list.nama;
       var username = list.username;
       dropDownList.add(
-        DropdownMenuItem<String>(value:username , child: Text(nama)),
+        DropdownMenuItem<String>(value: username, child: Text(nama)),
       );
     }
     for (var index = 0; index < menuList.length; index++) {
@@ -105,7 +98,11 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
       rekodCucuk current = rekod_Cucuk.elementAt(selectIndex);
       cucukId = current.id;
       tarikh = current.tarikh;
-      jumlahSatay = sortMenuList(List<rekodJumlahCucuk>.from(current.jumlahSatayList).toList()) as List<rekodJumlahCucuk>;
+      jumlahSatay =
+          sortMenuList(
+                List<rekodJumlahCucuk>.from(current.jumlahSatayList).toList(),
+              )
+              as List<rekodJumlahCucuk>;
       _rekodCucukDetail = List<rekodCucukDetail>.from(current.rekod).toList();
       jumlahKeseluruhan = 0;
       for (var index = 0; index < jumlahSatay.length; index++) {
@@ -230,7 +227,13 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
                       rekodCucukDetail current = _rekodCucukDetail.elementAt(
                         index,
                       );
-                      String nama = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.id == current.pekerja_id)).nama;
+                      String nama = rekod_Pekerja
+                          .elementAt(
+                            rekod_Pekerja.indexWhere(
+                              (e) => e.id == current.pekerja_id,
+                            ),
+                          )
+                          .nama;
                       return GestureDetector(
                         child: Table(
                           border: TableBorder.all(color: colorBorder),
@@ -458,7 +461,9 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
       builder: (BuildContext context) {
         if (index >= 0) {
           rekodCucukDetail current = _rekodCucukDetail.elementAt(index);
-          var result = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.id == current.pekerja_id));
+          var result = rekod_Pekerja.elementAt(
+            rekod_Pekerja.indexWhere((e) => e.id == current.pekerja_id),
+          );
           myController.text = result.nama;
           myController2.text = current.jenis;
           myController3.text = '${current.jumlah}';
@@ -513,9 +518,14 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
                           TextField(
                             autofocus: false,
                             controller: myController3,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                              signed: true,
+                            ),
                             inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                              FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9+\-*/.]'),
+                              ),
                             ],
                             decoration: InputDecoration(),
                             textInputAction:
@@ -587,7 +597,11 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
                                 return null;
                               };
                               username = item;
-                              var result = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.username == username));
+                              var result = rekod_Pekerja.elementAt(
+                                rekod_Pekerja.indexWhere(
+                                  (e) => e.username == username,
+                                ),
+                              );
                               var nama = result.nama;
                               myController.text = nama;
                             },
@@ -613,9 +627,14 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
                           TextField(
                             autofocus: false,
                             controller: myController3,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                              signed: true,
+                            ),
                             inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                              FilteringTextInputFormatter.allow(
+                                RegExp(r'[0-9+\-*/.]'),
+                              ),
                             ],
                             decoration: InputDecoration(),
                             textInputAction:
@@ -648,10 +667,15 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
                     if (!(myController3.text.isEmpty)) {
                       jumlah = myController3.text.totalIntNumber();
                     }
-                    var result = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.username == username));
+                    var result = rekod_Pekerja.elementAt(
+                      rekod_Pekerja.indexWhere((e) => e.username == username),
+                    );
                     var pekerjaID = result.id;
                     var nama = result.nama;
-                    updateDataTable(rekodCucukDetail(cucukId,pekerjaID,nama, jenis, jumlah), index);
+                    updateDataTable(
+                      rekodCucukDetail(cucukId, pekerjaID, nama, jenis, jumlah),
+                      index,
+                    );
                   }
                 },
               ),
@@ -693,7 +717,11 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
         }
         if (refresh) {
           current.jumlah = jumlah;
-          insertUpdateTable("Jumlah Cucuk Satay Rekod", current.toMapServer(),id: id);
+          insertUpdateTable(
+            "Jumlah Cucuk Satay Rekod",
+            current.toMapServer(),
+            id: id,
+          );
           if (index >= jumlahSatay.length - 1) {
             startRefresh = true;
           }
@@ -719,11 +747,15 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
   Future<void> updateDataTable(rekodCucukDetail detail, int index) async {
     print("update insert >>> $index");
     if (index >= 0) {
-      insertUpdateTable('Cucuk Detail Rekod', detail.toMapServer(), id: detail.id);
+      insertUpdateTable(
+        'Cucuk Detail Rekod',
+        detail.toMapServer(),
+        id: detail.id,
+      );
     } else {
       insertUpdateTable('Cucuk Detail Rekod', detail.toMapServer());
     }
-    addItem(detail,index);
+    addItem(detail, index);
   }
 
   // addItem adds our User Class item to list.
@@ -757,10 +789,10 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
 
   // This block saves our list locally.
   void saveData() {
-      saveDataLocal();
-      updateStok(tarikh);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Simpan Data')));
+    saveDataLocal();
+    updateStok(tarikh);
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Simpan Data')));
   }
 }

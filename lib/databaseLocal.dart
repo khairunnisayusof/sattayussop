@@ -1,5 +1,3 @@
-import 'package:intl/intl.dart';
-
 import 'DocumentHelper.dart';
 
 class rekodMenu {
@@ -10,26 +8,20 @@ class rekodMenu {
   rekodMenu(this.jenis, this.Harga);
 
   rekodMenu.fromMap(
-      Map<String, dynamic> map,
-      ) // This Function helps to convert our Map into our User Object
-      : id = map["id"],
-        jenis = map["Menu"],
-        Harga = map["Harga"];
+    Map<String, dynamic> map,
+  ) // This Function helps to convert our Map into our User Object
+  : id = map["id"],
+      jenis = map["Menu"],
+      Harga = map["Harga"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
-    return {
-      "id": id,
-      "Menu": jenis,
-      "Harga": Harga};
+    return {"id": id, "Menu": jenis, "Harga": Harga};
   }
 
   Map<String, dynamic> toMapServer() {
     // This Function helps to convert our User Object into a Map.
-    return {
-      "id": id,
-      "Menu": jenis,
-      "Harga": Harga};
+    return {"id": id, "Menu": jenis, "Harga": Harga};
   }
 
   factory rekodMenu.fromJson(Map<String, dynamic> toMap) {
@@ -53,36 +45,37 @@ class rekodPekerja {
   bool aktif = false;
 
   rekodPekerja(
-      this.nama,
-      this.namaPenuh,
-      this.ic,
-      this.bank,
-      this.noBank,
-      this.gajiHarian,
-      this.gajiSimpan,
-      this.cucuk,
-      this.role,
-      this.aktif,
-      this.rekodAmbil
-      );
+    this.nama,
+    this.namaPenuh,
+    this.ic,
+    this.bank,
+    this.noBank,
+    this.gajiHarian,
+    this.gajiSimpan,
+    this.cucuk,
+    this.role,
+    this.aktif,
+    this.rekodAmbil,
+  );
 
   rekodPekerja.fromMap(
-      Map<String, dynamic> map,
-      ) // This Function helps to convert our Map into our User Object
-      : id = map["id"],
-        username = "${map["nama"]}_${map["id"]}",
-        nama = map["nama"],
-        namaPenuh = map["nama penuh"],
-        ic = map["kad pengenalan"],
-        bank = map["bank"],
-        noBank = map["nombor Bank"],
-        gajiHarian = map["gajiHarian"],
-        gajiSimpan = map["gajiSimpan"],
-        cucuk = map["cucuk"],
-        role = map["role"],
-        aktif = map["aktif"],
-        rekodAmbil = (map["Ambil Gaji Rekod"] ?? []).map((e) => rekodAmbilGaji.fromMap(
-          Map<String, dynamic>.from(e),)).toList();
+    Map<String, dynamic> map,
+  ) // This Function helps to convert our Map into our User Object
+  : id = map["id"],
+      username = "${map["nama"]}_${map["id"]}",
+      nama = map["nama"],
+      namaPenuh = map["nama penuh"],
+      ic = map["kad pengenalan"],
+      bank = map["bank"],
+      noBank = map["nombor Bank"],
+      gajiHarian = map["gajiHarian"],
+      gajiSimpan = map["gajiSimpan"],
+      cucuk = map["cucuk"],
+      role = map["role"],
+      aktif = map["aktif"],
+      rekodAmbil = (map["Ambil Gaji Rekod"] ?? [])
+          .map((e) => rekodAmbilGaji.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -98,7 +91,7 @@ class rekodPekerja {
       "cucuk": cucuk,
       "role": role,
       "aktif": aktif,
-      "Ambil Gaji Rekod":rekodAmbil.map((e) => e.toMap()).toList()
+      "Ambil Gaji Rekod": rekodAmbil.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -115,38 +108,32 @@ class rekodPekerja {
       "gajiSimpan": gajiSimpan,
       "cucuk": cucuk,
       "role": role,
-      "aktif": aktif
+      "aktif": aktif,
     };
   }
 
   factory rekodPekerja.fromJson(Map<String, dynamic> toMap) {
     return rekodPekerja.fromMap(toMap);
   }
-
 }
 
 class rekodList {
   int id = -1;
-  String epochTime ='';
+  String epochTime = '';
   String tarikh = '';
   String hari = '';
   List<dynamic> rekod = [];
 
-  rekodList(
-      this.epochTime,
-      this.tarikh,
-      this.hari,
-      this.rekod);
+  rekodList(this.epochTime, this.tarikh, this.hari, this.rekod);
 
   rekodList.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        epochTime = map["epochTime"],
-        tarikh = map['tarikh'] == null
-            ? ''
-            :formatTarikhToServer(map['tarikh']),
-        hari = map["hari"],
-        rekod = (map["Harian Detail Rekod"] ?? []).map((e) => rekodHarianDetail.fromMap(
-          Map<String, dynamic>.from(e),)).toList();
+    : id = map["id"],
+      epochTime = map["epochTime"],
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      hari = map["hari"],
+      rekod = (map["Harian Detail Rekod"] ?? [])
+          .map((e) => rekodHarianDetail.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -155,7 +142,7 @@ class rekodList {
       "epochTime": epochTime,
       "tarikh": tarikh,
       "hari": hari,
-      "Harian Detail Rekod": rekod.map((e) => e.toMap()).toList()
+      "Harian Detail Rekod": rekod.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -165,14 +152,13 @@ class rekodList {
       "id": id,
       "epochTime": epochTime,
       "tarikh": formatTarikh(tarikh),
-      "hari": hari
+      "hari": hari,
     };
   }
 
   factory rekodList.fromJson(Map<String, dynamic> toMap) {
     return rekodList.fromMap(toMap);
   }
-
 }
 
 class rekodHarianDetail {
@@ -191,32 +177,32 @@ class rekodHarianDetail {
   num kerugian = 0.00;
 
   rekodHarianDetail(
-      this.harianId,
-      this.namaPasarMalam,
-      this.rekodMenu,
-      this.jumlahSatay,
-      this.jualanNS,
-      this.jumlahJualan,
-      this.barang,
-      this.pendapatanJualan,
-      this.pendapatanQR,
-      this.pendapatanSebenar,
-      this.kerugian,
-      );
+    this.harianId,
+    this.namaPasarMalam,
+    this.rekodMenu,
+    this.jumlahSatay,
+    this.jualanNS,
+    this.jumlahJualan,
+    this.barang,
+    this.pendapatanJualan,
+    this.pendapatanQR,
+    this.pendapatanSebenar,
+    this.kerugian,
+  );
 
   rekodHarianDetail.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        harianId = map["Harian id"],
-        namaPasarMalam = map["Nama"],
-        rekodMenu = Map<String, dynamic>.from(map["Produk"] ?? {}),
-        jumlahSatay = map["Jumlah Satay"],
-        jualanNS = map["Jumlah NS"],
-        jumlahJualan = map["Jumlah Jualan"],
-        barang = map["Beli Barang"],
-        pendapatanJualan = map["Pendapatan Jualan"],
-        pendapatanQR = map["Pendapatan QR"],
-        pendapatanSebenar = map["Pendapatan Sebenar"],
-        kerugian = map["Kerugian"];
+    : id = map["id"],
+      harianId = map["Harian id"],
+      namaPasarMalam = map["Nama"],
+      rekodMenu = Map<String, dynamic>.from(map["Produk"] ?? {}),
+      jumlahSatay = map["Jumlah Satay"],
+      jualanNS = map["Jumlah NS"],
+      jumlahJualan = map["Jumlah Jualan"],
+      barang = map["Beli Barang"],
+      pendapatanJualan = map["Pendapatan Jualan"],
+      pendapatanQR = map["Pendapatan QR"],
+      pendapatanSebenar = map["Pendapatan Sebenar"],
+      kerugian = map["Kerugian"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -257,7 +243,6 @@ class rekodHarianDetail {
   factory rekodHarianDetail.fromJson(Map<String, dynamic> toMap) {
     return rekodHarianDetail.fromMap(toMap);
   }
-
 }
 
 class rekodCawangan {
@@ -268,18 +253,21 @@ class rekodCawangan {
   Map<String, dynamic> rekodHarga = {};
   List<dynamic> rekodBayaran = [];
 
-  rekodCawangan(this.nama,
-      this.rekod,
-      this.rekodHarga,
-      this.rekodBayaran);
+  rekodCawangan(this.nama, this.rekod, this.rekodHarga, this.rekodBayaran);
 
   rekodCawangan.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        userName = "${map["nama"]}_${map["id"]}",
-        nama = map["nama"],
-        rekod = (map["Cawangan Detail Rekod"] ?? []).map((e) => rekodCawanganDetail.fromMap(Map<String, dynamic>.from(e))).toList(),
-        rekodHarga =  Map<String, dynamic>.from(map["harga Menu"] ?? {}),
-        rekodBayaran = (map["Cawangan Bayaran Rekod"] ?? []).map((e) => rekodBayaranCawangan.fromMap(Map<String, dynamic>.from(e))).toList();
+    : id = map["id"],
+      userName = "${map["nama"]}_${map["id"]}",
+      nama = map["nama"],
+      rekod = (map["Cawangan Detail Rekod"] ?? [])
+          .map((e) => rekodCawanganDetail.fromMap(Map<String, dynamic>.from(e)))
+          .toList(),
+      rekodHarga = Map<String, dynamic>.from(map["harga Menu"] ?? {}),
+      rekodBayaran = (map["Cawangan Bayaran Rekod"] ?? [])
+          .map(
+            (e) => rekodBayaranCawangan.fromMap(Map<String, dynamic>.from(e)),
+          )
+          .toList();
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -288,23 +276,18 @@ class rekodCawangan {
       "nama": nama,
       "Cawangan Detail Rekod": rekod.map((e) => e.toMap()).toList(),
       "harga Menu": rekodHarga,
-      "Cawangan Bayaran Rekod": rekodBayaran.map((e) => e.toMap()).toList()
+      "Cawangan Bayaran Rekod": rekodBayaran.map((e) => e.toMap()).toList(),
     };
   }
 
   Map<String, dynamic> toMapServer() {
     // This Function helps to convert our User Object into a Map.
-    return {
-      "id": id,
-      "nama": nama,
-      "harga Menu": rekodHarga,
-    };
+    return {"id": id, "nama": nama, "harga Menu": rekodHarga};
   }
 
   factory rekodCawangan.fromJson(Map<String, dynamic> toMap) {
     return rekodCawangan.fromMap(toMap);
   }
-
 }
 
 class rekodCawanganDetail {
@@ -322,34 +305,32 @@ class rekodCawanganDetail {
   num bayaran = 0.00;
 
   rekodCawanganDetail(
-      this.cawanganId,
-      this.epochTime,
-      this.tarikh,
-      this.hari,
-      this.rekodMenu,
-      this.jumlahSatay,
-      this.jumlahJualan,
-      this.baki,
-      this.rugi,
-      this.bayaranPenuh,
-      this.bayaran,
-      );
+    this.cawanganId,
+    this.epochTime,
+    this.tarikh,
+    this.hari,
+    this.rekodMenu,
+    this.jumlahSatay,
+    this.jumlahJualan,
+    this.baki,
+    this.rugi,
+    this.bayaranPenuh,
+    this.bayaran,
+  );
 
   rekodCawanganDetail.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        cawanganId = map["cawangan id"],
-        epochTime = map["epochTime"],
-        tarikh = map['tarikh'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikh']),
-        hari = map["hari"],
-        rekodMenu =  Map<String, dynamic>.from(map["menu"] ?? {}),
-        jumlahSatay = map["jumlahSatay"],
-        jumlahJualan = map["jumlahJualan"],
-        baki = map["baki"],
-        rugi = map["rugi"],
-        bayaranPenuh = map["bayaranPenuh"],
-        bayaran = map["bayaran"];
+    : id = map["id"],
+      cawanganId = map["cawangan id"],
+      epochTime = map["epochTime"],
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      hari = map["hari"],
+      rekodMenu = Map<String, dynamic>.from(map["menu"] ?? {}),
+      jumlahSatay = map["jumlahSatay"],
+      jumlahJualan = map["jumlahJualan"],
+      baki = map["baki"],
+      rugi = map["rugi"],
+      bayaranPenuh = map["bayaranPenuh"],
+      bayaran = map["bayaran"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -365,7 +346,7 @@ class rekodCawanganDetail {
       "baki": baki,
       "rugi": rugi,
       "bayaranPenuh": bayaranPenuh,
-      "bayaran": bayaran
+      "bayaran": bayaran,
     };
   }
 
@@ -401,21 +382,20 @@ class rekodBayaranCawangan {
   num bayaran = 0.00;
 
   rekodBayaranCawangan(
-      this.cawanganId,
-      this.epochTime,
-      this.tarikh,
-      this.hari,
-      this.bayaran);
+    this.cawanganId,
+    this.epochTime,
+    this.tarikh,
+    this.hari,
+    this.bayaran,
+  );
 
   rekodBayaranCawangan.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        cawanganId = map["cawangan id"],
-        epochTime = map["epochTime"],
-        tarikh = map['tarikh'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikh']),
-        hari = map["hari"],
-        bayaran = map["bayaran"];
+    : id = map["id"],
+      cawanganId = map["cawangan id"],
+      epochTime = map["epochTime"],
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      hari = map["hari"],
+      bayaran = map["bayaran"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -444,9 +424,7 @@ class rekodBayaranCawangan {
   factory rekodBayaranCawangan.fromJson(Map<String, dynamic> toMap) {
     return rekodBayaranCawangan.fromMap(toMap);
   }
-
 }
-
 
 class rekodCucuk {
   int id = -1;
@@ -457,22 +435,24 @@ class rekodCucuk {
   List<dynamic> jumlahSatayList = [];
 
   rekodCucuk(
-      this.epochTime,
-      this.tarikh,
-      this.hari,
-      this.rekod,
-      this.jumlahSatayList,
-      );
+    this.epochTime,
+    this.tarikh,
+    this.hari,
+    this.rekod,
+    this.jumlahSatayList,
+  );
 
   rekodCucuk.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        epochTime = map["epochTime"],
-        tarikh = map['tarikh'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikh']),
-        hari = map["hari"],
-        rekod = (map["Cucuk Detail Rekod"] ?? []).map((e) => rekodCucukDetail.fromMap(Map<String, dynamic>.from(e))).toList(),
-        jumlahSatayList = (map["Jumlah Cucuk Satay Rekod"] ?? []).map((e) => rekodJumlahCucuk.fromMap(Map<String, dynamic>.from(e))).toList();
+    : id = map["id"],
+      epochTime = map["epochTime"],
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      hari = map["hari"],
+      rekod = (map["Cucuk Detail Rekod"] ?? [])
+          .map((e) => rekodCucukDetail.fromMap(Map<String, dynamic>.from(e)))
+          .toList(),
+      jumlahSatayList = (map["Jumlah Cucuk Satay Rekod"] ?? [])
+          .map((e) => rekodJumlahCucuk.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -482,7 +462,9 @@ class rekodCucuk {
       "tarikh": tarikh,
       "hari": hari,
       "Cucuk Detail Rekod": rekod.map((e) => e.toMap()).toList(),
-      "Jumlah Cucuk Satay Rekod": jumlahSatayList.map((e) => e.toMap()).toList()
+      "Jumlah Cucuk Satay Rekod": jumlahSatayList
+          .map((e) => e.toMap())
+          .toList(),
     };
   }
 
@@ -492,7 +474,7 @@ class rekodCucuk {
       "id": id,
       "epochTime": epochTime,
       "tarikh": formatTarikh(tarikh),
-      "hari": hari
+      "hari": hari,
     };
   }
 
@@ -509,15 +491,21 @@ class rekodCucukDetail {
   String jenis = '';
   int jumlah = 0;
 
-  rekodCucukDetail(this.cucukId,this.pekerja_id,this.nama, this.jenis, this.jumlah);
+  rekodCucukDetail(
+    this.cucukId,
+    this.pekerja_id,
+    this.nama,
+    this.jenis,
+    this.jumlah,
+  );
 
   rekodCucukDetail.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        pekerja_id = map["pekerja id"],
-        cucukId = map["cucuk id"] ?? 0,
-        nama = map["nama"],
-        jenis = map["jenis"],
-        jumlah = map["jumlah"];
+    : id = map["id"],
+      pekerja_id = map["pekerja id"],
+      cucukId = map["cucuk id"] ?? 0,
+      nama = map["nama"],
+      jenis = map["jenis"],
+      jumlah = map["jumlah"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -527,7 +515,7 @@ class rekodCucukDetail {
       "cucuk id": cucukId,
       "nama": nama,
       "jenis": jenis,
-      "jumlah": jumlah
+      "jumlah": jumlah,
     };
   }
 
@@ -539,7 +527,7 @@ class rekodCucukDetail {
       "cucuk id": cucukId,
       "nama": nama,
       "jenis": jenis,
-      "jumlah": jumlah
+      "jumlah": jumlah,
     };
   }
 
@@ -557,28 +545,23 @@ class rekodCucukFilter {
   rekodCucukFilter(this.tarikh, this.nama, this.jumlah);
 
   rekodCucukFilter.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        tarikh = map['tarikh'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikh']),
-        nama = map["nama"],
-        jumlah = map["jumlah"];
+    : id = map["id"],
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      nama = map["nama"],
+      jumlah = map["jumlah"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
-    return {"id": id,
-      "tarikh": tarikh,
-      "nama": nama,
-      "jumlah": jumlah
-    };
+    return {"id": id, "tarikh": tarikh, "nama": nama, "jumlah": jumlah};
   }
 
   Map<String, dynamic> toMapServer() {
     // This Function helps to convert our User Object into a Map.
-    return {"id": id,
+    return {
+      "id": id,
       "tarikh": formatTarikh(tarikh),
       "nama": nama,
-      "jumlah": jumlah
+      "jumlah": jumlah,
     };
   }
 
@@ -593,32 +576,22 @@ class rekodJumlahCucuk {
   String jenis = '';
   int jumlah = 0;
 
-  rekodJumlahCucuk(this.cucukId,this.jenis, this.jumlah);
+  rekodJumlahCucuk(this.cucukId, this.jenis, this.jumlah);
 
   rekodJumlahCucuk.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        cucukId = map["cucuk id"],
-        jenis = map["jenis"],
-        jumlah = map["jumlah"];
+    : id = map["id"],
+      cucukId = map["cucuk id"],
+      jenis = map["jenis"],
+      jumlah = map["jumlah"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
-    return {
-      "id": id,
-      "cucuk id": cucukId,
-      "jenis": jenis,
-      "jumlah": jumlah
-    };
+    return {"id": id, "cucuk id": cucukId, "jenis": jenis, "jumlah": jumlah};
   }
 
   Map<String, dynamic> toMapServer() {
     // This Function helps to convert our User Object into a Map.
-    return {
-      "id": id,
-      "cucuk id": cucukId,
-      "jenis": jenis,
-      "jumlah": jumlah
-    };
+    return {"id": id, "cucuk id": cucukId, "jenis": jenis, "jumlah": jumlah};
   }
 
   factory rekodJumlahCucuk.fromJson(Map<String, dynamic> toMap) {
@@ -641,48 +614,50 @@ class rekodPelanggan {
   List<dynamic> orderMenu = [];
   num jumlahBayaran = 0.00;
   num BayaranPendahuluan = 0.00;
-  num baki  = 0.00;
+  num baki = 0.00;
   bool bayaranPenuh = false;
 
   rekodPelanggan(
-      this.noBil,
-      this.epochTime,
-      this.tarikhOrder,
-      this.tarikh,
-      this.masa,
-      this.hari,
-      this.nama,
-      this.telefon,
-      this.alamat,
-      this.runner,
-      this.orderMenu,
-      this.jumlahBayaran,
-      this.BayaranPendahuluan,
-      this.baki,
-      this.bayaranPenuh,
-      );
+    this.noBil,
+    this.epochTime,
+    this.tarikhOrder,
+    this.tarikh,
+    this.masa,
+    this.hari,
+    this.nama,
+    this.telefon,
+    this.alamat,
+    this.runner,
+    this.orderMenu,
+    this.jumlahBayaran,
+    this.BayaranPendahuluan,
+    this.baki,
+    this.bayaranPenuh,
+  );
 
   rekodPelanggan.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        noBil = map["noBil"] ?? "",
-        epochTime = map["epochTime"],
-        tarikhOrder = map['tarikhOrder'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikhOrder']),
-        tarikh = map['tarikh'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikh']),
-        masa = map["masa"],
-        hari = map["hari"],
-        nama = map["nama"],
-        telefon = map["telefon"],
-        alamat = map["alamat"],
-        runner = map["runner"],
-        jumlahBayaran = map["jumlahBayaran"],
-        BayaranPendahuluan = map["BayaranPendahuluan"],
-        baki = map["baki"],
-        bayaranPenuh = map["bayaranPenuh"],
-        orderMenu = (map["Pelanggan Detail Rekod"] ?? []).map((e) => rekodPesananPelanggan.fromMap(Map<String, dynamic>.from(e))).toList();
+    : id = map["id"],
+      noBil = map["noBil"] ?? "",
+      epochTime = map["epochTime"],
+      tarikhOrder = map['tarikhOrder'] == null
+          ? ''
+          : formatTarikhToServer(map['tarikhOrder']),
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      masa = map["masa"],
+      hari = map["hari"],
+      nama = map["nama"],
+      telefon = map["telefon"],
+      alamat = map["alamat"],
+      runner = map["runner"],
+      jumlahBayaran = map["jumlahBayaran"],
+      BayaranPendahuluan = map["BayaranPendahuluan"],
+      baki = map["baki"],
+      bayaranPenuh = map["bayaranPenuh"],
+      orderMenu = (map["Pelanggan Detail Rekod"] ?? [])
+          .map(
+            (e) => rekodPesananPelanggan.fromMap(Map<String, dynamic>.from(e)),
+          )
+          .toList();
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -702,7 +677,7 @@ class rekodPelanggan {
       "BayaranPendahuluan": BayaranPendahuluan,
       "baki": baki,
       "bayaranPenuh": bayaranPenuh,
-      "Pelanggan Detail Rekod": orderMenu.map((e) => e.toMap()).toList()
+      "Pelanggan Detail Rekod": orderMenu.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -740,17 +715,23 @@ class rekodPesananPelanggan {
   num Harga = 0.00;
   num Jumlah = 0.00;
 
-  rekodPesananPelanggan(this.pelanggan_id,this.jenis, this.pesanan, this.Harga, this.Jumlah);
+  rekodPesananPelanggan(
+    this.pelanggan_id,
+    this.jenis,
+    this.pesanan,
+    this.Harga,
+    this.Jumlah,
+  );
 
   rekodPesananPelanggan.fromMap(
-      Map<String, dynamic> map,
-      ) // This Function helps to convert our Map into our User Object
-      : id = map["id"],
-        pelanggan_id = map["pesanan id"],
-        jenis = map["jenis"],
-        pesanan = map["pesanan"],
-        Harga = map["Harga"],
-        Jumlah = map["Jumlah"];
+    Map<String, dynamic> map,
+  ) // This Function helps to convert our Map into our User Object
+  : id = map["id"],
+      pelanggan_id = map["pesanan id"],
+      jenis = map["jenis"],
+      pesanan = map["pesanan"],
+      Harga = map["Harga"],
+      Jumlah = map["Jumlah"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -760,7 +741,8 @@ class rekodPesananPelanggan {
       "jenis": jenis,
       "pesanan": pesanan,
       "Harga": Harga,
-      "Jumlah": Jumlah};
+      "Jumlah": Jumlah,
+    };
   }
 
   Map<String, dynamic> toMapServer() {
@@ -771,7 +753,8 @@ class rekodPesananPelanggan {
       "jenis": jenis,
       "pesanan": pesanan,
       "Harga": Harga,
-      "Jumlah": Jumlah};
+      "Jumlah": Jumlah,
+    };
   }
 
   factory rekodPesananPelanggan.fromJson(Map<String, dynamic> toMap) {
@@ -788,21 +771,21 @@ class rekodRunner {
   rekodRunner(this.nama, this.telefon);
 
   rekodRunner.fromMap(
-      Map<String, dynamic> map,
-      ) // This Function helps to convert our Map into our User Object
-      : id = map["id"],
-        username = "${map["nama"]}_${map["id"]}",
-        nama = map["nama"],
-        telefon = map["telefon"];
+    Map<String, dynamic> map,
+  ) // This Function helps to convert our Map into our User Object
+  : id = map["id"],
+      username = "${map["nama"]}_${map["id"]}",
+      nama = map["nama"],
+      telefon = map["telefon"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
-    return {"id": id,"nama": nama, "telefon": telefon};
+    return {"id": id, "nama": nama, "telefon": telefon};
   }
 
   Map<String, dynamic> toMapServer() {
     // This Function helps to convert our User Object into a Map.
-    return {"id": id,"nama": nama, "telefon": telefon};
+    return {"id": id, "nama": nama, "telefon": telefon};
   }
 
   factory rekodRunner.fromJson(Map<String, dynamic> toMap) {
@@ -820,24 +803,24 @@ class rekodStok {
   List<dynamic> rekod = [];
 
   rekodStok(
-      this.epochTime,
-      this.tarikh,
-      this.hari,
-      this.jumlahPendapatan,
-      this.kerugian,
-      this.rekod,
-      );
+    this.epochTime,
+    this.tarikh,
+    this.hari,
+    this.jumlahPendapatan,
+    this.kerugian,
+    this.rekod,
+  );
 
   rekodStok.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        epochTime = map["epochTime"],
-        tarikh = map['tarikh'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikh']),
-        hari = map["hari"],
-        jumlahPendapatan = map["Jumlah Pendapatan"],
-        kerugian = map["Kerugian"],
-        rekod = (map["Stok Detail Rekod"] ?? []).map((e) => rekodStokDetail.fromMap(Map<String, dynamic>.from(e))).toList();
+    : id = map["id"],
+      epochTime = map["epochTime"],
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      hari = map["hari"],
+      jumlahPendapatan = map["Jumlah Pendapatan"],
+      kerugian = map["Kerugian"],
+      rekod = (map["Stok Detail Rekod"] ?? [])
+          .map((e) => rekodStokDetail.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -848,7 +831,7 @@ class rekodStok {
       "hari": hari,
       "Jumlah Pendapatan": jumlahPendapatan,
       "Kerugian": kerugian,
-      "Stok Detail Rekod":rekod.map((e) => e.toMap()).toList()
+      "Stok Detail Rekod": rekod.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -860,7 +843,7 @@ class rekodStok {
       "tarikh": formatTarikh(tarikh),
       "hari": hari,
       "Jumlah Pendapatan": jumlahPendapatan,
-      "Kerugian": kerugian
+      "Kerugian": kerugian,
     };
   }
 
@@ -883,30 +866,30 @@ class rekodStokDetail {
   bool simpanManual = false;
 
   rekodStokDetail(
-      this.stokId,
-      this.jenis,
-      this.stokLama,
-      this.stokBaru,
-      this.simpan,
-      this.keluar,
-      this.jualan,
-      this.baki,
-      this.rugi,
-      this.simpanManual,
-      );
+    this.stokId,
+    this.jenis,
+    this.stokLama,
+    this.stokBaru,
+    this.simpan,
+    this.keluar,
+    this.jualan,
+    this.baki,
+    this.rugi,
+    this.simpanManual,
+  );
 
   rekodStokDetail.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        stokId = map["stok id"],
-        jenis = map["menu"],
-        stokLama = map["stokLama"],
-        stokBaru = map["stokBaru"],
-        simpan = map["simpan"],
-        keluar = map["keluar"],
-        jualan = map["jualan"],
-        baki = map["baki"],
-        rugi = map["rugi"],
-        simpanManual = map["simpanManual"];
+    : id = map["id"],
+      stokId = map["stok id"],
+      jenis = map["menu"],
+      stokLama = map["stokLama"],
+      stokBaru = map["stokBaru"],
+      simpan = map["simpan"],
+      keluar = map["keluar"],
+      jualan = map["jualan"],
+      baki = map["baki"],
+      rugi = map["rugi"],
+      simpanManual = map["simpanManual"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -941,6 +924,7 @@ class rekodStokDetail {
       "simpanManual": simpanManual,
     };
   }
+
   factory rekodStokDetail.fromJson(Map<String, dynamic> toMap) {
     return rekodStokDetail.fromMap(toMap);
   }
@@ -956,13 +940,13 @@ class rekodGaji {
   rekodGaji(this.epochTime, this.tarikh, this.hari);
 
   rekodGaji.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        epochTime = map["epochTime"],
-        tarikh = map['tarikh'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikh']),
-        hari = map["hari"],
-        rekod = (map["Gaji Detail Rekod"] ?? []).map((e) => rekodGajiDetail.fromMap(Map<String, dynamic>.from(e))).toList();
+    : id = map["id"],
+      epochTime = map["epochTime"],
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      hari = map["hari"],
+      rekod = (map["Gaji Detail Rekod"] ?? [])
+          .map((e) => rekodGajiDetail.fromMap(Map<String, dynamic>.from(e)))
+          .toList();
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -997,18 +981,14 @@ class rekodGajiDetail {
   num simpan = 0.00;
   num harian = 0.00;
 
-  rekodGajiDetail(
-      this.gaji_id,
-      this.pekerja_id,
-      this.simpan,
-      this.harian);
+  rekodGajiDetail(this.gaji_id, this.pekerja_id, this.simpan, this.harian);
 
   rekodGajiDetail.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        gaji_id = map["gaji id"],
-        pekerja_id = map["pekerja id"],
-        simpan = map["simpan"],
-        harian = map["harian"];
+    : id = map["id"],
+      gaji_id = map["gaji id"],
+      pekerja_id = map["pekerja id"],
+      simpan = map["simpan"],
+      harian = map["harian"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -1017,7 +997,8 @@ class rekodGajiDetail {
       "gaji id": gaji_id,
       "pekerja id": pekerja_id,
       "simpan": simpan,
-      "harian": harian};
+      "harian": harian,
+    };
   }
 
   Map<String, dynamic> toMapServer() {
@@ -1027,7 +1008,8 @@ class rekodGajiDetail {
       "gaji id": gaji_id,
       "pekerja id": pekerja_id,
       "simpan": simpan,
-      "harian": harian};
+      "harian": harian,
+    };
   }
 
   factory rekodGajiDetail.fromJson(Map<String, dynamic> toMap) {
@@ -1042,21 +1024,14 @@ class rekodGajiFilter {
   num simpan = 0.00;
   num ambil = 0.00;
 
-  rekodGajiFilter(
-      this.tarikh,
-      this.nama,
-      this.harian,
-      this.simpan,
-      this.ambil);
+  rekodGajiFilter(this.tarikh, this.nama, this.harian, this.simpan, this.ambil);
 
   rekodGajiFilter.fromMap(Map<String, dynamic> map)
-      : tarikh = map['tarikh'] == null
-      ? ''
-      : formatTarikhToServer(map['tarikh']),
-        nama = map["nama"],
-        harian = map["harian"],
-        simpan = map["simpan"],
-        ambil = map["ambil"];
+    : tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      nama = map["nama"],
+      harian = map["harian"],
+      simpan = map["simpan"],
+      ambil = map["ambil"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -1083,21 +1058,20 @@ class rekodAmbilGaji {
   num jumlah = 0.00;
 
   rekodAmbilGaji(
-      this.pekerjaId,
-      this.epochTime,
-      this.tarikh,
-      this.hari,
-      this.jumlah);
+    this.pekerjaId,
+    this.epochTime,
+    this.tarikh,
+    this.hari,
+    this.jumlah,
+  );
 
   rekodAmbilGaji.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        pekerjaId = map["pekerja id"],
-        epochTime = map["epochTime"],
-        tarikh = map['tarikh'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikh']),
-        hari = map["hari"],
-        jumlah = map["jumlah"];
+    : id = map["id"],
+      pekerjaId = map["pekerja id"],
+      epochTime = map["epochTime"],
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      hari = map["hari"],
+      jumlah = map["jumlah"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -1123,7 +1097,6 @@ class rekodAmbilGaji {
     };
   }
 
-
   factory rekodAmbilGaji.fromJson(Map<String, dynamic> toMap) {
     return rekodAmbilGaji.fromMap(toMap);
   }
@@ -1136,17 +1109,20 @@ class rekodPembekalList {
   List<dynamic> rekod = [];
   List<dynamic> rekodBayaran = [];
 
-  rekodPembekalList(
-      this.namaPembekal,
-      this.rekod,
-      this.rekodBayaran);
+  rekodPembekalList(this.namaPembekal, this.rekod, this.rekodBayaran);
 
   rekodPembekalList.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        username = "${map["username"]}_${map["id"]}",
-        namaPembekal = map["namaPembekal"],
-        rekod = (map["Pembekal Detail Rekod"] ?? []).map((e) => rekodPembekalDetail.fromMap(Map<String, dynamic>.from(e))).toList(),
-        rekodBayaran = (map["Pembekal Bayaran Rekod"] ?? []).map((e) => rekodBayaranPembekal.fromMap(Map<String, dynamic>.from(e))).toList();
+    : id = map["id"],
+      username = "${map["username"]}_${map["id"]}",
+      namaPembekal = map["namaPembekal"],
+      rekod = (map["Pembekal Detail Rekod"] ?? [])
+          .map((e) => rekodPembekalDetail.fromMap(Map<String, dynamic>.from(e)))
+          .toList(),
+      rekodBayaran = (map["Pembekal Bayaran Rekod"] ?? [])
+          .map(
+            (e) => rekodBayaranPembekal.fromMap(Map<String, dynamic>.from(e)),
+          )
+          .toList();
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -1154,15 +1130,13 @@ class rekodPembekalList {
       "id": id,
       "namaPembekal": namaPembekal,
       "Pembekal Detail Rekod": rekod.map((e) => e.toMap()).toList(),
-      "Pembekal Bayaran Rekod": rekodBayaran.map((e) => e.toMap()).toList()
+      "Pembekal Bayaran Rekod": rekodBayaran.map((e) => e.toMap()).toList(),
     };
   }
 
   Map<String, dynamic> toMapServer() {
     // This Function helps to convert our User Object into a Map.
-    return {
-      "id": id,
-      "namaPembekal": namaPembekal};
+    return {"id": id, "namaPembekal": namaPembekal};
   }
 
   factory rekodPembekalList.fromJson(Map<String, dynamic> toMap) {
@@ -1183,30 +1157,28 @@ class rekodPembekalDetail {
   bool bayaranPenuh = false;
 
   rekodPembekalDetail(
-      this.pembekal_id,
-      this.epochTime,
-      this.tarikh,
-      this.hari,
-      this.rekodBarang,
-      this.jumlah,
-      this.bayaran,
-      this.baki,
-      this.bayaranPenuh,
-      );
+    this.pembekal_id,
+    this.epochTime,
+    this.tarikh,
+    this.hari,
+    this.rekodBarang,
+    this.jumlah,
+    this.bayaran,
+    this.baki,
+    this.bayaranPenuh,
+  );
 
   rekodPembekalDetail.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        pembekal_id = map["pembekal id"],
-        epochTime = map["epochTime"],
-        tarikh = map['tarikh'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikh']),
-        hari = map["hari"],
-        rekodBarang = Map<String, dynamic>.from(map["rekodBarang"] ?? {}),
-        jumlah = map["jumlah"],
-        bayaran = map["bayaran"],
-        baki = map["baki"],
-        bayaranPenuh = map["bayaranPenuh"];
+    : id = map["id"],
+      pembekal_id = map["pembekal id"],
+      epochTime = map["epochTime"],
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      hari = map["hari"],
+      rekodBarang = Map<String, dynamic>.from(map["rekodBarang"] ?? {}),
+      jumlah = map["jumlah"],
+      bayaran = map["bayaran"],
+      baki = map["baki"],
+      bayaranPenuh = map["bayaranPenuh"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -1223,7 +1195,6 @@ class rekodPembekalDetail {
       "bayaranPenuh": bayaranPenuh,
     };
   }
-
 
   Map<String, dynamic> toMapServer() {
     // This Function helps to convert our User Object into a Map.
@@ -1254,24 +1225,18 @@ class rekodBarangPembekal {
   rekodBarangPembekal(this.nama, this.kuantiti, this.harga);
 
   rekodBarangPembekal.fromMap(Map<String, dynamic> map)
-      : nama = map["nama"],
-        kuantiti = map["kuantiti"],
-        harga = map["harga"];
+    : nama = map["nama"],
+      kuantiti = map["kuantiti"],
+      harga = map["harga"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
-    return {
-      "nama": nama,
-      "kuantiti": kuantiti,
-      "harga": harga};
+    return {"nama": nama, "kuantiti": kuantiti, "harga": harga};
   }
 
   Map<String, dynamic> toMapServer() {
     // This Function helps to convert our User Object into a Map.
-    return {
-      "nama": nama,
-      "kuantiti": kuantiti,
-      "harga": harga};
+    return {"nama": nama, "kuantiti": kuantiti, "harga": harga};
   }
 
   factory rekodBarangPembekal.fromJson(Map<String, dynamic> toMap) {
@@ -1288,21 +1253,20 @@ class rekodBayaranPembekal {
   num bayaran = 0.00;
 
   rekodBayaranPembekal(
-      this.pembekalId,
-      this.epochTime,
-      this.tarikh,
-      this.hari,
-      this.bayaran);
+    this.pembekalId,
+    this.epochTime,
+    this.tarikh,
+    this.hari,
+    this.bayaran,
+  );
 
   rekodBayaranPembekal.fromMap(Map<String, dynamic> map)
-      : id = map["id"],
-        pembekalId = map["pembekal id"],
-        epochTime = map["epochTime"],
-        tarikh = map['tarikh'] == null
-            ? ''
-            : formatTarikhToServer(map['tarikh']),
-        hari = map["hari"],
-        bayaran = map["bayaran"];
+    : id = map["id"],
+      pembekalId = map["pembekal id"],
+      epochTime = map["epochTime"],
+      tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      hari = map["hari"],
+      bayaran = map["bayaran"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -1331,7 +1295,6 @@ class rekodBayaranPembekal {
   factory rekodBayaranPembekal.fromJson(Map<String, dynamic> toMap) {
     return rekodBayaranPembekal.fromMap(toMap);
   }
-
 }
 
 class rekodPembekalFilter {
@@ -1342,21 +1305,19 @@ class rekodPembekalFilter {
   num baki = 0.00;
 
   rekodPembekalFilter(
-      this.tarikh,
-      this.nama,
-      this.jumlah,
-      this.bayaran,
-      this.baki,
-      );
+    this.tarikh,
+    this.nama,
+    this.jumlah,
+    this.bayaran,
+    this.baki,
+  );
 
   rekodPembekalFilter.fromMap(Map<String, dynamic> map)
-      : tarikh = map['tarikh'] == null
-      ? ''
-      : formatTarikhToServer(map['tarikh']),
-        nama = map["nama"],
-        jumlah = map["jumlah"],
-        bayaran = map["bayaran"],
-        baki = map["baki"];
+    : tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
+      nama = map["nama"],
+      jumlah = map["jumlah"],
+      bayaran = map["bayaran"],
+      baki = map["baki"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
@@ -1383,7 +1344,6 @@ class rekodPembekalFilter {
   factory rekodPembekalFilter.fromJson(Map<String, dynamic> toMap) {
     return rekodPembekalFilter.fromMap(toMap);
   }
-
 }
 
 class rekodBarang {
@@ -1391,29 +1351,21 @@ class rekodBarang {
   String nama = '';
   String unit = '';
 
-  rekodBarang(this.nama,this.unit);
+  rekodBarang(this.nama, this.unit);
 
-  rekodBarang.fromMap(Map<String, dynamic> map) :
-        id = map["id"],
+  rekodBarang.fromMap(Map<String, dynamic> map)
+    : id = map["id"],
       nama = map["nama"],
-        unit = map["unit"];
+      unit = map["unit"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
-    return {
-      "id" : id,
-      "nama": nama,
-      "unit": unit
-    };
+    return {"id": id, "nama": nama, "unit": unit};
   }
 
   Map<String, dynamic> toMapServer() {
     // This Function helps to convert our User Object into a Map.
-    return {
-      "id" : id,
-      "nama": nama,
-      "unit": unit
-    };
+    return {"id": id, "nama": nama, "unit": unit};
   }
 
   factory rekodBarang.fromJson(Map<String, dynamic> toMap) {

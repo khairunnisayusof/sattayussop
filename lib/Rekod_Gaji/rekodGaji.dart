@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
@@ -7,15 +6,8 @@ import '../Rekod_Gaji/rekodAmbilGaji.dart';
 import '../Rekod_Gaji/rekodGajiDetail.dart';
 import '../Rekod_Gaji/rekodGajiFilter.dart';
 import '../resit.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import '../DocumentHelper.dart';
-import '../Rekod_Harian/rekodHarianDetail.dart';
 import 'package:notification_center/notification_center.dart';
-import 'package:pdf/widgets.dart' as pw;
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
 
@@ -37,7 +29,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
   bool dark = sharedPreferences?.getBool("darkModeStatus") ?? false;
   Color color = Colors.orange;
   List<DropdownMenuItem> dropDownList = <DropdownMenuItem>[];
-  List<rekodPekerja> _rekodPekerja = <rekodPekerja>[];
+  final List<rekodPekerja> _rekodPekerja = <rekodPekerja>[];
 
   @override
   void initState() {
@@ -52,7 +44,10 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
       var nama = current.nama;
       if (!current.cucuk && (current.role == "Pekerja")) {
         dropDownList.add(
-          DropdownMenuItem<String>(value: username.isEmpty == true ? null : username, child: Text(nama)),
+          DropdownMenuItem<String>(
+            value: username.isEmpty == true ? null : username,
+            child: Text(nama),
+          ),
         );
         _rekodPekerja.add(current);
       }
@@ -64,9 +59,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
 
   void _refreshView(bool refresh) {
     if (!mounted) return;
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -215,10 +208,16 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
                     Container(height: 2),
                     DropdownButtonFormField(
                       isExpanded: true,
-                      initialValue: myController.text.isEmpty ? null : myController.text,
+                      initialValue: myController.text.isEmpty
+                          ? null
+                          : myController.text,
                       onChanged: (item) {
                         username = item;
-                        var result = _rekodPekerja.elementAt(_rekodPekerja.indexWhere((e) => e.username == username));
+                        var result = _rekodPekerja.elementAt(
+                          _rekodPekerja.indexWhere(
+                            (e) => e.username == username,
+                          ),
+                        );
                         var nama = result.nama;
                         myController.text = nama;
                       },
@@ -356,8 +355,14 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
       int idPekerja = current.id;
       num simpan = current.gajiSimpan;
       num harian = current.gajiHarian;
-      if (!current.cucuk && (current.role == "Pekerja" && !(simpan <= 0 && harian <= 0))) {
-        rekodGajiDetail rekodDetail = rekodGajiDetail(resultRekod.id, idPekerja, simpan, harian);
+      if (!current.cucuk &&
+          (current.role == "Pekerja" && !(simpan <= 0 && harian <= 0))) {
+        rekodGajiDetail rekodDetail = rekodGajiDetail(
+          resultRekod.id,
+          idPekerja,
+          simpan,
+          harian,
+        );
         insertDetailServer(rekodDetail);
         usr.rekod.insert(usr.rekod.length, rekodDetail);
       }
@@ -378,7 +383,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
   void removeItemInServer(int index) {
     tarikhRekod = rekod_Gaji[index].tarikh;
     var id = rekod_Gaji[index].id;
-    deleteRow('Gaji Rekod',id);
+    deleteRow('Gaji Rekod', id);
     removeItem(index);
   }
 

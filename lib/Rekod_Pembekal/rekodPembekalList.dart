@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
-import 'dart:convert';
 import 'package:sattayussop/DocumentHelper.dart';
 import 'package:sattayussop/Rekod_Pembekal/rekodPembekalDetail.dart';
 import 'package:notification_center/notification_center.dart';
@@ -59,7 +58,9 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
     }
     selectedIndex = widget.selectIndex;
     NotificationCenter().subscribe('refreshData', _refreshView);
-    rekodPembekalList current = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == selectedIndex));
+    rekodPembekalList current = rekod_Pembekal.elementAt(
+      rekod_Pembekal.indexWhere((e) => e.id == selectedIndex),
+    );
     namaRekod = current.namaPembekal;
     _rekodBarangDetail = List<rekodPembekalDetail>.from(current.rekod).toList();
     _refreshView(true);
@@ -68,8 +69,12 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
 
   void _refreshView(bool refresh) {
     setState(() {
-      rekodPembekalList current = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == selectedIndex));
-      _rekodBarangDetail = List<rekodPembekalDetail>.from(current.rekod).toList();
+      rekodPembekalList current = rekod_Pembekal.elementAt(
+        rekod_Pembekal.indexWhere((e) => e.id == selectedIndex),
+      );
+      _rekodBarangDetail = List<rekodPembekalDetail>.from(
+        current.rekod,
+      ).toList();
       _rekodBarangDetail.sort((a, b) => a.epochTime.compareTo(b.epochTime));
     });
   }
@@ -121,8 +126,12 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
               ],
             ),
             onTap: () {
-              rekodPembekalList currentBarang = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == selectedIndex));
-              var selectDetailBarang = List<rekodPembekalDetail>.from(currentBarang.rekod).toList();
+              rekodPembekalList currentBarang = rekod_Pembekal.elementAt(
+                rekod_Pembekal.indexWhere((e) => e.id == selectedIndex),
+              );
+              var selectDetailBarang = List<rekodPembekalDetail>.from(
+                currentBarang.rekod,
+              ).toList();
               rekodPembekalDetail current = selectDetailBarang.elementAt(index);
               Navigator.push(
                 context,
@@ -154,7 +163,9 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
         onSelected: (item) {
           // your logic
           if (item == '1') {
-            rekodPembekalList current = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == selectedIndex));
+            rekodPembekalList current = rekod_Pembekal.elementAt(
+              rekod_Pembekal.indexWhere((e) => e.id == selectedIndex),
+            );
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -164,30 +175,24 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
                 ),
               ),
             );
-          }else if (item == '2') {
+          } else if (item == '2') {
             removeAllServer();
           }
         },
         itemBuilder: (BuildContext bc) {
           var menu = const [
-            PopupMenuItem(
-              child: Text("Rekod Bayaran"),
-              value: '1',
-            ),
+            PopupMenuItem(value: '1', child: Text("Rekod Bayaran")),
           ];
           if (role.toString().capitalize() == "Admin") {
             menu = const [
-              PopupMenuItem(
-                child: Text("Rekod Bayaran"),
-                value: '1',
-              ),
-              PopupMenuItem(
-                child: Text("Padam Seluruh Data"),
-                value: '2',
-              ),
+              PopupMenuItem(value: '1', child: Text("Rekod Bayaran")),
+              PopupMenuItem(value: '2', child: Text("Padam Seluruh Data")),
             ];
           }
-          return (role.toString().capitalize() == "Admin" || role.toString().capitalize() == "Manager") ? menu : [];
+          return (role.toString().capitalize() == "Admin" ||
+                  role.toString().capitalize() == "Manager")
+              ? menu
+              : [];
         },
       ),
     );
@@ -203,15 +208,19 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
         centerTitle: true,
       ),
       body: buildCollectionView,
-      floatingActionButton: (role.toString().capitalize() == "Admin" || role.toString().capitalize() == "Manager") ? FloatingActionButton(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        onPressed: () {
-          _selectDate(context) as String;
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ): SizedBox(height: 0),
+      floatingActionButton:
+          (role.toString().capitalize() == "Admin" ||
+              role.toString().capitalize() == "Manager")
+          ? FloatingActionButton(
+              backgroundColor: color,
+              foregroundColor: Colors.white,
+              onPressed: () {
+                _selectDate(context) as String;
+              },
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            )
+          : SizedBox(height: 0),
     );
   }
 
@@ -303,7 +312,10 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
   }
 
   Future<void> insertServer(rekodPembekalDetail usr) async {
-    final result = await insertUpdateTable('Pembekal Detail Rekod', usr.toMapServer());
+    final result = await insertUpdateTable(
+      'Pembekal Detail Rekod',
+      usr.toMapServer(),
+    );
     usr.id = rekodPembekalDetail.fromMap(result).id;
     addItem(usr);
   }
@@ -312,7 +324,9 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
   void addItem(rekodPembekalDetail detail) {
     print("add item >>> $detail");
     _rekodBarangDetail.add(detail);
-    var target = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == selectedIndex));
+    var target = rekod_Pembekal.elementAt(
+      rekod_Pembekal.indexWhere((e) => e.id == selectedIndex),
+    );
     setState(() {
       target.rekod = _rekodBarangDetail;
     });
@@ -321,14 +335,16 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
 
   void removeItemInServer(int index) {
     var id = _rekodBarangDetail[index].id;
-    deleteRow('Pembekal Detail Rekod',id);
+    deleteRow('Pembekal Detail Rekod', id);
     removeItem(index);
   }
 
   void removeItem(int index) {
     tarikhRekod = _rekodBarangDetail.elementAt(index).tarikh;
     _rekodBarangDetail.removeAt(index);
-    var target = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == selectedIndex));
+    var target = rekod_Pembekal.elementAt(
+      rekod_Pembekal.indexWhere((e) => e.id == selectedIndex),
+    );
     setState(() {
       target.rekod = _rekodBarangDetail;
     });
@@ -336,19 +352,25 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
   }
 
   void removeAllServer() {
-    deleteAllRecordFromForeign("Pembekal Detail Rekod","pembekal id",selectedIndex);
+    deleteAllRecordFromForeign(
+      "Pembekal Detail Rekod",
+      "pembekal id",
+      selectedIndex,
+    );
     removeAll();
   }
 
-
   void removeAll() {
     _rekodBarangDetail.clear();
-    var target = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == selectedIndex));
+    var target = rekod_Pembekal.elementAt(
+      rekod_Pembekal.indexWhere((e) => e.id == selectedIndex),
+    );
     setState(() {
       target.rekod = _rekodBarangDetail;
     });
     saveData();
   }
+
   // This block saves our list locally.
   void saveData() {
     saveDataLocal();

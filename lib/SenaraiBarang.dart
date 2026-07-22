@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:sattayussop/supabaseServer.dart';
-import 'dart:convert';
 import "../DocumentHelper.dart";
 import '../databaseLocal.dart';
 import 'package:string_capitalize/string_capitalize.dart';
@@ -273,11 +272,7 @@ class _selectSenaraiBarangState extends State<selectSenaraiBarang> {
                       // Moves focus to next.
                       decoration: InputDecoration(),
                     ),
-                    Text(
-                      'Unit :',
-                      style: textStyle,
-                      textAlign: TextAlign.left,
-                    ),
+                    Text('Unit :', style: textStyle, textAlign: TextAlign.left),
                     TextFormField(
                       autofocus: true,
                       controller: myController2,
@@ -300,13 +295,12 @@ class _selectSenaraiBarangState extends State<selectSenaraiBarang> {
             TextButton(
               child: const Text('Simpan'),
               onPressed: () {
-                ;
                 // Handle the submit action
                 String nama = myController.text.capitalizeEach();
                 String unit = myController2.text;
                 if (formKey.currentState!.validate()) {
                   Navigator.of(context).pop();
-                  insertItem(rekodBarang(nama,unit), index);
+                  insertItem(rekodBarang(nama, unit), index);
                 }
                 // Handle the submit action
               },
@@ -318,16 +312,16 @@ class _selectSenaraiBarangState extends State<selectSenaraiBarang> {
   }
 
   Future<void> insertItem(rekodBarang barang, int index) async {
-      if (index >= 0) {
-        var id = senarai_Barang[index].id;
-        barang.id = id;
-        insertUpdateTable('Senarai Barang Rekod', barang.toMapServer(), id: id);
-      } else {
-        if (!senarai_Barang.map((item) => item.nama).contains(barang.nama)) {
-          insertUpdateTable('Senarai Barang Rekod', barang.toMapServer());
-        }
+    if (index >= 0) {
+      var id = senarai_Barang[index].id;
+      barang.id = id;
+      insertUpdateTable('Senarai Barang Rekod', barang.toMapServer(), id: id);
+    } else {
+      if (!senarai_Barang.map((item) => item.nama).contains(barang.nama)) {
+        insertUpdateTable('Senarai Barang Rekod', barang.toMapServer());
       }
-      addItem(barang, index);
+    }
+    addItem(barang, index);
   }
 
   // addItem adds our User Class item to list.
@@ -345,7 +339,7 @@ class _selectSenaraiBarangState extends State<selectSenaraiBarang> {
 
   void removeItemInServer(int index) {
     var id = senarai_Barang[index].id;
-    deleteRow('Senarai Barang Rekod',id);
+    deleteRow('Senarai Barang Rekod', id);
     removeItem(index);
   }
 

@@ -2,14 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import 'package:sattayussop/DocumentHelper.dart';
-import 'package:sattayussop/Rekod_Harian/RekodHarian.dart';
-import 'package:sattayussop/RekodMenu.dart';
 import 'package:notification_center/notification_center.dart';
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
@@ -70,7 +63,7 @@ class _selectRekodAmbilGajiState extends State<selectRekodAmbilGaji> {
       rekod_Pekerja.indexWhere((element) => element.username == nama),
     );
     idPekerja = current.id;
-    print("ambik gaji >> ${nama} | ${idPekerja}");
+    print("ambik gaji >> $nama | $idPekerja");
     _rekodAmbilGaji = List<rekodAmbilGaji>.from(current.rekodAmbil).toList();
     _rekodAmbilGaji.sort((a, b) => a.epochTime.compareTo(b.epochTime));
     _refreshView(true);
@@ -114,7 +107,8 @@ class _selectRekodAmbilGajiState extends State<selectRekodAmbilGaji> {
       color: Colors.white,
     );
     rekodPekerja current = rekod_Pekerja.elementAt(
-      rekod_Pekerja.indexWhere((element) => element.id == idPekerja));
+      rekod_Pekerja.indexWhere((element) => element.id == idPekerja),
+    );
     Container buildCollectionView;
     buildCollectionView = Container(
       margin: EdgeInsets.all(5),
@@ -347,9 +341,12 @@ class _selectRekodAmbilGajiState extends State<selectRekodAmbilGaji> {
     String errorText = "Sila masukkan beberapa digit";
     final formKey = GlobalKey<FormState>();
     rekodAmbilGaji current = rekodAmbilGaji(idPekerja, "", "", "", 0.00);
-    if (index >= 0 || _rekodAmbilGaji.map((item) => item.tarikh).contains(tarikhRekod)) {
+    if (index >= 0 ||
+        _rekodAmbilGaji.map((item) => item.tarikh).contains(tarikhRekod)) {
       current = _rekodAmbilGaji.elementAt(index);
-      print("index ambil $index == ${_rekodAmbilGaji.indexWhere((e) => e.tarikh == tarikhRekod)} >> ${current.toMap()}");
+      print(
+        "index ambil $index == ${_rekodAmbilGaji.indexWhere((e) => e.tarikh == tarikhRekod)} >> ${current.toMap()}",
+      );
       hariRekod = current.hari;
       tarikhRekod = current.tarikh;
       myController1.text = '${current.jumlah}';
@@ -406,10 +403,13 @@ class _selectRekodAmbilGajiState extends State<selectRekodAmbilGaji> {
                       controller: myController1,
                       textInputAction: TextInputAction.next,
                       keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true, signed: true),
+                        decimal: true,
+                        signed: true,
+                      ),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
-                            RegExp(r'[0-9+\-*/.]')),
+                          RegExp(r'[0-9+\-*/.]'),
+                        ),
                       ],
                       // Moves focus to next.
                       decoration: InputDecoration(),
@@ -440,7 +440,12 @@ class _selectRekodAmbilGajiState extends State<selectRekodAmbilGaji> {
                     current.jumlah = ambil;
                   } else {
                     current = rekodAmbilGaji(
-                        idPekerja, epochTime, tarikhRekod, hariRekod, ambil);
+                      idPekerja,
+                      epochTime,
+                      tarikhRekod,
+                      hariRekod,
+                      ambil,
+                    );
                   }
                   insertDetailServer(current, index);
                 }
@@ -493,28 +498,36 @@ class _selectRekodAmbilGajiState extends State<selectRekodAmbilGaji> {
             "dd/MM/yyyy",
           ).parse(tarikhRekod.toString());
           epochTime = tempDate1.millisecondsSinceEpoch.toString();
-          if (_rekodAmbilGaji.map((item) => item.tarikh).contains(tarikhRekod)) {
+          if (_rekodAmbilGaji
+              .map((item) => item.tarikh)
+              .contains(tarikhRekod)) {
             index = _rekodAmbilGaji.indexWhere((e) => e.tarikh == tarikhRekod);
           }
-          showDialogAmbilRequired(context, "Masukkan Data",index);
+          showDialogAmbilRequired(context, "Masukkan Data", index);
         });
       }
     });
   }
 
   Future<void> insertDetailServer(rekodAmbilGaji usr, int index) async {
-    index >= 0 ? await insertUpdateTable('Ambil Gaji Rekod', usr.toMapServer(),id: usr.id) : await insertUpdateTable('Ambil Gaji Rekod', usr.toMapServer());
-    addItem(usr,index);
+    index >= 0
+        ? await insertUpdateTable(
+            'Ambil Gaji Rekod',
+            usr.toMapServer(),
+            id: usr.id,
+          )
+        : await insertUpdateTable('Ambil Gaji Rekod', usr.toMapServer());
+    addItem(usr, index);
   }
 
   // addItem adds our User Class item to list.
   void addItem(rekodAmbilGaji usr, int index) {
     if (index >= 0) {
-        rekodAmbilGaji current = _rekodAmbilGaji.elementAt(index);
-        current.tarikh = usr.tarikh;
-        current.hari = usr.hari;
-        current.epochTime = usr.epochTime;
-        current.jumlah = usr.jumlah;
+      rekodAmbilGaji current = _rekodAmbilGaji.elementAt(index);
+      current.tarikh = usr.tarikh;
+      current.hari = usr.hari;
+      current.epochTime = usr.epochTime;
+      current.jumlah = usr.jumlah;
     } else {
       _rekodAmbilGaji.add(usr);
     }
@@ -529,7 +542,7 @@ class _selectRekodAmbilGajiState extends State<selectRekodAmbilGaji> {
     tarikhRekod = _rekodAmbilGaji[index].tarikh;
     var id = _rekodAmbilGaji[index].id;
     print("removed >> $id");
-    deleteRow('Ambil Gaji Rekod',id);
+    deleteRow('Ambil Gaji Rekod', id);
     removeItemSelected(index);
   }
 

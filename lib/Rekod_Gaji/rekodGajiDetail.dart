@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
-import 'package:intl/intl.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import '../DocumentHelper.dart';
-import '../Rekod_Harian/RekodHarian.dart';
-import '../RekodMenu.dart';
 import 'package:notification_center/notification_center.dart';
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
@@ -31,7 +24,7 @@ class selectRekodGajiDetail extends StatefulWidget {
 class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
   int selectIndex = 0;
   int id = 0;
-  List<rekodGajiDetail> _rekodGajiDetail = <rekodGajiDetail>[];
+  final List<rekodGajiDetail> _rekodGajiDetail = <rekodGajiDetail>[];
   List<rekodPekerja> pekerja = <rekodPekerja>[];
   String tarikh = "";
   Icon more_rev_Icon = Icon(Icons.more_vert, color: Colors.white);
@@ -95,30 +88,33 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
 
   void _refreshView(bool refresh) {
     if (!mounted) return;
-      rekodGaji current = rekod_Gaji.elementAt(rekod_Gaji.indexWhere((e) => e.id == id));
-      List<rekodGajiDetail> currentDetail = List<rekodGajiDetail>.from(current.rekod).toList();
-      _rekodGajiDetail.clear();
-      for (var index = 0; index < pekerja.length; index++) {
-        rekodPekerja list = pekerja.elementAt(index);
-        int i = currentDetail.indexWhere((e) => e.pekerja_id == list.id);
-        if (i < 0) {
-          print("Pekerja tidak dijumpai: $list.id");
-          continue; // atau continue;
-        }
-        var rekod = currentDetail.elementAt(i);
-        _rekodGajiDetail.insert(_rekodGajiDetail.length, rekod);
+    rekodGaji current = rekod_Gaji.elementAt(
+      rekod_Gaji.indexWhere((e) => e.id == id),
+    );
+    List<rekodGajiDetail> currentDetail = List<rekodGajiDetail>.from(
+      current.rekod,
+    ).toList();
+    _rekodGajiDetail.clear();
+    for (var index = 0; index < pekerja.length; index++) {
+      rekodPekerja list = pekerja.elementAt(index);
+      int i = currentDetail.indexWhere((e) => e.pekerja_id == list.id);
+      if (i < 0) {
+        print("Pekerja tidak dijumpai: $list.id");
+        continue; // atau continue;
       }
-      jumlahHarian = 0.0;
-      jumlahSimpan = 0.0;
-      for (var i = 0; i < _rekodGajiDetail.length; i++) {
-        rekodGajiDetail currentrekod = _rekodGajiDetail.elementAt(i);
-        num harian = currentrekod.harian;
-        num simpan = currentrekod.simpan;
-        jumlahHarian = jumlahHarian + harian;
-        jumlahSimpan = jumlahSimpan + simpan;
-      }
-    setState(() {
-    });
+      var rekod = currentDetail.elementAt(i);
+      _rekodGajiDetail.insert(_rekodGajiDetail.length, rekod);
+    }
+    jumlahHarian = 0.0;
+    jumlahSimpan = 0.0;
+    for (var i = 0; i < _rekodGajiDetail.length; i++) {
+      rekodGajiDetail currentrekod = _rekodGajiDetail.elementAt(i);
+      num harian = currentrekod.harian;
+      num simpan = currentrekod.simpan;
+      jumlahHarian = jumlahHarian + harian;
+      jumlahSimpan = jumlahSimpan + simpan;
+    }
+    setState(() {});
   }
 
   @override
@@ -133,7 +129,9 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
       fontWeight: FontWeight.normal,
       color: Colors.white,
     );
-    rekodGaji current = rekod_Gaji.elementAt(rekod_Gaji.indexWhere((e) => e.id == id));
+    rekodGaji current = rekod_Gaji.elementAt(
+      rekod_Gaji.indexWhere((e) => e.id == id),
+    );
 
     Container buildCollectionView;
     buildCollectionView = Container(
@@ -234,9 +232,14 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
                       rekodGajiDetail current = _rekodGajiDetail.elementAt(
-                        index );
+                        index,
+                      );
                       int pekerjaID = current.pekerja_id;
-                      String nama = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.id == pekerjaID)).nama;
+                      String nama = rekod_Pekerja
+                          .elementAt(
+                            rekod_Pekerja.indexWhere((e) => e.id == pekerjaID),
+                          )
+                          .nama;
                       return GestureDetector(
                         child: Table(
                           border: TableBorder.all(color: colorBorder),
@@ -457,12 +460,14 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
     String errorText = "Sila masukkan beberapa digit";
     final formKey = GlobalKey<FormState>();
     // declare a variable to keep track of the input text
-    rekodGajiDetail current = rekodGajiDetail(-1,-1, 0.00, 0.00);
+    rekodGajiDetail current = rekodGajiDetail(-1, -1, 0.00, 0.00);
     int pekerjaID = -1;
     if (index >= 0) {
       current = _rekodGajiDetail.elementAt(index);
       pekerjaID = current.pekerja_id;
-      var detailPekerja = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.id == pekerjaID));
+      var detailPekerja = rekod_Pekerja.elementAt(
+        rekod_Pekerja.indexWhere((e) => e.id == pekerjaID),
+      );
       var nama = detailPekerja.nama;
       var simpan = current.simpan;
       var harian = current.harian;
@@ -479,135 +484,164 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-          return  AlertDialog(
-            title: Text(title),
-            content: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-                return SizedBox(
-                  height: MediaQuery.of(context).size.height / 3,
-                  child: SingleChildScrollView(
-                    child: Form(
-                      key: formKey,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        //position
-                        mainAxisSize: MainAxisSize.min,
-                        // wrap content in flutter
-                        children: <Widget>[
-                          Text(
-                            'Nama :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
+        return AlertDialog(
+          title: Text(title),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height / 3,
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      //position
+                      mainAxisSize: MainAxisSize.min,
+                      // wrap content in flutter
+                      children: <Widget>[
+                        Text(
+                          'Nama :',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        (index >= 0)
+                            ? TextField(
+                                enableInteractiveSelection: false,
+                                // will disable paste operation
+                                enabled: false,
+                                autofocus: false,
+                                controller: myController,
+                                decoration: InputDecoration(),
+                                textInputAction: TextInputAction
+                                    .next, // Moves focus to next.
+                              )
+                            : DropdownButtonFormField(
+                                isExpanded: true,
+                                onChanged: (item) {
+                                  validator:
+                                  (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return errorText;
+                                    }
+                                    return null;
+                                  };
+                                  String username = item.toString();
+                                  var detailPekerja = rekod_Pekerja.elementAt(
+                                    rekod_Pekerja.indexWhere(
+                                      (e) => e.username == username,
+                                    ),
+                                  );
+                                  pekerjaID = detailPekerja.id;
+                                  myController.text = detailPekerja.nama;
+                                },
+                                items: dropDownList,
+                              ),
+                        Text(
+                          'Gaji Simpan :',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        TextField(
+                          autofocus: false,
+                          controller: myController2,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                            signed: true,
                           ),
-                          (index >= 0) ?  TextField(
-                            enableInteractiveSelection: false,
-                            // will disable paste operation
-                            enabled: false,
-                            autofocus: false,
-                            controller: myController,
-                            decoration: InputDecoration(),
-                            textInputAction:
-                            TextInputAction.next, // Moves focus to next.
-                          ) : DropdownButtonFormField(
-                            isExpanded: true,
-                            onChanged: (item) {
-                              validator:
-                              (value) {
-                                if (value == null || value.isEmpty) {
-                                  return errorText;
-                                }
-                                return null;
-                              };
-                              String username = item.toString();
-                              var detailPekerja = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.username == username));
-                              pekerjaID = detailPekerja.id;
-                              myController.text = detailPekerja.nama;
-                            },
-                            items: dropDownList,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9+\-*/.]'),
+                            ),
+                          ],
+                          decoration: InputDecoration(),
+                          textInputAction:
+                              TextInputAction.done, // Moves focus to next.
+                        ),
+                        Text(
+                          'Gaji Harian :',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        TextField(
+                          autofocus: false,
+                          controller: myController3,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                            signed: true,
                           ),
-                          Text(
-                            'Gaji Simpan :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
-                          ),
-                          TextField(
-                            autofocus: false,
-                            controller: myController2,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
-                            ],
-                            decoration: InputDecoration(),
-                            textInputAction:
-                                TextInputAction.done, // Moves focus to next.
-                          ),
-                          Text(
-                            'Gaji Harian :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
-                          ),
-                          TextField(
-                            autofocus: false,
-                            controller: myController3,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
-                            ],
-                            decoration: InputDecoration(),
-                            textInputAction:
-                                TextInputAction.done, // Moves focus to next.
-                          ),
-                        ],
-                      ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9+\-*/.]'),
+                            ),
+                          ],
+                          decoration: InputDecoration(),
+                          textInputAction:
+                              TextInputAction.done, // Moves focus to next.
+                        ),
+                      ],
                     ),
                   ),
-                );
+                ),
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Batal'),
+              onPressed: () {
+                Navigator.of(context).pop();
               },
             ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Batal'),
-                onPressed: () {
+            TextButton(
+              child: const Text('Simpan'),
+              onPressed: () {
+                // Handle the submit action
+                String nama = myController.text.capitalizeEach();
+                print("nama >> $nama");
+                num simpan = 0.0;
+                num harian = 0.0;
+                if (formKey.currentState!.validate()) {
                   Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: const Text('Simpan'),
-                onPressed: () {
-                  // Handle the submit action
-                  String nama = myController.text.capitalizeEach();
-                  print("nama >> $nama");
-                  num simpan = 0.0;
-                  num harian = 0.0;
-                  if (formKey.currentState!.validate()) {
-                    Navigator.of(context).pop();
-                    if (!(myController2.text.isEmpty)) {
-                      simpan = myController2.text.totalDoubleNumber();
-                    }
-                    if (!(myController3.text.isEmpty)) {
-                      harian = myController3.text.totalDoubleNumber();
-                    }
-                    if (index < 0) {
-                      current = rekodGajiDetail(current.id,pekerjaID, simpan, harian);
-                    }else {
-                      current.simpan = simpan;
-                      current.harian = harian;
-                    }
-                    print("rekod detail >> $index : ${current.pekerja_id} = ${_rekodGajiDetail.elementAt(index).id} | ${current.toMap()}");
-                    insertDetailServer(current, index);
+                  if (!(myController2.text.isEmpty)) {
+                    simpan = myController2.text.totalDoubleNumber();
                   }
-                },
-              ),
-            ],
-          );
+                  if (!(myController3.text.isEmpty)) {
+                    harian = myController3.text.totalDoubleNumber();
+                  }
+                  if (index < 0) {
+                    current = rekodGajiDetail(
+                      current.id,
+                      pekerjaID,
+                      simpan,
+                      harian,
+                    );
+                  } else {
+                    current.simpan = simpan;
+                    current.harian = harian;
+                  }
+                  print(
+                    "rekod detail >> $index : ${current.pekerja_id} = ${_rekodGajiDetail.elementAt(index).id} | ${current.toMap()}",
+                  );
+                  insertDetailServer(current, index);
+                }
+              },
+            ),
+          ],
+        );
       },
     );
   }
 
   Future<void> insertDetailServer(rekodGajiDetail usr, int index) async {
-    index >= 0 ? await insertUpdateTable('Gaji Detail Rekod', usr.toMapServer(),id: usr.id) : await insertUpdateTable('Gaji Detail Rekod', usr.toMapServer());
-    addItem(usr,index);
+    index >= 0
+        ? await insertUpdateTable(
+            'Gaji Detail Rekod',
+            usr.toMapServer(),
+            id: usr.id,
+          )
+        : await insertUpdateTable('Gaji Detail Rekod', usr.toMapServer());
+    addItem(usr, index);
   }
 
   // addItem adds our User Class item to list.
@@ -615,7 +649,9 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
     if (index >= 0) {
       _rekodGajiDetail[index] = usr;
     } else {
-      if (!_rekodGajiDetail.map((item) => item.pekerja_id).contains(usr.pekerja_id)) {
+      if (!_rekodGajiDetail
+          .map((item) => item.pekerja_id)
+          .contains(usr.pekerja_id)) {
         _rekodGajiDetail.add(usr);
       } else {
         _rekodGajiDetail[_rekodGajiDetail.indexWhere(
@@ -633,7 +669,7 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
 
   void removeItemInServer(int index) {
     var id = _rekodGajiDetail[index].id;
-    deleteRow('Gaji Detail Rekod',id);
+    deleteRow('Gaji Detail Rekod', id);
     removeItemSelected(index);
   }
 

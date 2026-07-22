@@ -3,19 +3,8 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 import '../DocumentHelper.dart';
-import '../Rekod_Cawangan/rekodBayaranCawangan.dart';
-import '../resit.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
 
@@ -73,8 +62,7 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
   String tarikhRekod = "";
   String hariRekod = "";
   var epochTime = "";
-  List<rekodBayaranCawangan> _rekodBayaranCawangan =
-      <rekodBayaranCawangan>[];
+  List<rekodBayaranCawangan> _rekodBayaranCawangan = <rekodBayaranCawangan>[];
   bool refreshPage = false;
   final pdf = pw.Document();
 
@@ -98,8 +86,12 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
         DropdownMenuItem<String>(value: nama, child: Text(nama)),
       );
     }
-    selectDetailCawangan = List<rekodCawanganDetail>.from(currentCawangan.rekod).toList();
-    rekodCawanganDetail current = selectDetailCawangan.elementAt(selectedDetail);
+    selectDetailCawangan = List<rekodCawanganDetail>.from(
+      currentCawangan.rekod,
+    ).toList();
+    rekodCawanganDetail current = selectDetailCawangan.elementAt(
+      selectedDetail,
+    );
     id = current.id;
     tarikh = current.tarikh;
     _rekodCawanganDetail = current;
@@ -116,10 +108,18 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
 
   void _refreshView(bool refresh) {
     setState(() {
-      rekodCawangan currentCawangan = rekod_Cawangan.elementAt(rekod_Cawangan.indexWhere((e) => e.id == cawanganId));
-      _rekodBayaranCawangan = List<rekodBayaranCawangan>.from(currentCawangan.rekodBayaran).toList();
-      selectDetailCawangan = List<rekodCawanganDetail>.from(currentCawangan.rekod).toList();
-      _rekodCawanganDetail = selectDetailCawangan.elementAt(selectDetailCawangan.indexWhere((e) => e.id == id));
+      rekodCawangan currentCawangan = rekod_Cawangan.elementAt(
+        rekod_Cawangan.indexWhere((e) => e.id == cawanganId),
+      );
+      _rekodBayaranCawangan = List<rekodBayaranCawangan>.from(
+        currentCawangan.rekodBayaran,
+      ).toList();
+      selectDetailCawangan = List<rekodCawanganDetail>.from(
+        currentCawangan.rekod,
+      ).toList();
+      _rekodCawanganDetail = selectDetailCawangan.elementAt(
+        selectDetailCawangan.indexWhere((e) => e.id == id),
+      );
       _rekodMenu = _rekodCawanganDetail?.rekodMenu ?? {};
     });
   }
@@ -136,7 +136,9 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
       fontWeight: FontWeight.normal,
       color: Colors.white,
     );
-    rekodCawanganDetail current = selectDetailCawangan.elementAt(selectDetailCawangan.indexWhere((e) => e.id == id));
+    rekodCawanganDetail current = selectDetailCawangan.elementAt(
+      selectDetailCawangan.indexWhere((e) => e.id == id),
+    );
     Container buildCollectionView;
     buildCollectionView = Container(
       margin: EdgeInsets.only(top: 5),
@@ -421,12 +423,10 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
         icon: more_rev_Icon,
         onSelected: (item) async {
           // your logic
-          if (item == '1') {
-          }
+          if (item == '1') {}
         },
         itemBuilder: (BuildContext bc) {
-          return const [
-          ];
+          return const [];
         },
       ),
     );
@@ -491,20 +491,19 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
             "dd/MM/yyyy",
           ).parse(tarikhRekod.toString());
           epochTime = tempDate1.millisecondsSinceEpoch.toString();
-          var _index = _rekodBayaranCawangan.indexWhere(
-                  (element) => element.tarikh == tarikhRekod);
+          var index0 = _rekodBayaranCawangan.indexWhere(
+            (element) => element.tarikh == tarikhRekod,
+          );
           if (_rekodBayaranCawangan
               .map((item) => item.tarikh)
               .contains(tarikhRekod)) {
-            rekodBayaranCawangan current = _rekodBayaranCawangan.elementAt(_index);
+            rekodBayaranCawangan current = _rekodBayaranCawangan.elementAt(
+              index0,
+            );
             current.tarikh = tarikhRekod;
             current.hari = hariRekod;
             current.epochTime = epochTime;
-            showDialogBayaranRequired(
-              context,
-              "Masukkan Data",
-                _index
-            );
+            showDialogBayaranRequired(context, "Masukkan Data", index0);
           } else {
             showDialogBayaranRequired(context, "Masukkan Data", -1);
           }
@@ -580,10 +579,17 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
                       autofocus: true,
                       controller: myController1,
                       textInputAction: TextInputAction.next,
-                      keyboardType: (index >= 0) ? const TextInputType.numberWithOptions(decimal: true, signed: true) : TextInputType.number,
+                      keyboardType: (index >= 0)
+                          ? const TextInputType.numberWithOptions(
+                              decimal: true,
+                              signed: true,
+                            )
+                          : TextInputType.number,
                       inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
-                        ],
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[0-9+\-*/.]'),
+                        ),
+                      ],
                       // Moves focus to next.
                       decoration: InputDecoration(),
                     ),
@@ -741,9 +747,14 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
                         },
                         autofocus: true,
                         controller: myController1,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                          signed: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9+\-*/.]'),
+                          ),
                         ],
                         textInputAction: TextInputAction.next,
                         // Moves focus to next.
@@ -758,9 +769,14 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
                       TextFormField(
                         autofocus: true,
                         controller: myController2,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                          signed: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9+\-*/.]'),
+                          ),
                         ],
                         textInputAction: TextInputAction.next,
                         // Moves focus to next.
@@ -775,9 +791,14 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
                       TextFormField(
                         autofocus: true,
                         controller: myController3,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                          signed: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9+\-*/.]'),
+                          ),
                         ],
                         textInputAction: TextInputAction.next,
                         // Moves focus to next.
@@ -806,12 +827,12 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
                     Navigator.of(context).pop();
-                   bawa = myController1.text.totalIntNumber();
+                    bawa = myController1.text.totalIntNumber();
                     if (!(myController2.text.isEmpty)) {
-                     baki = myController2.text.totalIntNumber();
+                      baki = myController2.text.totalIntNumber();
                     }
                     if (!(myController3.text.isEmpty)) {
-                     rosak = myController3.text.totalIntNumber();
+                      rosak = myController3.text.totalIntNumber();
                     }
                     var value = _rekodMenu[menu];
                     value["bawa"] = bawa;
@@ -873,9 +894,14 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
                         },
                         autofocus: false,
                         controller: myController1,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                          signed: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9+\-*/.]'),
+                          ),
                         ],
                         textInputAction: TextInputAction.next,
                         // Moves focus to next.
@@ -890,9 +916,14 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
                       TextFormField(
                         autofocus: false,
                         controller: myController2,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                          signed: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9+\-*/.]'),
+                          ),
                         ],
                         textInputAction: TextInputAction.next,
                         // Moves focus to next.
@@ -907,9 +938,14 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
                       TextFormField(
                         autofocus: false,
                         controller: myController3,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                          signed: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9+\-*/.]'),
+                          ),
                         ],
                         textInputAction: TextInputAction.next,
                         // Moves focus to next.
@@ -939,7 +975,7 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
                     Navigator.of(context).pop();
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
-                   bawa = myController1.text.totalIntNumber();
+                    bawa = myController1.text.totalIntNumber();
                     if (!(myController2.text.isEmpty)) {
                       baki = myController2.text.totalIntNumber();
                     }
@@ -950,7 +986,7 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
                       _rekodMenu[menu] = {
                         "bawa": bawa,
                         'baki': baki,
-                        'rosak': rosak
+                        'rosak': rosak,
                       };
                     } else {
                       var value = _rekodMenu[menu];
@@ -1006,7 +1042,7 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
   // addItem adds our User Class item to list.
   void addItemSelected() {
     if (_rekodBayaranCawangan.isNotEmpty) {
-        // Total bayaran
+      // Total bayaran
       num jumlahBayaranSemua = 0.0;
 
       for (var current in _rekodBayaranCawangan) {
@@ -1019,7 +1055,7 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
       for (var current in selectDetailCawangan) {
         num jumlahJualan = current.jumlahJualan;
 
-// Bayaran cukup untuk cover full
+        // Bayaran cukup untuk cover full
         if (bakiBayaran >= jumlahJualan) {
           current.bayaran = jumlahJualan;
           current.baki = 0.0;
@@ -1027,7 +1063,7 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
 
           bakiBayaran -= jumlahJualan;
         }
-// Bayaran separuh
+        // Bayaran separuh
         else if (bakiBayaran > 0) {
           current.bayaran = bakiBayaran;
           current.baki = jumlahJualan - bakiBayaran;
@@ -1035,7 +1071,7 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
 
           bakiBayaran = 0;
         }
-// Tiada bayaran lagi
+        // Tiada bayaran lagi
         else {
           current.bayaran = 0.0;
           current.baki = jumlahJualan;
@@ -1046,14 +1082,15 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
   }
 
   Future<void> insertServer(rekodCawanganDetail usr) async {
-    await insertUpdateTable('Cawangan Detail Rekod',usr.toMapServer(),id: id);
-    var target = rekod_Cawangan.elementAt(rekod_Cawangan.indexWhere((e) => e.id == cawanganId));
+    await insertUpdateTable('Cawangan Detail Rekod', usr.toMapServer(), id: id);
+    var target = rekod_Cawangan.elementAt(
+      rekod_Cawangan.indexWhere((e) => e.id == cawanganId),
+    );
     setState(() {
       target.rekod = selectDetailCawangan;
     });
     saveData();
   }
-
 
   void removeItemSelected(String menu) {
     _rekodMenu.remove(menu);

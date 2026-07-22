@@ -1,19 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:async';
-import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:sattayussop/resit.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import 'package:sattayussop/DocumentHelper.dart';
-import 'package:sattayussop/Rekod_Harian/RekodHarian.dart';
-import 'package:sattayussop/RekodMenu.dart';
-import 'package:notification_center/notification_center.dart';
-import 'package:pdf/widgets.dart' as pw;
 import '../databaseLocal.dart';
 
 class selectRekodCucukFilter extends StatefulWidget {
@@ -104,7 +93,9 @@ class _selectRekodCucukFilterState extends State<selectRekodCucukFilter> {
       if (filterName == "Semua Pekerja") {
         for (var i = 0; i < pekerja.length; i++) {
           rekodPekerja gaji = pekerja.elementAt(i);
-          List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(gaji.rekodAmbil).toList();
+          List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(
+            gaji.rekodAmbil,
+          ).toList();
           for (var l = 0; l < rekod.length; l++) {
             rekodAmbilGaji gajiRekod = rekod.elementAt(l);
             jumlahGajiAmbil = jumlahGajiAmbil + gajiRekod.jumlah;
@@ -112,10 +103,12 @@ class _selectRekodCucukFilterState extends State<selectRekodCucukFilter> {
         }
       } else if (filterName != "") {
         rekodPekerja gaji =
-        pekerja[pekerja.indexWhere(
+            pekerja[pekerja.indexWhere(
               (element) => element.username == filterName,
-        )];
-        List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(gaji.rekodAmbil).toList();
+            )];
+        List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(
+          gaji.rekodAmbil,
+        ).toList();
         for (var l = 0; l < rekod.length; l++) {
           rekodAmbilGaji gajiRekod = rekod.elementAt(l);
           jumlahGajiAmbil = jumlahGajiAmbil + gajiRekod.jumlah;
@@ -124,15 +117,21 @@ class _selectRekodCucukFilterState extends State<selectRekodCucukFilter> {
       for (var index = 0; index < rekod_Cucuk.length; index++) {
         rekodCucuk cucukList = rekod_Cucuk.elementAt(index);
         String tarikh = cucukList.tarikh;
-        List<rekodCucukDetail> stokCucuk = List<rekodCucukDetail>.from(cucukList.rekod).toList();
+        List<rekodCucukDetail> stokCucuk = List<rekodCucukDetail>.from(
+          cucukList.rekod,
+        ).toList();
         for (var k = 0; k < stokCucuk.length; k++) {
           rekodCucukDetail current = stokCucuk.elementAt(k);
           print("record >> ${current.toMap()}");
           int idPekerja = current.pekerja_id;
           if (idPekerja > 0) {
-            var indexPekerja = pekerja.indexWhere((element) => element.id == idPekerja);
+            var indexPekerja = pekerja.indexWhere(
+              (element) => element.id == idPekerja,
+            );
             if (indexPekerja == -1) {
-              print("Pekerja tidak dijumpai. id = $idPekerja == ${current.nama}");
+              print(
+                "Pekerja tidak dijumpai. id = $idPekerja == ${current.nama}",
+              );
               continue;
             }
             rekodPekerja gaji = pekerja.elementAt(indexPekerja);
@@ -201,7 +200,9 @@ class _selectRekodCucukFilterState extends State<selectRekodCucukFilter> {
     }
     var nama = filterName;
     if (filterName != "Semua Pekerja") {
-      nama =  rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.username == filterName)).nama;
+      nama = rekod_Pekerja
+          .elementAt(rekod_Pekerja.indexWhere((e) => e.username == filterName))
+          .nama;
     }
     Container buildCollectionView;
     buildCollectionView = Container(
@@ -348,10 +349,7 @@ class _selectRekodCucukFilterState extends State<selectRekodCucukFilter> {
                                       style: textStyle,
                                     ),
                                   ),
-                                  Text(
-                                    "${jumlahSatay}",
-                                    style: textStyleNormal,
-                                  ),
+                                  Text("$jumlahSatay", style: textStyleNormal),
                                 ],
                               ),
                               SizedBox(height: 5),
@@ -438,8 +436,13 @@ class _selectRekodCucukFilterState extends State<selectRekodCucukFilter> {
           }
         },
         itemBuilder: (BuildContext bc) {
-          var menu = const [PopupMenuItem(value: '1', child: Text("Slip Gaji"))];
-          return (role.toString().capitalize() == "Admin" || role.toString().capitalize() == "Manager") ? menu : [];
+          var menu = const [
+            PopupMenuItem(value: '1', child: Text("Slip Gaji")),
+          ];
+          return (role.toString().capitalize() == "Admin" ||
+                  role.toString().capitalize() == "Manager")
+              ? menu
+              : [];
         },
       ),
     );

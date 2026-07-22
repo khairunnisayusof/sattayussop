@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
 import 'package:intl/intl.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import 'package:sattayussop/DocumentHelper.dart';
-import '../Rekod_Stok/rekodStok.dart';
-import 'package:sattayussop/RekodMenu.dart';
 import 'package:notification_center/notification_center.dart';
 import '../databaseLocal.dart';
 
@@ -64,7 +56,9 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
     rekodStok current = rekod_stok.elementAt(selectIndex);
     stok_id = current.id;
     tarikhRekod = current.tarikh;
-    selectStokDetail = List<rekodStokDetail>.from(sortMenuList(List<rekodStokDetail>.from(current.rekod).toList()));
+    selectStokDetail = List<rekodStokDetail>.from(
+      sortMenuList(List<rekodStokDetail>.from(current.rekod).toList()),
+    );
     DateTime tempDate = DateFormat("dd/MM/yyyy").parse(tarikhRekod.toString());
     int currentEpochTime = tempDate.millisecondsSinceEpoch;
     for (var index = 0; index < rekod_stok.length; index++) {
@@ -89,10 +83,14 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
 
   void _refreshView(bool refresh) {
     if (!mounted) return;
-        setState(() {
-          rekodStok current = rekod_stok.elementAt(rekod_stok.indexWhere((e) => e.id == stok_id));
-          selectStokDetail = List<rekodStokDetail>.from(sortMenuList(List<rekodStokDetail>.from(current.rekod).toList()));
-      });
+    setState(() {
+      rekodStok current = rekod_stok.elementAt(
+        rekod_stok.indexWhere((e) => e.id == stok_id),
+      );
+      selectStokDetail = List<rekodStokDetail>.from(
+        sortMenuList(List<rekodStokDetail>.from(current.rekod).toList()),
+      );
+    });
   }
 
   @override
@@ -229,9 +227,15 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
 
                       rekodStok? targetStok = findStok(rekod_stok, stokLama0);
                       if (targetStok != null) {
-                        List<rekodStokDetail> stokDetail = List<rekodStokDetail>.from(targetStok.rekod).toList();
+                        List<rekodStokDetail> stokDetail =
+                            List<rekodStokDetail>.from(
+                              targetStok.rekod,
+                            ).toList();
 
-                        rekodStokDetail? findStok(List<rekodStokDetail> list, String menu) {
+                        rekodStokDetail? findStok(
+                          List<rekodStokDetail> list,
+                          String menu,
+                        ) {
                           try {
                             return list.firstWhere(
                               (element) => menu.contains(element.jenis),
@@ -241,7 +245,10 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
                           }
                         }
 
-                        rekodStokDetail? targetStokDetail = findStok(stokDetail, menu);
+                        rekodStokDetail? targetStokDetail = findStok(
+                          stokDetail,
+                          menu,
+                        );
                         if (targetStokDetail != null) {
                           stokLama = targetStokDetail.baki;
                         }
@@ -529,9 +536,7 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
         icon: more_rev_Icon,
         onSelected: (item) {
           // your logic
-          if (item == '1') {
-
-          }
+          if (item == '1') {}
         },
         itemBuilder: (BuildContext bc) {
           return const [
@@ -606,9 +611,14 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
                       autofocus: true,
                       controller: myController2,
                       decoration: InputDecoration(),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[0-9+\-*/.]'),
+                        ),
                       ],
                       textInputAction:
                           TextInputAction.next, // Moves focus to next.
@@ -676,7 +686,9 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
 
   // addItem adds our User Class item to list.
   void addItemSelected() {
-    rekodStok target = rekod_stok.elementAt(rekod_stok.indexWhere((e) => e.id == stok_id));
+    rekodStok target = rekod_stok.elementAt(
+      rekod_stok.indexWhere((e) => e.id == stok_id),
+    );
     setState(() {
       target.rekod = selectStokDetail;
     });

@@ -1,17 +1,12 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 import '../DocumentHelper.dart';
-import 'dart:convert';
 import 'package:notification_center/notification_center.dart';
 import '../resit.dart';
-import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
 
@@ -89,14 +84,19 @@ class _selectRekodPelangganDetailState
     pelangganID = widget.selectIndex;
     menuList = widget.menuList;
     runnerList = widget.runnerList;
-    rekodPelanggan currentList = rekod_Pelanggan.elementAt(rekod_Pelanggan.indexWhere((e) => e.id == pelangganID));
+    rekodPelanggan currentList = rekod_Pelanggan.elementAt(
+      rekod_Pelanggan.indexWhere((e) => e.id == pelangganID),
+    );
     rekodPelangganDetail = currentList;
     _refreshView(true);
     for (var index = 0; index < menuList.length; index++) {
       rekodMenu list = menuList.elementAt(index);
       var nama = list.jenis;
       dropDownListMenu.add(
-        DropdownMenuItem<String>(value: nama.isEmpty == true ? '' : nama, child: Text(nama)),
+        DropdownMenuItem<String>(
+          value: nama.isEmpty == true ? '' : nama,
+          child: Text(nama),
+        ),
       );
       if (index >= menuList.length - 1) {
         dropDownListMenu.add(
@@ -110,7 +110,10 @@ class _selectRekodPelangganDetailState
       var username = list.username ?? '';
       print("username >> $nama | $username");
       dropDownListRunner.add(
-        DropdownMenuItem<String>(value: username.isEmpty == true ? '' : username, child: Text(nama)),
+        DropdownMenuItem<String>(
+          value: username.isEmpty == true ? '' : username,
+          child: Text(nama),
+        ),
       );
     }
     super.initState();
@@ -125,14 +128,18 @@ class _selectRekodPelangganDetailState
   void _refreshView(bool refresh) {
     if (!mounted) return;
     setState(() {
-      rekodPelanggan currentList = rekod_Pelanggan.elementAt(rekod_Pelanggan.indexWhere((e) => e.id == pelangganID));
+      rekodPelanggan currentList = rekod_Pelanggan.elementAt(
+        rekod_Pelanggan.indexWhere((e) => e.id == pelangganID),
+      );
       rekodPelangganDetail = currentList;
       epochTime = currentList.epochTime;
       tarikhRekod = currentList.tarikh;
       hariRekod = currentList.hari;
       masaRekod = currentList.masa;
       nama = currentList.nama;
-      var list = List<rekodPesananPelanggan>.from(currentList.orderMenu).toList();
+      var list = List<rekodPesananPelanggan>.from(
+        currentList.orderMenu,
+      ).toList();
       _rekodMenu = list;
     });
   }
@@ -141,13 +148,14 @@ class _selectRekodPelangganDetailState
   Widget build(BuildContext context) {
     rekodPelanggan current = rekodPelangganDetail!;
     int runner = current.runner;
-    rekodRunner currentRunner = rekod_Runner.elementAt(rekod_Runner.indexWhere((e) => e.id == runner));
+    rekodRunner currentRunner = rekod_Runner.elementAt(
+      rekod_Runner.indexWhere((e) => e.id == runner),
+    );
     String namaRunner = currentRunner.nama;
     String telRunner = currentRunner.telefon;
     String labelRunner = "Self Pickup";
     if (runner != 12) {
-      labelRunner =
-          '$namaRunner ($telRunner)';
+      labelRunner = '$namaRunner ($telRunner)';
     }
     Container buildCollectionView;
     buildCollectionView = Container(
@@ -617,9 +625,13 @@ class _selectRekodPelangganDetailState
     String title,
     String message,
   ) {
-    rekodPelanggan current = rekod_Pelanggan.elementAt(rekod_Pelanggan.indexWhere((e) => e.id == pelangganID));
+    rekodPelanggan current = rekod_Pelanggan.elementAt(
+      rekod_Pelanggan.indexWhere((e) => e.id == pelangganID),
+    );
     int runner = current.runner;
-    rekodRunner currentRunner = rekod_Runner.elementAt(rekod_Runner.indexWhere((e) => e.id == runner));
+    rekodRunner currentRunner = rekod_Runner.elementAt(
+      rekod_Runner.indexWhere((e) => e.id == runner),
+    );
     String namaRunner = currentRunner.nama;
     String telRunner = currentRunner.telefon;
     List<Widget> textButtonList = <Widget>[
@@ -714,9 +726,14 @@ class _selectRekodPelangganDetailState
                       autofocus: true,
                       controller: myController,
                       decoration: InputDecoration(),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[0-9+\-*/.]'),
+                        ),
                       ],
                       textInputAction:
                           TextInputAction.next, // Moves focus to next.
@@ -780,9 +797,7 @@ class _selectRekodPelangganDetailState
           : pesananValue.toStringAsFixed(1);
       myController2.text = money(current.Harga);
     }
-    final values = dropDownListMenu
-        .map((e) => e.value)
-        .toList();
+    final values = dropDownListMenu.map((e) => e.value).toList();
     bool isNewMenu = newMenu;
 
     showDialog(
@@ -854,9 +869,14 @@ class _selectRekodPelangganDetailState
                         TextFormField(
                           autofocus: index >= 0 ? true : false,
                           controller: myController1,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                            signed: true,
+                          ),
                           inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9+\-*/.]'),
+                            ),
                           ],
                           textInputAction: TextInputAction.next,
                           validator: (value) {
@@ -872,9 +892,14 @@ class _selectRekodPelangganDetailState
                         SizedBox(height: 2),
                         TextFormField(
                           controller: myController2,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                            signed: true,
+                          ),
                           inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9+\-*/.]'),
+                            ),
                           ],
                           textInputAction: TextInputAction.done,
                           decoration: InputDecoration(),
@@ -912,7 +937,13 @@ class _selectRekodPelangganDetailState
                       } else {
                         // Add new
                         insertServer(
-                          rekodPesananPelanggan(pelangganID,nama, pesanan, harga, jumlah),
+                          rekodPesananPelanggan(
+                            pelangganID,
+                            nama,
+                            pesanan,
+                            harga,
+                            jumlah,
+                          ),
                           index,
                         );
                       }
@@ -1000,21 +1031,23 @@ class _selectRekodPelangganDetailState
     final formKey = GlobalKey<FormState>();
     String tarikh = '$hariRekod, $tarikhRekod $masaRekod';
     myController.text = tarikh;
-    rekodPelanggan current = rekod_Pelanggan.elementAt(rekod_Pelanggan.indexWhere((e) => e.id == pelangganID));
+    rekodPelanggan current = rekod_Pelanggan.elementAt(
+      rekod_Pelanggan.indexWhere((e) => e.id == pelangganID),
+    );
     myController1.text = current.nama;
     myController2.text = current.telefon.cleanNumber();
     myController3.text = current.alamat;
     int runner = current.runner;
-    rekodRunner currentRunner = rekod_Runner.elementAt(rekod_Runner.indexWhere((e) => e.id == runner));
+    rekodRunner currentRunner = rekod_Runner.elementAt(
+      rekod_Runner.indexWhere((e) => e.id == runner),
+    );
     String namaRunner = currentRunner.nama;
     String usernameRunner = currentRunner.username;
     print("runner >>> $runner");
     if (runner > 0) {
       myController4.text = usernameRunner;
     }
-    final values = dropDownListRunner
-        .map((e) => e.value)
-        .toList();
+    final values = dropDownListRunner.map((e) => e.value).toList();
 
     showDialog(
       context: context,
@@ -1105,7 +1138,11 @@ class _selectRekodPelangganDetailState
                       onChanged: (item) {
                         if (item == null) return;
                         var username = item.toString();
-                        rekodRunner currentRunner = rekod_Runner.elementAt(rekod_Runner.indexWhere((e) => e.username == username));
+                        rekodRunner currentRunner = rekod_Runner.elementAt(
+                          rekod_Runner.indexWhere(
+                            (e) => e.username == username,
+                          ),
+                        );
                         runner = currentRunner.id;
                         myController4.text = username;
                       },
@@ -1176,16 +1213,20 @@ class _selectRekodPelangganDetailState
     print("pelanggan id in save >> $pelangganID");
     if (index > 0) {
       await insertUpdateTable(
-          'Pelanggan Detail Rekod', usr.toMapServer(),id: usr.id);
-    }else {
+        'Pelanggan Detail Rekod',
+        usr.toMapServer(),
+        id: usr.id,
+      );
+    } else {
       final result = await insertUpdateTable(
-          'Pelanggan Detail Rekod', usr.toMapServer());
+        'Pelanggan Detail Rekod',
+        usr.toMapServer(),
+      );
       var resultRekod = rekodPesananPelanggan.fromMap(result);
       usr.id = resultRekod.id;
     }
     addItem(usr, index);
   }
-
 
   void addItem(rekodPesananPelanggan pesananList, int index) {
     if (index < 0) {
@@ -1200,7 +1241,9 @@ class _selectRekodPelangganDetailState
   }
 
   void kiraJualan() {
-    rekodPelanggan currentList = rekod_Pelanggan.elementAt(rekod_Pelanggan.indexWhere((e) => e.id == pelangganID));
+    rekodPelanggan currentList = rekod_Pelanggan.elementAt(
+      rekod_Pelanggan.indexWhere((e) => e.id == pelangganID),
+    );
     setState(() {
       num jumlahSebenar = 0.00;
       for (var index = 0; index < _rekodMenu.length; index++) {
@@ -1219,14 +1262,20 @@ class _selectRekodPelangganDetailState
   }
 
   Future<void> insertServerPelanggan(rekodPelanggan usr) async {
-    final result = await insertUpdateTable('Pelanggan Rekod', usr.toMapServer(),id: pelangganID);
+    final result = await insertUpdateTable(
+      'Pelanggan Rekod',
+      usr.toMapServer(),
+      id: pelangganID,
+    );
     var resultRekod = rekodPelanggan.fromMap(result);
     insertStok(epochTime, tarikhRekod, hariRekod);
     addItemPesanan(resultRekod);
   }
 
   void addItemPesanan(rekodPelanggan usr) {
-    rekodPelanggan current = rekod_Pelanggan.elementAt(rekod_Pelanggan.indexWhere((e) => e.id == pelangganID));
+    rekodPelanggan current = rekod_Pelanggan.elementAt(
+      rekod_Pelanggan.indexWhere((e) => e.id == pelangganID),
+    );
     num rekod = usr.baki;
     if (rekod <= 0.00 && usr.orderMenu.isNotEmpty) {
       current.bayaranPenuh = true;

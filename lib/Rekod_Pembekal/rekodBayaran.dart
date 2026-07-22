@@ -5,14 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:notification_center/notification_center.dart';
 import '../resit.dart';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../Rekod_Harian/RekodHarian.dart';
 import "../DocumentHelper.dart";
-import 'package:string_capitalize/string_capitalize.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
 
@@ -74,12 +69,18 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
 
   void _refreshView(bool refresh) {
     setState(() {
-      rekodPembekalList currentPembekal = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == selectIndex));
+      rekodPembekalList currentPembekal = rekod_Pembekal.elementAt(
+        rekod_Pembekal.indexWhere((e) => e.id == selectIndex),
+      );
       PembekalId = currentPembekal.id;
       nama = currentPembekal.namaPembekal;
-      selectDetailBarang = List<rekodPembekalDetail>.from(currentPembekal.rekod).toList();
-      rekodBayaran = List<rekodBayaranPembekal>.from(currentPembekal.rekodBayaran).toList();
-      print("rekod bayaran >> ${rekodBayaran.length} | ${selectIndex}");
+      selectDetailBarang = List<rekodPembekalDetail>.from(
+        currentPembekal.rekod,
+      ).toList();
+      rekodBayaran = List<rekodBayaranPembekal>.from(
+        currentPembekal.rekodBayaran,
+      ).toList();
+      print("rekod bayaran >> ${rekodBayaran.length} | $selectIndex");
       jumlahBayaran = 0.0;
       jumlahKeseluruhan = 0.0;
       for (var index = 0; index < rekodBayaran.length; index++) {
@@ -267,7 +268,10 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
                           Expanded(
                             child: Text('Baki Bayaran (RM)', style: textStyle),
                           ),
-                          Text(money(jumlahKeseluruhan - jumlahBayaran), style: textStyleNormal),
+                          Text(
+                            money(jumlahKeseluruhan - jumlahBayaran),
+                            style: textStyleNormal,
+                          ),
                         ],
                       ),
                       SizedBox(height: 2),
@@ -373,7 +377,7 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
           epochTime = tempDate1.millisecondsSinceEpoch.toString();
           epochTime = tempDate1.millisecondsSinceEpoch.toString();
           var selectIndex = rekodBayaran.indexWhere(
-                (pelanggan) => pelanggan.tarikh == tarikhRekod,
+            (pelanggan) => pelanggan.tarikh == tarikhRekod,
           );
 
           if (selectIndex >= 0) {
@@ -381,17 +385,9 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
             current.tarikh = tarikhRekod;
             current.hari = hariRekod;
             current.epochTime = epochTime;
-            showDialogBayaranRequired(
-              context,
-              "Masukkan Data",
-              selectIndex,
-            );
-          }else {
-            showDialogBayaranRequired(
-              context,
-              "Masukkan Data",
-              -1,
-            );
+            showDialogBayaranRequired(context, "Masukkan Data", selectIndex);
+          } else {
+            showDialogBayaranRequired(context, "Masukkan Data", -1);
           }
         });
       }
@@ -399,10 +395,10 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
   }
 
   void showDialogBayaranRequired(
-      BuildContext context,
-      String title,
-      int index,
-      ) {
+    BuildContext context,
+    String title,
+    int index,
+  ) {
     var myController = TextEditingController();
     var myController1 = TextEditingController();
     String errorText = "Sila masukkan beberapa digit";
@@ -464,9 +460,14 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
                       autofocus: true,
                       controller: myController1,
                       textInputAction: TextInputAction.next,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[0-9+\-*/.]'),
+                        ),
                       ],
                       // Moves focus to next.
                       decoration: InputDecoration(),
@@ -511,11 +512,11 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
   }
 
   void showDialogRequired(
-      BuildContext context,
-      String title,
-      String message,
-      int index,
-      ) {
+    BuildContext context,
+    String title,
+    String message,
+    int index,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -544,11 +545,15 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
 
   Future<void> insertServer(rekodBayaranPembekal usr, int index) async {
     if (index >= 0) {
-      await insertUpdateTable('Pembekal Bayaran Rekod', usr.toMapServer(),id: selectIndex);
-    }else {
+      await insertUpdateTable(
+        'Pembekal Bayaran Rekod',
+        usr.toMapServer(),
+        id: selectIndex,
+      );
+    } else {
       await insertUpdateTable('Pembekal Bayaran Rekod', usr.toMapServer());
     }
-    addItem(usr,index);
+    addItem(usr, index);
   }
 
   // addItem adds our User Class item to list.
@@ -564,11 +569,15 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
   }
 
   void kiraJualan() async {
-    rekodPembekalList currentPembekal = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == PembekalId));
+    rekodPembekalList currentPembekal = rekod_Pembekal.elementAt(
+      rekod_Pembekal.indexWhere((e) => e.id == PembekalId),
+    );
 
     nama = currentPembekal.namaPembekal;
 
-    List<rekodPembekalDetail> selectDetail = List<rekodPembekalDetail>.from(currentPembekal.rekod).toList();
+    List<rekodPembekalDetail> selectDetail = List<rekodPembekalDetail>.from(
+      currentPembekal.rekod,
+    ).toList();
 
     // Total bayaran
     num jumlahBayaranSemua = 0.0;
@@ -605,9 +614,12 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
         current.baki = jumlahJualan;
         current.bayaranPenuh = false;
       }
-      await insertUpdateTable('Pembekal Detail Rekod', current.toMapServer(),id: current.id);
+      await insertUpdateTable(
+        'Pembekal Detail Rekod',
+        current.toMapServer(),
+        id: current.id,
+      );
     }
-
 
     List<String> rekodList = selectDetail
         .map((item) => jsonEncode(item.toMap()))
@@ -619,13 +631,17 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
       currentPembekal.rekod = selectDetail;
       currentPembekal.rekodBayaran = rekodBayaran;
     });
-    await insertUpdateTable('Pembekal Rekod', currentPembekal.toMapServer(),id: PembekalId);
+    await insertUpdateTable(
+      'Pembekal Rekod',
+      currentPembekal.toMapServer(),
+      id: PembekalId,
+    );
     saveData();
   }
 
   void removeItemInServer(int index) {
     var id = rekodBayaran[index].id;
-    deleteRow('Pembekal Bayaran Rekod',id);
+    deleteRow('Pembekal Bayaran Rekod', id);
     removeItem(index);
   }
 

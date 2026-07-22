@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 import 'package:sattayussop/Rekod_Cucuk/rekodCucukFilter.dart';
 import 'package:sattayussop/Rekod_Gaji/rekodAmbilGaji.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import 'package:sattayussop/DocumentHelper.dart';
 import 'package:sattayussop/Rekod_Cucuk/rekodCucukDetail.dart';
 import 'package:notification_center/notification_center.dart';
@@ -60,7 +55,10 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
       if (current.cucuk == true) {
         print("rekod >> $username");
         dropDownList.add(
-          DropdownMenuItem<String>(value: username.isEmpty == true ? null : username, child: Text(nama)),
+          DropdownMenuItem<String>(
+            value: username.isEmpty == true ? null : username,
+            child: Text(nama),
+          ),
         );
         _rekodPekerja.add(current);
       }
@@ -184,10 +182,10 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
           ];
           if (role.toString().capitalize() == "Manager") {
             menu = const [
-             PopupMenuItem(value: '1', child: Text("Rekod Terperinci")),
-             PopupMenuItem(value: '2', child: Text("Ambil Gaji")),
-           ];
-          }else if (role.toString().capitalize() == "Admin") {
+              PopupMenuItem(value: '1', child: Text("Rekod Terperinci")),
+              PopupMenuItem(value: '2', child: Text("Ambil Gaji")),
+            ];
+          } else if (role.toString().capitalize() == "Admin") {
             menu = const [
               PopupMenuItem(value: '1', child: Text("Rekod Terperinci")),
               PopupMenuItem(value: '2', child: Text("Ambil Gaji")),
@@ -249,10 +247,16 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
                     Container(height: 2),
                     DropdownButtonFormField(
                       isExpanded: true,
-                      initialValue: myController.text.isEmpty ? null : myController.text,
+                      initialValue: myController.text.isEmpty
+                          ? null
+                          : myController.text,
                       onChanged: (item) {
                         username = item;
-                        var result = _rekodPekerja.elementAt(_rekodPekerja.indexWhere((e) => e.username == username));
+                        var result = _rekodPekerja.elementAt(
+                          _rekodPekerja.indexWhere(
+                            (e) => e.username == username,
+                          ),
+                        );
                         var nama = result.nama;
                         myController.text = nama;
                       },
@@ -355,13 +359,13 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
         }
 
         tarikhRekod = DateFormat('dd/MM/yyyy').format(selectedDate).toString();
-        DateTime tempDate1 = DateFormat("dd/MM/yyyy").parse(tarikhRekod.toString());
+        DateTime tempDate1 = DateFormat(
+          "dd/MM/yyyy",
+        ).parse(tarikhRekod.toString());
         var epochTime = tempDate1.millisecondsSinceEpoch.toString();
 
         // List<dynamic> rekod = [];
-        insertServer(
-          rekodCucuk(epochTime, tarikhRekod, hariRekod, [], []),
-        );
+        insertServer(rekodCucuk(epochTime, tarikhRekod, hariRekod, [], []));
       });
     }
   }
@@ -376,13 +380,16 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
         var current = menuList.elementAt(i);
         String menu = current.jenis;
         if (menu.toLowerCase().contains('satay')) {
-          var jumlahCucukRekod = rekodJumlahCucuk(id,menu, 0);
-          insertUpdateTable('Jumlah Cucuk Satay Rekod', jumlahCucukRekod.toMapServer());
+          var jumlahCucukRekod = rekodJumlahCucuk(id, menu, 0);
+          insertUpdateTable(
+            'Jumlah Cucuk Satay Rekod',
+            jumlahCucukRekod.toMapServer(),
+          );
           rekodJumlah.add(jumlahCucukRekod);
         }
       }
     }
-    insertStok(usr.epochTime,usr.tarikh, usr.hari);
+    insertStok(usr.epochTime, usr.tarikh, usr.hari);
     addItem(usr);
   }
 
@@ -400,11 +407,10 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
     });
   }
 
-
   void removeItemInServer(int index) {
     tarikhRekod = rekod_Cucuk[index].tarikh;
     var id = rekod_Cucuk[index].id;
-    deleteRow('Cucuk Rekod',id);
+    deleteRow('Cucuk Rekod', id);
     removeItem(index);
   }
 
@@ -419,7 +425,9 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
     rekod_Cucuk.clear();
     for (var index = 0; index < _rekodPekerja.length; index++) {
       rekodPekerja current = _rekodPekerja.elementAt(index);
-      List<rekodAmbilGaji> rekodAmbil = List<rekodAmbilGaji>.from(current.rekodAmbil).toList();
+      List<rekodAmbilGaji> rekodAmbil = List<rekodAmbilGaji>.from(
+        current.rekodAmbil,
+      ).toList();
       rekodAmbil.clear();
       current.rekodAmbil = rekodAmbil;
       rekod_Pekerja[rekod_Pekerja.indexWhere(
@@ -435,11 +443,10 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
     saveData();
   }
 
-
   // This block saves our list locally.
   void saveData() {
-      saveDataLocal();
-      // Future.delayed(Duration(seconds: 2), () {
-      updateStok(tarikhRekod);
+    saveDataLocal();
+    // Future.delayed(Duration(seconds: 2), () {
+    updateStok(tarikhRekod);
   }
 }

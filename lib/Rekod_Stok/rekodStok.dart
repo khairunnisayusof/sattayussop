@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import '../DocumentHelper.dart';
 import '../Rekod_Stok/rekodStokDetail.dart';
 import 'package:notification_center/notification_center.dart';
@@ -59,16 +54,19 @@ class _RekodStokState extends State<RekodStok> {
 
   void _refreshView(bool refresh) {
     if (!mounted) return;
-      setState(() {
-        if (tarikhRekod.isNotEmpty) {
-          var record = rekod_stok.elementAt(rekod_stok.indexWhere(
-                (element) => element.tarikh == tarikhRekod,
-          ));
-          _rekodStokDetail = (record.rekod as List).map((item) => rekodStokDetail.fromMap(
-            Map<String, dynamic>.from(item),
-          )).toList();
-        }
-      });
+    setState(() {
+      if (tarikhRekod.isNotEmpty) {
+        var record = rekod_stok.elementAt(
+          rekod_stok.indexWhere((element) => element.tarikh == tarikhRekod),
+        );
+        _rekodStokDetail = (record.rekod)
+            .map(
+              (item) =>
+                  rekodStokDetail.fromMap(Map<String, dynamic>.from(item)),
+            )
+            .toList();
+      }
+    });
   }
 
   @override
@@ -277,7 +275,14 @@ class _RekodStokState extends State<RekodStok> {
         .toList();
     if (!rekod_stok.map((item) => item.tarikh).contains(tarikhRekod)) {
       rekod_stok.add(
-        rekodStok(epochTimeStok, tarikhRekod, hariRekod, 0.00, 0.00, _rekodStokDetail),
+        rekodStok(
+          epochTimeStok,
+          tarikhRekod,
+          hariRekod,
+          0.00,
+          0.00,
+          _rekodStokDetail,
+        ),
       );
     } else {
       var target =

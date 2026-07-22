@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:string_capitalize/string_capitalize.dart';
 import 'package:sattayussop/DocumentHelper.dart';
 import 'package:sattayussop/Rekod_Harian/rekodHarianDetail.dart';
@@ -45,7 +44,9 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
   void dispose() {
     // Clean up the controller when the widget is disposed.
     if (!mounted) return;
-    rekodList current = rekod_List.elementAt(rekod_List.indexWhere((e) => e.id == id));
+    rekodList current = rekod_List.elementAt(
+      rekod_List.indexWhere((e) => e.id == id),
+    );
     _rekodHarianDetail = List<rekodHarianDetail>.from(current.rekod).toList();
     _rekodHarianDetail.sort((a, b) => a.id.compareTo(b.id));
     super.dispose();
@@ -255,7 +256,7 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
                         .map((item) => item.namaPasarMalam)
                         .contains(namaPasarMalam)) {
                   mapMenu = sortMenu(mapMenu);
-                  print("list >>>> ${mapMenu}");
+                  print("list >>>> $mapMenu");
                   insertItem(
                     rekodHarianDetail(
                       id,
@@ -298,12 +299,12 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
 
   void removeItem(int index) {
     var id = _rekodHarianDetail[index].id;
-    deleteRow('Harian Detail Rekod',id);
+    deleteRow('Harian Detail Rekod', id);
   }
 
   // This block saves our list locally.
   void saveData() {
-      saveDataLocal();
-      updateStok(tarikh);
+    saveDataLocal();
+    updateStok(tarikh);
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:notification_center/notification_center.dart';
-import 'dart:convert';
 import "package:sattayussop/DocumentHelper.dart";
 import 'package:sattayussop/supabaseServer.dart';
 import 'package:string_capitalize/string_capitalize.dart';
@@ -397,8 +396,10 @@ class _selectRekodRunnerState extends State<selectRekodRunner> {
   }
 
   Future<void> insertServer(rekodRunner usr, int index) async {
-    index >= 0 ? await insertUpdateTable('Runner Rekod', usr.toMapServer(),id: usr.id) : await insertUpdateTable('Runner Rekod', usr.toMapServer());
-    addItem(usr,index);
+    index >= 0
+        ? await insertUpdateTable('Runner Rekod', usr.toMapServer(), id: usr.id)
+        : await insertUpdateTable('Runner Rekod', usr.toMapServer());
+    addItem(usr, index);
   }
 
   // addItem adds our User Class item to list.
@@ -412,7 +413,7 @@ class _selectRekodRunnerState extends State<selectRekodRunner> {
 
   void removeItem(int index) {
     var id = rekod_Runner[index].id;
-    deleteRow('Runner Rekod',id);
+    deleteRow('Runner Rekod', id);
     removeInLocal(index);
   }
 

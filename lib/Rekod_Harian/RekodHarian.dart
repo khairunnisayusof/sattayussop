@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
-import 'dart:convert';
 import 'package:sattayussop/DocumentHelper.dart';
 import 'package:sattayussop/Rekod_Harian/rekodHarianList.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:sattayussop/supabaseServer.dart';
 import 'package:string_capitalize/string_capitalize.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../databaseLocal.dart';
 
 class selectRekodHarian extends StatefulWidget {
@@ -52,26 +50,25 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
   void _refreshView(bool refresh) {
     if (!mounted) return;
     print("refresh data in rekodHarian ${rekod_List.length}");
-    setState(() {
-    });
+    setState(() {});
     if (!refresh) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Rekod Menu Kosong"),
-              content: Text("Sila Masukkan Rekod Menu dahulu!"),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Rekod Menu Kosong"),
+            content: Text("Sila Masukkan Rekod Menu dahulu!"),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -137,7 +134,10 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
           var menu = const [
             PopupMenuItem(value: '1', child: Text("Padam Seluruh Data")),
           ];
-          return (role.toString().capitalize() == "Admin" || role.toString().capitalize() == "Manager") ? menu : [];
+          return (role.toString().capitalize() == "Admin" ||
+                  role.toString().capitalize() == "Manager")
+              ? menu
+              : [];
         },
       ),
     );
@@ -225,7 +225,9 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
           hariRekod = "Sabtu";
         }
         tarikhRekod = DateFormat('dd/MM/yyyy').format(selectedDate).toString();
-        DateTime tempDate1 = DateFormat("dd/MM/yyyy").parse(tarikhRekod.toString());
+        DateTime tempDate1 = DateFormat(
+          "dd/MM/yyyy",
+        ).parse(tarikhRekod.toString());
         epochTime = tempDate1.millisecondsSinceEpoch.toString();
 
         insertHarian(rekodList(epochTime, tarikhRekod, hariRekod, []));
@@ -246,20 +248,20 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
       await insertUpdateTable('Harian Rekod', usr.toMapServer());
     }
     addItem(usr);
-    insertStok(epochTime,tarikhRekod,hariRekod);
+    insertStok(epochTime, tarikhRekod, hariRekod);
   }
 
   void removeItem(int index) {
-      rekod_List.removeAt(
-        rekod_List.indexWhere((element) => element.tarikh == tarikhRekod),
-      );
-      saveData();
+    rekod_List.removeAt(
+      rekod_List.indexWhere((element) => element.tarikh == tarikhRekod),
+    );
+    saveData();
   }
 
   void removeItemInServer(int index) {
     tarikhRekod = rekod_List[index].tarikh;
     var id = rekod_List[index].id;
-    deleteRow('Harian Rekod',id);
+    deleteRow('Harian Rekod', id);
     removeItem(index);
   }
 

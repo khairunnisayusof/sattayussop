@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
-import 'package:intl/intl.dart';
 import 'package:sattayussop/DocumentHelper.dart';
-import 'package:sattayussop/Rekod_Pembekal/rekodBayaran.dart';
 import 'package:sattayussop/resit.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:pdf/pdf.dart';
-import 'package:printing/printing.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
 
@@ -101,11 +92,19 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
 
   void _refreshView(bool refresh) {
     setState(() {
-      rekodPembekalList currentBarang = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == selectIndex));
+      rekodPembekalList currentBarang = rekod_Pembekal.elementAt(
+        rekod_Pembekal.indexWhere((e) => e.id == selectIndex),
+      );
       nama = currentBarang.namaPembekal;
-      _rekodBayaranPembekal = List<rekodBayaranPembekal>.from(currentBarang.rekodBayaran).toList();
-      selectDetailBarang = List<rekodPembekalDetail>.from(currentBarang.rekod).toList();
-      rekodPembekalDetail current = selectDetailBarang.elementAt(selectDetailBarang.indexWhere((e) => e.id == selectedDetail));
+      _rekodBayaranPembekal = List<rekodBayaranPembekal>.from(
+        currentBarang.rekodBayaran,
+      ).toList();
+      selectDetailBarang = List<rekodPembekalDetail>.from(
+        currentBarang.rekod,
+      ).toList();
+      rekodPembekalDetail current = selectDetailBarang.elementAt(
+        selectDetailBarang.indexWhere((e) => e.id == selectedDetail),
+      );
       tarikh = current.tarikh;
       barangList = current.rekodBarang;
       _rekodBarangDetail = current;
@@ -150,9 +149,7 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
     var myController1 = TextEditingController();
     String errorText = "Sila masukkan beberapa digit";
     final formKey = GlobalKey<FormState>();
-    final values = dropDownListMenu
-        .map((e) => e.value)
-        .toList();
+    final values = dropDownListMenu.map((e) => e.value).toList();
 
     if (index >= 0) {
       var current = barangList.keys.elementAt(index);
@@ -182,7 +179,7 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
                     ),
                     DropdownButtonFormField(
                       isExpanded: true,
-                      initialValue:  values.contains(myController.text)
+                      initialValue: values.contains(myController.text)
                           ? myController.text
                           : null,
                       onChanged: (item) {
@@ -209,9 +206,14 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
                       textInputAction: TextInputAction.done,
                       // Moves focus to next.
                       decoration: InputDecoration(),
-                      keyboardType:  const TextInputType.numberWithOptions(decimal: true, signed: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[0-9+\-*/.]'),
+                        ),
                       ],
                     ),
                   ],
@@ -250,7 +252,6 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
       },
     );
   }
-
 
   void showDialogTextJumlahRequired(BuildContext context, String title) {
     var myController = TextEditingController();
@@ -327,6 +328,7 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
       },
     );
   }
+
   void kiraJualan() {
     num jumlahBarang = _rekodBarangDetail?.jumlah ?? 0.00;
     print("start rekod kira >>> $barangList");
@@ -339,7 +341,9 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
       }
     }
     print("jumlah >> $jumlah | ${selectDetailBarang.length} | $selectedDetail");
-    rekodPembekalDetail currentDetail = selectDetailBarang.elementAt(selectDetailBarang.indexWhere((e) => e.id == selectedDetail));
+    rekodPembekalDetail currentDetail = selectDetailBarang.elementAt(
+      selectDetailBarang.indexWhere((e) => e.id == selectedDetail),
+    );
     print("jumlah >> $jumlah | ${_rekodBayaranPembekal.length}");
     currentDetail.rekodBarang = barangList;
     currentDetail.bayaran = jumlah;
@@ -356,8 +360,14 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
   }
 
   Future<void> insertServer(rekodPembekalDetail usr) async {
-    await insertUpdateTable('Pembekal Detail Rekod', usr.toMapServer(),id: selectedDetail);
-    var target = rekod_Pembekal.elementAt(rekod_Pembekal.indexWhere((e) => e.id == selectIndex));
+    await insertUpdateTable(
+      'Pembekal Detail Rekod',
+      usr.toMapServer(),
+      id: selectedDetail,
+    );
+    var target = rekod_Pembekal.elementAt(
+      rekod_Pembekal.indexWhere((e) => e.id == selectIndex),
+    );
     setState(() {
       target.rekod = selectDetailBarang;
     });
@@ -405,7 +415,9 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
       fontWeight: FontWeight.normal,
       color: Colors.white,
     );
-    rekodPembekalDetail current = selectDetailBarang.elementAt(selectDetailBarang.indexWhere((e) => e.id == selectedDetail));
+    rekodPembekalDetail current = selectDetailBarang.elementAt(
+      selectDetailBarang.indexWhere((e) => e.id == selectedDetail),
+    );
     Container buildCollectionView;
     buildCollectionView = Container(
       margin: EdgeInsets.all(5),
@@ -493,7 +505,11 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
                     itemBuilder: (BuildContext context, int index) {
                       var nama = barangList.keys.elementAt(index);
                       var kuantiti = barangList[nama];
-                      var unit = senarai_Barang.elementAt(senarai_Barang.indexWhere((e) => e.nama == nama)).unit;
+                      var unit = senarai_Barang
+                          .elementAt(
+                            senarai_Barang.indexWhere((e) => e.nama == nama),
+                          )
+                          .unit;
                       print("menu >> $nama");
                       return GestureDetector(
                         child: Table(
@@ -549,97 +565,105 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
                       );
                     },
                   ),
-                  (role.toString().capitalize() == "Admin" || role.toString().capitalize() == "Manager") ? Container(
-                    alignment: Alignment.centerRight,
-                    child: Row(
-                      children: [
-                        Spacer(flex: 1),
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                  (role.toString().capitalize() == "Admin" ||
+                          role.toString().capitalize() == "Manager")
+                      ? Container(
+                          alignment: Alignment.centerRight,
+                          child: Row(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'Jumlah Barang (RM)',
-                                      style: textStyle,
+                              Spacer(flex: 1),
+                              Expanded(
+                                flex: 2,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Jumlah Barang (RM)',
+                                            style: textStyle,
+                                          ),
+                                        ),
+                                        Text(
+                                          money(current.jumlah),
+                                          style: textStyleNormal,
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  Text(
-                                    money(current.jumlah),
-                                    style: textStyleNormal,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 5),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'Jumlah Bayaran (RM)',
-                                      style: textStyle,
+                                    SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Jumlah Bayaran (RM)',
+                                            style: textStyle,
+                                          ),
+                                        ),
+                                        Text(
+                                          money(current.bayaran),
+                                          style: textStyleNormal,
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  Text(
-                                    money(current.bayaran),
-                                    style: textStyleNormal,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 5),
-                              Divider(),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'Baki Bayaran (RM)',
-                                      style: textStyle,
+                                    SizedBox(height: 5),
+                                    Divider(),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'Baki Bayaran (RM)',
+                                            style: textStyle,
+                                          ),
+                                        ),
+                                        Text(
+                                          money(current.baki),
+                                          style: textStyleNormal,
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  Text(
-                                    money(current.baki),
-                                    style: textStyleNormal,
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 2),
-                              Container(height: 1, color: Colors.grey),
-                              SizedBox(height: 0.5),
-                              Container(height: 1, color: Colors.grey),
-                              SizedBox(height: 10),
-                              GestureDetector(
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child:ListTile(
-                                    title: Text(
-                                      "Jumlah Bayaran",
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                    SizedBox(height: 2),
+                                    Container(height: 1, color: Colors.grey),
+                                    SizedBox(height: 0.5),
+                                    Container(height: 1, color: Colors.grey),
+                                    SizedBox(height: 10),
+                                    GestureDetector(
+                                      child: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: color,
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        child: ListTile(
+                                          title: Text(
+                                            "Jumlah Bayaran",
+                                            style: TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
                                       ),
-                                      textAlign: TextAlign.center,
+                                      onTap: () async {
+                                        showDialogTextJumlahRequired(
+                                          context,
+                                          "Masukkan Jumlah Barang Dari Pembekal $nama",
+                                        );
+                                      },
                                     ),
-                                  ),
+                                  ],
                                 ),
-                                onTap: () async {
-                                  showDialogTextJumlahRequired(
-                                    context,
-                                    "Masukkan Jumlah Barang Dari Pembekal $nama");
-                                },
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ) : SizedBox(height: 0),
+                        )
+                      : SizedBox(height: 0),
                   // Container(
                   //   alignment: Alignment.centerRight,
                   //   child: Row(
@@ -692,7 +716,10 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
           var menu = const [
             PopupMenuItem(value: '1', child: Text("Resit Order")),
           ];
-          return (role.toString().capitalize() == "Admin" || role.toString().capitalize() == "Manager") ? menu : [];
+          return (role.toString().capitalize() == "Admin" ||
+                  role.toString().capitalize() == "Manager")
+              ? menu
+              : [];
         },
       ),
     );
@@ -708,15 +735,19 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
         centerTitle: true,
       ),
       body: buildCollectionView,
-      floatingActionButton: (role.toString().capitalize() == "Admin" || role.toString().capitalize() == "Manager") ? FloatingActionButton(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        onPressed: () {
-          showDialogTextRequired(context, "Masukkan data", -1);
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ):SizedBox(height: 0),
+      floatingActionButton:
+          (role.toString().capitalize() == "Admin" ||
+              role.toString().capitalize() == "Manager")
+          ? FloatingActionButton(
+              backgroundColor: color,
+              foregroundColor: Colors.white,
+              onPressed: () {
+                showDialogTextRequired(context, "Masukkan data", -1);
+              },
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            )
+          : SizedBox(height: 0),
     );
   }
 }

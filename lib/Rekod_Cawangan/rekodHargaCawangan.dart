@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
-import 'package:intl/intl.dart';
 import 'package:notification_center/notification_center.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sattayussop/Rekod_Harian/RekodHarian.dart';
 import "package:sattayussop/DocumentHelper.dart";
 import 'package:string_capitalize/string_capitalize.dart';
 import '../databaseLocal.dart';
@@ -54,7 +50,9 @@ class _selectRekodHargaCawanganState extends State<selectRekodHargaCawangan> {
     for (var index = 0; index < menuList.length; index++) {
       rekodMenu list = menuList.elementAt(index);
       var nama = list.jenis;
-      print("list record >> $nama ${DropdownMenuItem<String>(value: nama, child: Text(nama))}");
+      print(
+        "list record >> $nama ${DropdownMenuItem<String>(value: nama, child: Text(nama))}",
+      );
       dropDownListMenu.add(
         DropdownMenuItem<String>(value: nama, child: Text(nama)),
       );
@@ -75,15 +73,18 @@ class _selectRekodHargaCawanganState extends State<selectRekodHargaCawangan> {
   void dispose() {
     // Clean up the controller when the widget is disposed.
   }
-void _refreshView(bool refresh) {
-  setState(() {
-    rekodCawangan current = rekod_Cawangan.elementAt(rekod_Cawangan.indexWhere((item) => item.nama == nama));
-    if (cawanganID < 0) {
-      cawanganID = current.id;
-    }
-    listHarga = sortMenu(current.rekodHarga);
-  });
-}
+  void _refreshView(bool refresh) {
+    setState(() {
+      rekodCawangan current = rekod_Cawangan.elementAt(
+        rekod_Cawangan.indexWhere((item) => item.nama == nama),
+      );
+      if (cawanganID < 0) {
+        cawanganID = current.id;
+      }
+      listHarga = sortMenu(current.rekodHarga);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Container buildCollectionView;
@@ -209,9 +210,8 @@ void _refreshView(bool refresh) {
     var myController2 = TextEditingController();
     String errorText = "Sila masukkan beberapa digit";
     final formKey = GlobalKey<FormState>();
-    final initialValue = dropDownListMenu.any(
-          (e) => e.value == myController.text,
-    )
+    final initialValue =
+        dropDownListMenu.any((e) => e.value == myController.text)
         ? myController.text
         : null;
 
@@ -266,9 +266,14 @@ void _refreshView(bool refresh) {
                         },
                         autofocus: true,
                         controller: myController2,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                          signed: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9+\-*/.]'),
+                          ),
                         ],
                         textInputAction: TextInputAction.next,
                         // Moves focus to next.
@@ -289,7 +294,7 @@ void _refreshView(bool refresh) {
               TextButton(
                 child: const Text('Simpan'),
                 onPressed: () {
-                  num _harga = 0;
+                  num harga0 = 0;
                   // Handle the submit action
                   String namaMenu = myController.text.capitalizeEach();
                   if (formKey.currentState!.validate()) {
@@ -297,9 +302,9 @@ void _refreshView(bool refresh) {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
                     if (!(myController2.text.isEmpty)) {
-                      _harga = myController2.text.toDoubleNumberFormat();
+                      harga0 = myController2.text.toDoubleNumberFormat();
                     }
-                    addItem(namaMenu,_harga);
+                    addItem(namaMenu, harga0);
                   }
                   // Handle the submit action
                 },
@@ -354,9 +359,14 @@ void _refreshView(bool refresh) {
                         },
                         autofocus: false,
                         controller: myController2,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                          signed: true,
+                        ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-*/.]')),
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9+\-*/.]'),
+                          ),
                         ],
                         textInputAction: TextInputAction.next,
                         // Moves focus to next.
@@ -387,7 +397,7 @@ void _refreshView(bool refresh) {
                     if (!(myController2.text.isEmpty)) {
                       harga = myController2.text.toDoubleNumberFormat();
                     }
-                    addItem(namaMenu,harga);
+                    addItem(namaMenu, harga);
                   }
                   // Handle the submit action
                 },
@@ -408,11 +418,12 @@ void _refreshView(bool refresh) {
     print("save record >> ${target.id} | $cawanganID");
     if (cawanganID >= 0) {
       await insertUpdateTable(
-          'Cawangan Rekod', target.toMapServer(), id: cawanganID);
+        'Cawangan Rekod',
+        target.toMapServer(),
+        id: cawanganID,
+      );
     } else {
-      await insertUpdateTable(
-          'Cawangan Rekod', target.toMapServer());
-
+      await insertUpdateTable('Cawangan Rekod', target.toMapServer());
     }
 
     saveData();

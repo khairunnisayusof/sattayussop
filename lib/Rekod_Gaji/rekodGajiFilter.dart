@@ -1,19 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:async';
-import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import '../resit.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:string_capitalize/string_capitalize.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/locale.dart';
 import '../DocumentHelper.dart';
-import '../Rekod_Harian/RekodHarian.dart';
-import '../RekodMenu.dart';
-import 'package:notification_center/notification_center.dart';
-import 'package:pdf/widgets.dart' as pw;
 import '../databaseLocal.dart';
 
 class selectRekodGajiFilter extends StatefulWidget {
@@ -98,11 +86,21 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
       for (var index = 0; index < rekod_Gaji.length; index++) {
         rekodGaji gajiList = rekod_Gaji.elementAt(index);
         String tarikh = gajiList.tarikh;
-        List<rekodGajiDetail> rekod = List<rekodGajiDetail>.from(gajiList.rekod).toList();
+        List<rekodGajiDetail> rekod = List<rekodGajiDetail>.from(
+          gajiList.rekod,
+        ).toList();
         for (var k = 0; k < rekod.length; k++) {
           rekodGajiDetail current = rekod.elementAt(k);
-          String userName = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.id == current.pekerja_id)).username;
-          String nama = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.id == current.pekerja_id)).nama;
+          String userName = rekod_Pekerja
+              .elementAt(
+                rekod_Pekerja.indexWhere((e) => e.id == current.pekerja_id),
+              )
+              .username;
+          String nama = rekod_Pekerja
+              .elementAt(
+                rekod_Pekerja.indexWhere((e) => e.id == current.pekerja_id),
+              )
+              .nama;
           num harian = current.harian;
           num simpan = current.simpan;
           if (filterName == userName) {
@@ -144,7 +142,9 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
         rekodPekerja currentPekerja = pekerja.elementAt(index);
         String nama = currentPekerja.username;
         if (filterName == nama) {
-          List<rekodAmbilGaji> rekodAmbil = List<rekodAmbilGaji>.from(currentPekerja.rekodAmbil).toList();
+          List<rekodAmbilGaji> rekodAmbil = List<rekodAmbilGaji>.from(
+            currentPekerja.rekodAmbil,
+          ).toList();
           for (var i = 0; i < rekodAmbil.length; i++) {
             rekodAmbilGaji current = rekodAmbil.elementAt(i);
             String tarikh0 = current.tarikh;
@@ -154,7 +154,7 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
             if (_rekodGajiDetail.map((item) => item.tarikh).contains(tarikh0)) {
               rekodGajiFilter currentfilter = _rekodGajiDetail.elementAt(
                 _rekodGajiDetail.indexWhere(
-                      (element) => element.tarikh == tarikh0,
+                  (element) => element.tarikh == tarikh0,
                 ),
               );
               currentfilter.ambil = jumlahAmbil;
@@ -165,7 +165,9 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
             }
           }
         } else if (filterName == "Semua Pekerja") {
-          List<rekodAmbilGaji> rekodAmbil =  List<rekodAmbilGaji>.from(currentPekerja.rekodAmbil).toList();
+          List<rekodAmbilGaji> rekodAmbil = List<rekodAmbilGaji>.from(
+            currentPekerja.rekodAmbil,
+          ).toList();
           for (var i = 0; i < rekodAmbil.length; i++) {
             rekodAmbilGaji current = rekodAmbil.elementAt(i);
             String tarikh0 = current.tarikh;
@@ -175,7 +177,7 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
             if (_rekodGajiDetail.map((item) => item.tarikh).contains(tarikh0)) {
               rekodGajiFilter currentfilter = _rekodGajiDetail.elementAt(
                 _rekodGajiDetail.indexWhere(
-                      (element) => element.tarikh == tarikh0,
+                  (element) => element.tarikh == tarikh0,
                 ),
               );
               currentfilter.ambil = jumlahAmbil;
@@ -209,7 +211,9 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
     }
     var nama = filterName;
     if (filterName != "Semua Pekerja") {
-      nama =  rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.username == filterName)).nama;
+      nama = rekod_Pekerja
+          .elementAt(rekod_Pekerja.indexWhere((e) => e.username == filterName))
+          .nama;
     }
     Container buildCollectionView;
     buildCollectionView = Container(
@@ -477,8 +481,11 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
                                     ),
                                   ),
                                   Text(
-                                    money((jumlahGajiAmbil + (((JumlahSimpan * 11) / 100))
-                                                .round())),
+                                    money(
+                                      (jumlahGajiAmbil +
+                                          (((JumlahSimpan * 11) / 100))
+                                              .round()),
+                                    ),
                                     style: textStyleNormal,
                                   ),
                                 ],
@@ -493,7 +500,9 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
                                     ),
                                   ),
                                   Text(
-                                    money((((JumlahSimpan * 13) / 100).round())),
+                                    money(
+                                      (((JumlahSimpan * 13) / 100).round()),
+                                    ),
                                     style: textStyleNormal,
                                   ),
                                 ],
@@ -507,10 +516,13 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
                                       style: textStyle,
                                     ),
                                   ),
-                                  Text(money((JumlahSimpan -
-                                            jumlahGajiAmbil -
-                                            (((JumlahSimpan * 11) / 100))
-                                                .round())),
+                                  Text(
+                                    money(
+                                      (JumlahSimpan -
+                                          jumlahGajiAmbil -
+                                          (((JumlahSimpan * 11) / 100))
+                                              .round()),
+                                    ),
                                     style: textStyleNormal,
                                   ),
                                 ],
@@ -525,10 +537,13 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
                                       style: textStyle,
                                     ),
                                   ),
-                                  Text(money((JumlahSimpan -
-                                            jumlahGajiAmbil -
-                                            (((JumlahSimpan * 11) / 100))
-                                                .round())),
+                                  Text(
+                                    money(
+                                      (JumlahSimpan -
+                                          jumlahGajiAmbil -
+                                          (((JumlahSimpan * 11) / 100))
+                                              .round()),
+                                    ),
                                     style: textStyleNormal,
                                   ),
                                 ],

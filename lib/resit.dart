@@ -17,6 +17,7 @@ import '../DocumentHelper.dart';
 import '../databaseLocal.dart';
 
 final fontFamily = font;
+
 class PdfInvoicePelanggan {
   static Future<File> generate(
     PdfColor color,
@@ -31,10 +32,14 @@ class PdfInvoicePelanggan {
       'image/sattay_Desa_QR.png',
     )).buffer.asUint8List();
 
-    List<rekodPesananPelanggan> rekodMenu = List<rekodPesananPelanggan>.from(current.orderMenu).toList();
+    List<rekodPesananPelanggan> rekodMenu = List<rekodPesananPelanggan>.from(
+      current.orderMenu,
+    ).toList();
     String pdfFile = '${current.nama} Resit';
     int runnerID = current.runner;
-    String runner = rekod_Runner.elementAt(rekod_Runner.indexWhere((e) => e.id == runnerID)).nama;
+    String runner = rekod_Runner
+        .elementAt(rekod_Runner.indexWhere((e) => e.id == runnerID))
+        .nama;
     String invoice = current.noBil;
     String tarikhOrder = current.tarikhOrder == ""
         ? DateFormat('dd/MM/yyyy').format(DateTime.now())
@@ -523,10 +528,7 @@ class PdfInvoicePelanggan {
                           ),
                           pw.Text(
                             'SATTAY DESA',
-                            style: pw.TextStyle(
-                              color: color,
-                              font: font,
-                            ),
+                            style: pw.TextStyle(color: color, font: font),
                           ),
                         ],
                       ),
@@ -544,10 +546,7 @@ class PdfInvoicePelanggan {
                           ),
                           pw.Text(
                             '558033625191',
-                            style: pw.TextStyle(
-                              color: color,
-                              font: font,
-                            ),
+                            style: pw.TextStyle(color: color, font: font),
                           ),
                         ],
                       ),
@@ -565,11 +564,7 @@ class PdfInvoicePelanggan {
 }
 
 class PdfSlipGaji {
-  static Future<File> generate(
-    PdfColor color,
-    String nama,
-    bool epf,
-  ) async {
+  static Future<File> generate(PdfColor color, String nama, bool epf) async {
     final pdf = pw.Document();
 
     num jumlahHarian = 0.0;
@@ -587,7 +582,9 @@ class PdfSlipGaji {
     String namaPenuh = current.namaPenuh;
     String ic = current.ic;
     String bank = current.bank;
-    final List<rekodAmbilGaji> rekodAmbil = List<rekodAmbilGaji>.from(current.rekodAmbil).toList();
+    final List<rekodAmbilGaji> rekodAmbil = List<rekodAmbilGaji>.from(
+      current.rekodAmbil,
+    ).toList();
 
     // Jumlah ambil
     ambil = rekodAmbil.fold(0.0, (total, item) => total + item.jumlah);
@@ -1156,10 +1153,16 @@ class PdfDetailGaji {
     for (var index = 0; index < rekod_Gaji.length; index++) {
       rekodGaji gajiList = rekod_Gaji.elementAt(index);
       String tarikh = gajiList.tarikh;
-      List<rekodGajiDetail> rekod = List<rekodGajiDetail>.from(gajiList.rekod).toList();
+      List<rekodGajiDetail> rekod = List<rekodGajiDetail>.from(
+        gajiList.rekod,
+      ).toList();
       for (var k = 0; k < rekod.length; k++) {
         rekodGajiDetail current = rekod.elementAt(k);
-        String nama = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.id == current.pekerja_id)).username;
+        String nama = rekod_Pekerja
+            .elementAt(
+              rekod_Pekerja.indexWhere((e) => e.id == current.pekerja_id),
+            )
+            .username;
         num harian = current.harian;
         num simpan = current.simpan;
         if (filterName == nama) {
@@ -1216,7 +1219,9 @@ class PdfDetailGaji {
       String nama = currentPekerja.username;
       if (!cucuk) {
         if (filterName == nama) {
-          List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(currentPekerja.rekodAmbil).toList();
+          List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(
+            currentPekerja.rekodAmbil,
+          ).toList();
           for (var i = 0; i < rekod.length; i++) {
             rekodAmbilGaji current = rekod.elementAt(i);
             String tarikh0 = current.tarikh;
@@ -1229,7 +1234,9 @@ class PdfDetailGaji {
               );
 
               if (selectIndex >= 0) {
-                rekodGajiFilter currentfilter = rekodGajiFilterDetail.elementAt(selectIndex);
+                rekodGajiFilter currentfilter = rekodGajiFilterDetail.elementAt(
+                  selectIndex,
+                );
                 currentfilter.ambil = current.jumlah;
               }
             } else {
@@ -1239,7 +1246,9 @@ class PdfDetailGaji {
             }
           }
         } else if (filterName == "Semua Pekerja") {
-          List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(currentPekerja.rekodAmbil).toList();
+          List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(
+            currentPekerja.rekodAmbil,
+          ).toList();
           for (var i = 0; i < rekod.length; i++) {
             rekodAmbilGaji current = rekod.elementAt(i);
             String tarikh0 = current.tarikh;
@@ -1252,12 +1261,12 @@ class PdfDetailGaji {
               );
 
               if (selectIndex >= 0) {
-              rekodGajiFilter currentfilter = rekodGajiFilterDetail.elementAt(
-                rekodGajiFilterDetail.indexWhere(
-                  (element) => element.tarikh == tarikh0,
-                ),
-              );
-              currentfilter.ambil = current.jumlah;
+                rekodGajiFilter currentfilter = rekodGajiFilterDetail.elementAt(
+                  rekodGajiFilterDetail.indexWhere(
+                    (element) => element.tarikh == tarikh0,
+                  ),
+                );
+                currentfilter.ambil = current.jumlah;
               }
             } else {
               rekodGajiFilterDetail.add(
@@ -1272,10 +1281,7 @@ class PdfDetailGaji {
     return rekodGajiFilterDetail;
   }
 
-  static Future<File> generate(
-    PdfColor color,
-    String nama,
-  ) async {
+  static Future<File> generate(PdfColor color, String nama) async {
     final pdf = pw.Document();
 
     List<rekodGajiFilter> currentGajiList = reloadData(nama);
@@ -1787,10 +1793,7 @@ class PdfDetailGaji {
 }
 
 class PdfCucukGaji {
-  static Future<File> generate(
-    PdfColor color,
-    String nama,
-  ) async {
+  static Future<File> generate(PdfColor color, String nama) async {
     final pdf = pw.Document();
     var filterName = nama;
     List<rekodCucukFilter> currentCucukList = <rekodCucukFilter>[];
@@ -1800,12 +1803,17 @@ class PdfCucukGaji {
     for (var index = 0; index < rekod_Cucuk.length; index++) {
       rekodCucuk cucukList = rekod_Cucuk.elementAt(index);
       String tarikh = cucukList.tarikh;
-      List<rekodCucukDetail> stokCucuk = List<rekodCucukDetail>.from(cucukList.rekod).toList();
+      List<rekodCucukDetail> stokCucuk = List<rekodCucukDetail>.from(
+        cucukList.rekod,
+      ).toList();
       for (var k = 0; k < stokCucuk.length; k++) {
         rekodCucukDetail current = stokCucuk.elementAt(k);
         int pekerjaID = current.pekerja_id;
         int jumlah = current.jumlah;
-        rekodPekerja gaji = rekod_Pekerja[rekod_Pekerja.indexWhere((element) => element.id == pekerjaID)];
+        rekodPekerja gaji =
+            rekod_Pekerja[rekod_Pekerja.indexWhere(
+              (element) => element.id == pekerjaID,
+            )];
         String userName = gaji.username;
         print("filter >> $filterName == $userName | ${filterName == userName}");
         if (filterName == userName) {
@@ -1818,7 +1826,7 @@ class PdfCucukGaji {
           } else {
             rekodCucukFilter currentfilter = currentCucukList.elementAt(
               currentCucukList.indexWhere(
-                    (element) => element.tarikh == tarikh,
+                (element) => element.tarikh == tarikh,
               ),
             );
             jumlah = currentfilter.jumlah + jumlah;
@@ -1829,14 +1837,12 @@ class PdfCucukGaji {
           num gajiHarian = gaji.gajiHarian;
           num gajiPekerja = jumlah * gajiHarian;
           jumlahGaji = jumlahGaji + gajiPekerja;
-          if (!currentCucukList
-              .map((item) => item.tarikh)
-              .contains(tarikh)) {
+          if (!currentCucukList.map((item) => item.tarikh).contains(tarikh)) {
             currentCucukList.add(rekodCucukFilter(tarikh, nama, jumlah));
           } else {
             rekodCucukFilter currentfilter = currentCucukList.elementAt(
               currentCucukList.indexWhere(
-                    (element) => element.tarikh == tarikh,
+                (element) => element.tarikh == tarikh,
               ),
             );
             jumlah = currentfilter.jumlah + jumlah;
@@ -1861,32 +1867,36 @@ class PdfCucukGaji {
     String namaPenuh = "Semua Pekerja";
     String ic = "";
     bool showIC = false;
-      if (nama == "Semua Pekerja") {
-        for (var i = 0; i < rekod_Pekerja.length; i++) {
-          rekodPekerja gaji = rekod_Pekerja.elementAt(i);
-          bool cucuk = gaji.cucuk;
-          if (cucuk) {
-            List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(gaji.rekodAmbil).toList();
-            for (var l = 0; l < rekod.length; l++) {
-              rekodAmbilGaji gajiRekod = rekod.elementAt(l);
-              ambil = ambil + gajiRekod.jumlah;
-            }
+    if (nama == "Semua Pekerja") {
+      for (var i = 0; i < rekod_Pekerja.length; i++) {
+        rekodPekerja gaji = rekod_Pekerja.elementAt(i);
+        bool cucuk = gaji.cucuk;
+        if (cucuk) {
+          List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(
+            gaji.rekodAmbil,
+          ).toList();
+          for (var l = 0; l < rekod.length; l++) {
+            rekodAmbilGaji gajiRekod = rekod.elementAt(l);
+            ambil = ambil + gajiRekod.jumlah;
           }
         }
-      } else {
-        rekodPekerja gaji =
-        rekod_Pekerja[rekod_Pekerja.indexWhere(
-              (element) => element.username == nama,
-        )];
-        namaPenuh = gaji.namaPenuh;
-        ic = gaji.ic;
-        showIC = true;
-        List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(gaji.rekodAmbil).toList();
-        for (var l = 0; l < rekod.length; l++) {
-          rekodAmbilGaji gajiRekod = rekod.elementAt(l);
-          ambil = ambil + gajiRekod.jumlah;
-        }
       }
+    } else {
+      rekodPekerja gaji =
+          rekod_Pekerja[rekod_Pekerja.indexWhere(
+            (element) => element.username == nama,
+          )];
+      namaPenuh = gaji.namaPenuh;
+      ic = gaji.ic;
+      showIC = true;
+      List<rekodAmbilGaji> rekod = List<rekodAmbilGaji>.from(
+        gaji.rekodAmbil,
+      ).toList();
+      for (var l = 0; l < rekod.length; l++) {
+        rekodAmbilGaji gajiRekod = rekod.elementAt(l);
+        ambil = ambil + gajiRekod.jumlah;
+      }
+    }
     num gajiBersih = jumlahGaji - ambil;
     bool showAmbil = false;
     if (ambil > 0) {
@@ -2207,11 +2217,13 @@ class PdfPembekalResit {
     rekodPembekalList pembekalList = rekod_Pembekal.elementAt(
       rekod_Pembekal.indexWhere((element) => element.namaPembekal == nama),
     );
-    List<rekodPembekalDetail> rekodPembekal = List<rekodPembekalDetail>.from(pembekalList.rekod).toList();
+    List<rekodPembekalDetail> rekodPembekal = List<rekodPembekalDetail>.from(
+      pembekalList.rekod,
+    ).toList();
     rekodPembekalDetail current = rekodPembekal.elementAt(
       rekodPembekal.indexWhere((element) => element.tarikh == tarikhRekod),
     );
-    Map<String,dynamic> rekodBarang = current.rekodBarang;
+    Map<String, dynamic> rekodBarang = current.rekodBarang;
     String tarikh = "${current.hari}, ${current.tarikh}";
     print("rekod pembekal >>> $nama >> ${rekodBarang.length}");
     String pdfFile = '$nama Resit';
@@ -2352,7 +2364,9 @@ class PdfPembekalResit {
                 String nama = rekodBarang.keys.elementAt(index);
                 String barang = nama.capitalizeEach();
                 String kuantiti = rekodBarang[nama];
-                var unit = senarai_Barang.elementAt(senarai_Barang.indexWhere((e) => e.nama == nama)).unit;
+                var unit = senarai_Barang
+                    .elementAt(senarai_Barang.indexWhere((e) => e.nama == nama))
+                    .unit;
                 print("list menu >>> $barang");
                 return pw.Table(
                   border: pw.TableBorder.all(),
@@ -2412,11 +2426,15 @@ class PdfBayaranPembekalResit {
     rekodPembekalList pembekalList = rekod_Pembekal.elementAt(
       rekod_Pembekal.indexWhere((element) => element.namaPembekal == nama),
     );
-    List<rekodPembekalDetail> rekodPembekal = List<rekodPembekalDetail>.from(pembekalList.rekod).toList();
+    List<rekodPembekalDetail> rekodPembekal = List<rekodPembekalDetail>.from(
+      pembekalList.rekod,
+    ).toList();
     // rekodPembekalDetail current = rekodPembekal.elementAt(
     //   rekodPembekal.indexWhere((element) => element.tarikh == tarikhRekod),
     // );
-    List<rekodBayaranPembekal> rekodBayaran = List<rekodBayaranPembekal>.from(pembekalList.rekodBayaran).toList();
+    List<rekodBayaranPembekal> rekodBayaran = List<rekodBayaranPembekal>.from(
+      pembekalList.rekodBayaran,
+    ).toList();
     rekodBayaran.sort((a, b) => a.tarikh.compareTo(b.tarikh));
 
     num jumlahKeseluruhan = 0.0;
@@ -2720,11 +2738,15 @@ class PdfBayaranCawanganResit {
     rekodCawangan cawanganList = rekod_Cawangan.elementAt(
       rekod_Cawangan.indexWhere((element) => element.nama == nama),
     );
-    List<rekodCawanganDetail> _rekodCawangan = List<rekodCawanganDetail>.from(cawanganList.rekod).toList();
+    List<rekodCawanganDetail> _rekodCawangan = List<rekodCawanganDetail>.from(
+      cawanganList.rekod,
+    ).toList();
     // rekodCawanganDetail current = _rekodCawangan.elementAt(
     //   _rekodCawangan.indexWhere((element) => element.tarikh == tarikhRekod),
     // );
-    List<rekodBayaranCawangan> rekodBayaran = List<rekodBayaranCawangan>.from(cawanganList.rekodBayaran).toList();
+    List<rekodBayaranCawangan> rekodBayaran = List<rekodBayaranCawangan>.from(
+      cawanganList.rekodBayaran,
+    ).toList();
     num jumlahKeseluruhan = 0.0;
     num jumlahBayaran = 0.0;
     for (var index = 0; index < rekodBayaran.length; index++) {

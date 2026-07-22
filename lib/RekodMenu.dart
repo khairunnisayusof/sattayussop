@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:notification_center/notification_center.dart';
-import 'dart:convert';
 import "../DocumentHelper.dart";
 import 'package:string_capitalize/string_capitalize.dart';
 import '../databaseLocal.dart';
@@ -48,9 +47,7 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
     if (!mounted) return;
 
     print("rekod menu >> $rekod_Menu");
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   @override
@@ -420,7 +417,7 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
                     if (!(myController2.text.isEmpty)) {
                       harga = myController2.text.totalDoubleNumber();
                     }
-                    insertItem(rekodMenu(namaMenu, harga),index);
+                    insertItem(rekodMenu(namaMenu, harga), index);
                   }
                   // Handle the submit action
                 },
@@ -431,16 +428,16 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
       );
     }
   }
-  
+
   Future<void> insertItem(rekodMenu menu, int index) async {
     if (index >= 0) {
-      var id  = rekod_Menu[index].id;
+      var id = rekod_Menu[index].id;
       menu.id = id;
       insertUpdateTable('Menu Rekod', menu.toMapServer(), id: id);
     } else {
       insertUpdateTable('Menu Rekod', menu.toMapServer());
     }
-    addItem(menu,index);
+    addItem(menu, index);
   }
 
   // addItem adds our User Class item to list.
@@ -452,7 +449,7 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
 
   void removeItem(int index) {
     var id = rekod_Menu[index].id;
-    deleteRow('Menu Rekod',id);
+    deleteRow('Menu Rekod', id);
     removeInLocal(index);
   }
 
@@ -467,6 +464,5 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
       context,
     ).showSnackBar(const SnackBar(content: Text('Simpan Data')));
     saveDataLocal();
-
   }
 }

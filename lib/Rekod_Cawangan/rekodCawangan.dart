@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:string_capitalize/string_capitalize.dart';
 import '../DocumentHelper.dart';
 import '../Rekod_Cawangan/rekodCawanganList.dart';
@@ -155,7 +154,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
           var menu = [
             PopupMenuItem(value: '1', child: Text("Padam Seluruh Data")),
           ];
-          return (role.toString().capitalize() == "Admin") ? menu : [] ;
+          return (role.toString().capitalize() == "Admin") ? menu : [];
         },
       ),
     );
@@ -171,19 +170,23 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
         centerTitle: true,
       ),
       body: buildCollectionView,
-      floatingActionButton: (role.toString().capitalize() == "Admin" || role.toString().capitalize() == "Manager") ? FloatingActionButton(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        onPressed: () {
-          showDialogTextRequired(
-            context,
-            "Masukkan Nama Cawangan",
-            "nama cawangan anda.",
-          );
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ):SizedBox(height: 0),
+      floatingActionButton:
+          (role.toString().capitalize() == "Admin" ||
+              role.toString().capitalize() == "Manager")
+          ? FloatingActionButton(
+              backgroundColor: color,
+              foregroundColor: Colors.white,
+              onPressed: () {
+                showDialogTextRequired(
+                  context,
+                  "Masukkan Nama Cawangan",
+                  "nama cawangan anda.",
+                );
+              },
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            )
+          : SizedBox(height: 0),
     );
   }
 
@@ -251,7 +254,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
                 nama = myController.text.capitalizeEach();
                 List<dynamic> rekod = <rekodCawangan>[];
                 if (!rekod_Cawangan.map((item) => item.nama).contains(nama)) {
-                  insertServer(rekodCawangan(nama, rekod, {},[]));
+                  insertServer(rekodCawangan(nama, rekod, {}, []));
                 }
               },
             ),
@@ -278,7 +281,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
 
   void removeItemInServer(int index) {
     var id = rekod_Cawangan[index].id;
-    deleteRow('Cawangan Rekod',id);
+    deleteRow('Cawangan Rekod', id);
     removeItem(index);
   }
 
@@ -297,7 +300,6 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
     deleteAllRecord("Cawangan Rekod");
     saveData();
   }
-
 
   // This block saves our list locally.
   void saveData() {

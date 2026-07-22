@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:intl/intl.dart';
 import 'package:sattayussop/Rekod_Cawangan/rekodCawanganDetail.dart';
-import 'dart:convert';
 import 'package:sattayussop/DocumentHelper.dart';
 import 'package:sattayussop/Rekod_Cawangan/rekodHargaCawangan.dart';
 import 'package:notification_center/notification_center.dart';
@@ -79,9 +78,13 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
 
   void _refreshView(bool refresh) {
     setState(() {
-      print("cawangan >> ${cawangan_id}");
-      rekodCawangan current = rekod_Cawangan.elementAt(rekod_Cawangan.indexWhere((e) => e.id == cawangan_id));
-      _rekodCawanganDetail = List<rekodCawanganDetail>.from(current.rekod).toList();
+      print("cawangan >> $cawangan_id");
+      rekodCawangan current = rekod_Cawangan.elementAt(
+        rekod_Cawangan.indexWhere((e) => e.id == cawangan_id),
+      );
+      _rekodCawanganDetail = List<rekodCawanganDetail>.from(
+        current.rekod,
+      ).toList();
       _rekodCawanganDetail.sort((a, b) => a.epochTime.compareTo(b.epochTime));
     });
   }
@@ -173,7 +176,7 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
                 ),
               ),
             );
-          }else if (item == '2') {
+          } else if (item == '2') {
             rekodCawangan current = rekod_Cawangan.elementAt(selectedIndex);
             Navigator.push(
               context,
@@ -184,7 +187,7 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
                 ),
               ),
             );
-          }else if (item == '3') {
+          } else if (item == '3') {
             removeAllServer();
           }
         },
@@ -194,7 +197,10 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
             PopupMenuItem(value: '2', child: Text("Rekod Bayaran")),
             PopupMenuItem(value: '3', child: Text("Padam Seluruh Data")),
           ];
-          return (role.toString().capitalize() == "Admin" || role.toString().capitalize() == "Manager") ? menu : [];
+          return (role.toString().capitalize() == "Admin" ||
+                  role.toString().capitalize() == "Manager")
+              ? menu
+              : [];
         },
       ),
     );
@@ -289,17 +295,17 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
         var epochTime = tempDate1.millisecondsSinceEpoch.toString();
 
         List<dynamic> bayaranList = [];
-        Map<String, dynamic> listHarga = rekod_Cawangan.elementAt(selectedIndex).rekodHarga;
+        Map<String, dynamic> listHarga = rekod_Cawangan
+            .elementAt(selectedIndex)
+            .rekodHarga;
         Map<String, dynamic> mapMenu = sortMenu(listHarga);
         for (var index = 0; index < listHarga.length; index++) {
           String nama = listHarga.keys.elementAt(index);
-            mapMenu[nama] = {
-              "bawa": 0,
-              'baki': 0,
-              'rosak': 0,
-            };
+          mapMenu[nama] = {"bawa": 0, 'baki': 0, 'rosak': 0};
         }
-        if (!_rekodCawanganDetail.map((item) => item.tarikh).contains(tarikhRekod)) {
+        if (!_rekodCawanganDetail
+            .map((item) => item.tarikh)
+            .contains(tarikhRekod)) {
           insertServer(
             rekodCawanganDetail(
               cawangan_id,
@@ -317,17 +323,18 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
           );
         }
       });
-
     }
   }
 
-
   Future<void> insertServer(rekodCawanganDetail usr) async {
-      final result = await insertUpdateTable('Cawangan Detail Rekod', usr.toMapServer());
-      var current = rekodCawanganDetail.fromMap(result);
-      usr.id = current.id;
-      print("id <<< ${usr}");
-      addItem(usr);
+    final result = await insertUpdateTable(
+      'Cawangan Detail Rekod',
+      usr.toMapServer(),
+    );
+    var current = rekodCawanganDetail.fromMap(result);
+    usr.id = current.id;
+    print("id <<< $usr");
+    addItem(usr);
   }
 
   // addItem adds our User Class item to list.
@@ -341,10 +348,9 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
     saveData();
   }
 
-
   void removeItemInServer(int index) {
     var id = _rekodCawanganDetail[index].id;
-    deleteRow('Cawangan Detail Rekod',id);
+    deleteRow('Cawangan Detail Rekod', id);
     removeItem(index);
   }
 
@@ -358,9 +364,12 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
     saveData();
   }
 
-
   void removeAllServer() {
-    deleteAllRecordFromForeign("Cawangan Detail Rekod","cawangan id",cawangan_id);
+    deleteAllRecordFromForeign(
+      "Cawangan Detail Rekod",
+      "cawangan id",
+      cawangan_id,
+    );
     removeAll();
   }
 
@@ -372,6 +381,7 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
     });
     saveData();
   }
+
   // This block saves our list locally.
   void saveData() {
     saveDataLocal();

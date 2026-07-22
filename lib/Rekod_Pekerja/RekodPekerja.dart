@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'dart:async';
-import 'package:intl/intl.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sattayussop/Rekod_Harian/RekodHarian.dart';
 import "package:sattayussop/DocumentHelper.dart";
 import 'package:string_capitalize/string_capitalize.dart';
 import 'package:notification_center/notification_center.dart';
@@ -44,8 +39,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
   bool filterCucuk = false;
   bool filterPekerja = false;
   List<DropdownMenuItem> dropDownList = <DropdownMenuItem>[];
-  List<String> roleList = ["Admin","Pekerja","Manager"];
-
+  List<String> roleList = ["Admin", "Pekerja", "Manager"];
 
   @override
   void initState() {
@@ -59,7 +53,10 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
     for (var index = 0; index < roleList.length; index++) {
       var role = roleList[index];
       dropDownList.add(
-        DropdownMenuItem<String>(value: role.isEmpty == true ? null : role, child: Text(role)),
+        DropdownMenuItem<String>(
+          value: role.isEmpty == true ? null : role,
+          child: Text(role),
+        ),
       );
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
@@ -290,7 +287,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
     if (index >= 0) {
       String nama = _rekodPekerjaView.elementAt(index);
       int indexSelected = rekod_Pekerja.indexWhere(
-            (element) => element.username == nama,
+        (element) => element.username == nama,
       );
       rekodPekerja current = rekod_Pekerja.elementAt(indexSelected);
       cucukSatay = current.cucuk;
@@ -325,235 +322,236 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-            title: Text(title),
-            content: StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-                return SizedBox(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height / 3,
-                  child: SingleChildScrollView(
-                    child: Form(
-                      key: formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        //position
-                        mainAxisSize: MainAxisSize.min,
-                        // wrap content in flutter
-                        children: <Widget>[
-                          Text(
-                            'Nama :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
+          title: Text(title),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height / 3,
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      //position
+                      mainAxisSize: MainAxisSize.min,
+                      // wrap content in flutter
+                      children: <Widget>[
+                        Text(
+                          'Nama :',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        TextFormField(
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return errorText;
+                            }
+                            return null;
+                          },
+                          // enableInteractiveSelection: false,
+                          // enabled:  (index >= 0) ? false : true,
+                          // autofocus: (index >= 0) ? false : true,
+                          autofocus: true,
+                          controller: myController,
+                          decoration: InputDecoration(),
+                          textInputAction:
+                              TextInputAction.next, // Moves focus to next.
+                        ),
+                        Text(
+                          'Nama Penuh :',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        TextFormField(
+                          autofocus: false,
+                          controller: myController2,
+                          decoration: InputDecoration(),
+                          textInputAction:
+                              TextInputAction.done, // Moves focus to next.
+                        ),
+                        Text(
+                          'Kad Pengenalan :',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        TextFormField(
+                          autofocus: false,
+                          controller: myController3,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(),
+                          textInputAction:
+                              TextInputAction.done, // Moves focus to next.
+                        ),
+                        Text(
+                          'Nama Bank :',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        TextFormField(
+                          autofocus: false,
+                          controller: myController4,
+                          decoration: InputDecoration(),
+                          textInputAction:
+                              TextInputAction.done, // Moves focus to next.
+                        ),
+                        Text(
+                          'Nombor Akaun :',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        TextFormField(
+                          autofocus: false,
+                          controller: myController5,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(),
+                          textInputAction:
+                              TextInputAction.done, // Moves focus to next.
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Cucuk Satay :',
+                              style: textStyle,
+                              textAlign: TextAlign.left,
+                            ),
+                            Switch(
+                              value: cucukSatay,
+                              onChanged: (value) {
+                                setState(() {
+                                  cucukSatay = value;
+                                });
+                              },
+                              activeThumbColor: color,
+                            ),
+                          ],
+                        ),
+                        Text(
+                          'Gaji Harian :',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        TextFormField(
+                          autofocus: true,
+                          controller: myController6,
+                          keyboardType: TextInputType.numberWithOptions(
+                            decimal: true,
                           ),
-                          TextFormField(
-                            // The validator receives the text that the user has entered.
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return errorText;
-                              }
-                              return null;
-                            },
-                            // enableInteractiveSelection: false,
-                            // enabled:  (index >= 0) ? false : true,
-                            // autofocus: (index >= 0) ? false : true,
-                            autofocus: true,
-                            controller: myController,
-                            decoration: InputDecoration(),
-                            textInputAction:
-                            TextInputAction.next, // Moves focus to next.
-                          ),
-                          Text(
-                            'Nama Penuh :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
-                          ),
-                          TextFormField(
-                            autofocus: false,
-                            controller: myController2,
-                            decoration: InputDecoration(),
-                            textInputAction:
-                            TextInputAction.done, // Moves focus to next.
-                          ),
-                          Text(
-                            'Kad Pengenalan :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
-                          ),
-                          TextFormField(
-                            autofocus: false,
-                            controller: myController3,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(),
-                            textInputAction:
-                            TextInputAction.done, // Moves focus to next.
-                          ),
-                          Text(
-                            'Nama Bank :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
-                          ),
-                          TextFormField(
-                            autofocus: false,
-                            controller: myController4,
-                            decoration: InputDecoration(),
-                            textInputAction:
-                            TextInputAction.done, // Moves focus to next.
-                          ),
-                          Text(
-                            'Nombor Akaun :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
-                          ),
-                          TextFormField(
-                            autofocus: false,
-                            controller: myController5,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(),
-                            textInputAction:
-                            TextInputAction.done, // Moves focus to next.
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                'Cucuk Satay :',
+                          decoration: InputDecoration(),
+                          textInputAction:
+                              TextInputAction.done, // Moves focus to next.
+                        ),
+                        !cucukSatay
+                            ? Text(
+                                'Gaji Simpan :',
                                 style: textStyle,
                                 textAlign: TextAlign.left,
-                              ),
-                              Switch(
-                                value: cucukSatay,
-                                onChanged: (value) {
-                                  setState(() {
-                                    cucukSatay = value;
-                                  });
-                                },
-                                activeThumbColor: color,
-                              ),
-                            ],
-                          ),
-                          Text(
-                            'Gaji Harian :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
-                          ),
-                          TextFormField(
-                            autofocus: true,
-                            controller: myController6,
-                            keyboardType: TextInputType.numberWithOptions(
-                              decimal: true,
+                              )
+                            : SizedBox.fromSize(),
+                        !cucukSatay
+                            ? TextFormField(
+                                autofocus: true,
+                                controller: myController7,
+                                keyboardType: TextInputType.numberWithOptions(
+                                  decimal: true,
+                                ),
+                                decoration: InputDecoration(),
+                                textInputAction: TextInputAction
+                                    .done, // Moves focus to next.
+                              )
+                            : SizedBox.fromSize(),
+                        Text(
+                          'Role Login :',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        DropdownButtonFormField(
+                          isExpanded: true,
+                          initialValue: myController8.text,
+                          onChanged: (item) {
+                            role = item;
+                            myController8.text = role.capitalize();
+                          },
+                          items: dropDownList,
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Akses Sistem :',
+                              style: textStyle,
+                              textAlign: TextAlign.left,
                             ),
-                            decoration: InputDecoration(),
-                            textInputAction:
-                            TextInputAction.done, // Moves focus to next.
-                          ),
-                          !cucukSatay ? Text(
-                            'Gaji Simpan :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
-                          ) : SizedBox.fromSize(),
-                          !cucukSatay ? TextFormField(
-                            autofocus: true,
-                            controller: myController7,
-                            keyboardType: TextInputType.numberWithOptions(
-                              decimal: true,
+                            Switch(
+                              value: accessApps,
+                              onChanged: (value) {
+                                setState(() {
+                                  accessApps = value;
+                                });
+                              },
+                              activeThumbColor: color,
                             ),
-                            decoration: InputDecoration(),
-                            textInputAction:
-                            TextInputAction.done, // Moves focus to next.
-                          ) : SizedBox.fromSize(),
-                          Text(
-                            'Role Login :',
-                            style: textStyle,
-                            textAlign: TextAlign.left,
-                          ),
-                          DropdownButtonFormField(
-                            isExpanded: true,
-                            value: myController8.text,
-                            onChanged: (item) {
-                              role = item;
-                              myController8.text = role.capitalize();
-                            },
-                            items: dropDownList,
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                'Akses Sistem :',
-                                style: textStyle,
-                                textAlign: TextAlign.left,
-                              ),
-                              Switch(
-                                value: accessApps,
-                                onChanged: (value) {
-                                  setState(() {
-                                    accessApps = value;
-                                  });
-                                },
-                                activeThumbColor: color,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                );
+                ),
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Batal'),
+              onPressed: () {
+                Navigator.of(context).pop();
               },
             ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Batal'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: const Text('Simpan'),
-                onPressed: () {
-                  // Handle the submit action
-                  print("nama >> ${myController.text}");
-                  String nama = myController.text.capitalizeEach();
-                  String namaPenuh = myController2.text.capitalizeEach();
-                  String ic = myController3.text;
-                  String bank = myController4.text;
-                  String akaun = myController5.text;
-                  double gajiHarian = 0.000;
-                  double gajiSimpan = 0.000;
+            TextButton(
+              child: const Text('Simpan'),
+              onPressed: () {
+                // Handle the submit action
+                print("nama >> ${myController.text}");
+                String nama = myController.text.capitalizeEach();
+                String namaPenuh = myController2.text.capitalizeEach();
+                String ic = myController3.text;
+                String bank = myController4.text;
+                String akaun = myController5.text;
+                double gajiHarian = 0.000;
+                double gajiSimpan = 0.000;
 
-                  if (formKey.currentState!.validate()) {
-                    Navigator.of(context).pop();
-                    if (namaPenuh.isEmpty && nama.isNotEmpty) {
-                      namaPenuh = nama;
-                    }
-                    if (!(myController6.text.isEmpty)) {
-                      gajiHarian = myController6.text.totalDoubleNumber();
-                    }
-                    if (!(myController7.text.isEmpty)) {
-                      gajiSimpan = myController7.text.totalDoubleNumber();
-                    }
-                    List<dynamic> rekod = <rekodAmbilGaji>[];
-                    insertItem(
-                      rekodPekerja(
-                        nama,
-                        namaPenuh,
-                        ic,
-                        bank,
-                        akaun,
-                        gajiHarian,
-                        gajiSimpan,
-                        cucukSatay,
-                        role,
-                          accessApps,
-                        rekod
-                      ),
-                      index,
-                    );
+                if (formKey.currentState!.validate()) {
+                  Navigator.of(context).pop();
+                  if (namaPenuh.isEmpty && nama.isNotEmpty) {
+                    namaPenuh = nama;
                   }
-                },
-              ),
-            ],
-          );
+                  if (!(myController6.text.isEmpty)) {
+                    gajiHarian = myController6.text.totalDoubleNumber();
+                  }
+                  if (!(myController7.text.isEmpty)) {
+                    gajiSimpan = myController7.text.totalDoubleNumber();
+                  }
+                  List<dynamic> rekod = <rekodAmbilGaji>[];
+                  insertItem(
+                    rekodPekerja(
+                      nama,
+                      namaPenuh,
+                      ic,
+                      bank,
+                      akaun,
+                      gajiHarian,
+                      gajiSimpan,
+                      cucukSatay,
+                      role,
+                      accessApps,
+                      rekod,
+                    ),
+                    index,
+                  );
+                }
+              },
+            ),
+          ],
+        );
       },
     );
   }
@@ -586,43 +584,43 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
   Future<void> insertItem(rekodPekerja pekerja, int index) async {
     if (index >= 0) {
       var username = _rekodPekerjaView[index];
-      var id = rekod_Pekerja.elementAt(rekod_Pekerja.indexWhere((e) => e.username == username)).id;
+      var id = rekod_Pekerja
+          .elementAt(rekod_Pekerja.indexWhere((e) => e.username == username))
+          .id;
       pekerja.id = id;
-      print("rekod >>> ${id} | ${pekerja.toMapServer()} ");
+      print("rekod >>> $id | ${pekerja.toMapServer()} ");
       // insertUpdateTable('Pekerja Rekod', pekerja.toMapServer(), id: id);
     } else {
       // insertUpdateTable('Pekerja Rekod', pekerja.toMapServer());
     }
-    addItem(pekerja,index);
+    addItem(pekerja, index);
   }
 
   // addItem adds our User Class item to list.
   void addItem(rekodPekerja usr, int index) {
     if (index >= 0) {
       var id = rekod_Pekerja.indexWhere((e) => e.id == usr.id);
-      rekod_Pekerja[id] =
-          usr;
+      rekod_Pekerja[id] = usr;
     } else {
       rekod_Pekerja.add(usr);
     }
     saveData();
   }
 
-
   void removeItem(int index) {
     var nama = _rekodPekerjaView[index];
     int indexDeleted = rekod_Pekerja.indexWhere(
-          (element) => element.username == nama,
+      (element) => element.username == nama,
     );
     var id = rekod_Pekerja.elementAt(indexDeleted).id;
-    deleteRow('Pekerja Rekod',id);
+    deleteRow('Pekerja Rekod', id);
     removeInLocal(index);
   }
 
   void removeInLocal(int index) {
     String nama = _rekodPekerjaView.elementAt(index);
     int indexDeleted = rekod_Pekerja.indexWhere(
-          (element) => element.username == nama,
+      (element) => element.username == nama,
     );
     rekod_Pekerja.removeAt(indexDeleted);
     _rekodPekerjaView.removeAt(index);
@@ -631,9 +629,9 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
 
   // This block saves our list locally.
   void saveData() async {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Simpan Data')));
-      saveDataLocal();
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Simpan Data')));
+    saveDataLocal();
   }
 }
