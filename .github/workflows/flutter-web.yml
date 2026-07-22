@@ -33,6 +33,10 @@ jobs:
       - name: Build Flutter Web
         run: flutter build web --release
 
+      - name: Check Account
+        run: |
+              echo "ACCOUNT=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
+
       - name: Check build
         run: |
           ls -la build/web
