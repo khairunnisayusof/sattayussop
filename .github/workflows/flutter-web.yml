@@ -41,6 +41,7 @@ jobs:
         run: |
           ls -la build/web
           test -f build/web/index.html
+
       - name: Check Token Accounts
         run: |
           curl -s \
@@ -63,6 +64,11 @@ jobs:
         run: |
           curl -i \
           "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/sattayussop" \
+          -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
+      - name: List Pages Projects
+        run: |
+          curl -s \
+          "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects" \
           -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
 
       - name: Install Wrangler
