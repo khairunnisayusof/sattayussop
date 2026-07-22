@@ -65,19 +65,15 @@ jobs:
           curl -i \
           "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/sattayussop" \
           -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
-      - name: List Pages Projects
-        run: |
-          curl -s \
-          "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects" \
-          -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}"
 
       - name: Install Wrangler
         run: npm install -g wrangler
 
       - name: Deploy Cloudflare Pages
         run: |
-          wrangler pages deploy build/web \
-            --project-name=sattayussop
+          npx wrangler pages deploy build/web \
+          --project-name sattayussop \
+          --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
