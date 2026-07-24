@@ -25,6 +25,7 @@ List<rekodList> rekod_List = <rekodList>[];
 List<rekodCawangan> rekod_Cawangan = <rekodCawangan>[];
 List<rekodCucuk> rekod_Cucuk = <rekodCucuk>[];
 List<rekodPelanggan> rekod_Pelanggan = <rekodPelanggan>[];
+List<rekodKategoriMenu> rekod_Kategori = <rekodKategoriMenu>[];
 List<rekodMenu> rekod_Menu = <rekodMenu>[];
 List<rekodPekerja> rekod_Pekerja = <rekodPekerja>[];
 List<rekodRunner> rekod_Runner = <rekodRunner>[];
@@ -69,6 +70,9 @@ Future<void> saveDataLocal() async {
     rekod_Pekerja.map((e) => e.toMap()).toList(),
   );
   await sharedPreferences?.setString("rekodPekerja", jsonstringPekerja);
+
+  final jsonstringKategoriMenu = jsonEncode(rekod_Kategori.map((e) => e.toMap()).toList());
+  await sharedPreferences?.setString("rekodKategori", jsonstringKategoriMenu);
 
   final jsonstringMenu = jsonEncode(rekod_Menu.map((e) => e.toMap()).toList());
   await sharedPreferences?.setString("rekodMenu", jsonstringMenu);
@@ -124,6 +128,29 @@ Future<void> loadData() async {
   role = sharedPreferences?.getString("role") ?? '';
   user_id = sharedPreferences?.getInt("userId") ?? 0;
 
+  final kategoriList = sharedPreferences?.getString("rekodKategoriMenu");
+  if (kategoriList != null) {
+    final List data = jsonDecode(kategoriList);
+    rekod_Kategori = data
+        .map((e) => rekodKategoriMenu.fromMap(Map<String, dynamic>.from(e)))
+        .toList();
+    final list = sortMenuList(rekod_Kategori);
+    rekod_Kategori = list as List<rekodKategoriMenu>;
+  } else {
+    await sharedPreferences?.remove("rekodKategori");
+  }
+
+  final menuList = sharedPreferences?.getString("rekodMenu");
+  if (menuList != null) {
+    final List data = jsonDecode(menuList);
+    rekod_Menu = data
+        .map((e) => rekodMenu.fromMap(Map<String, dynamic>.from(e)))
+        .toList();
+    rekod_Menu.sort((a, b) => a.jenis.compareTo(b.jenis));
+  } else {
+    await sharedPreferences?.remove("rekodMenu");
+  }
+
   final userString = sharedPreferences?.getString("rekodPekerja");
   if (userString != null) {
     final List data = jsonDecode(userString);
@@ -144,16 +171,6 @@ Future<void> loadData() async {
     await sharedPreferences?.remove("rekodHarian");
   }
 
-  final menuList = sharedPreferences?.getString("rekodMenu");
-  if (menuList != null) {
-    final List data = jsonDecode(menuList);
-    rekod_Menu = data
-        .map((e) => rekodMenu.fromMap(Map<String, dynamic>.from(e)))
-        .toList();
-    rekod_Menu.sort((a, b) => a.jenis.compareTo(b.jenis));
-  } else {
-    await sharedPreferences?.remove("rekodMenu");
-  }
 
   final rekodCucukjsonString = sharedPreferences?.getString("rekodCucuk");
   if (rekodCucukjsonString != null) {

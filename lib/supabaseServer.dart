@@ -105,6 +105,10 @@ Future<void> loadDataServer() async {
         .toList();
     rekod_Pekerja.sort((a, b) => a.username.compareTo(b.username));
 
+    final kategoriList = await selectTable('Kategori Menu Rekod', "");
+    rekod_Kategori = kategoriList.map((e) => rekodKategoriMenu.fromMap(e)).toList();
+    rekod_Kategori.sort((a, b) => a.jenis.compareTo(b.jenis));
+
     final menuList = await selectTable('Menu Rekod', "");
     rekod_Menu = menuList.map((e) => rekodMenu.fromMap(e)).toList();
     rekod_Menu.sort((a, b) => a.jenis.compareTo(b.jenis));

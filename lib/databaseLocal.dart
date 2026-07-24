@@ -1,27 +1,56 @@
 import 'DocumentHelper.dart';
 
+class rekodKategoriMenu {
+  int id = -1;
+  String jenis = '';
+
+  rekodKategoriMenu(this.jenis);
+
+  rekodKategoriMenu.fromMap(
+      Map<String, dynamic> map,
+      ) // This Function helps to convert our Map into our User Object
+      : id = map["id"],
+        jenis = map["jenis"];
+
+  Map<String, dynamic> toMap() {
+    // This Function helps to convert our User Object into a Map.
+    return {"id": id, "jenis": jenis};
+  }
+
+  Map<String, dynamic> toMapServer() {
+    // This Function helps to convert our User Object into a Map.
+    return {"id": id, "jenis": jenis};
+  }
+
+  factory rekodKategoriMenu.fromJson(Map<String, dynamic> toMap) {
+    return rekodKategoriMenu.fromMap(toMap);
+  }
+}
+
 class rekodMenu {
   int id = -1;
   String jenis = '';
+  int kategori = -1;
   num Harga = 0.00;
 
-  rekodMenu(this.jenis, this.Harga);
+  rekodMenu(this.jenis,this.kategori, this.Harga);
 
   rekodMenu.fromMap(
     Map<String, dynamic> map,
   ) // This Function helps to convert our Map into our User Object
   : id = map["id"],
       jenis = map["Menu"],
+        kategori = map["kategori"] ?? -1,
       Harga = map["Harga"];
 
   Map<String, dynamic> toMap() {
     // This Function helps to convert our User Object into a Map.
-    return {"id": id, "Menu": jenis, "Harga": Harga};
+    return {"id": id, "Menu": jenis, "kategori": kategori, "Harga": Harga};
   }
 
   Map<String, dynamic> toMapServer() {
     // This Function helps to convert our User Object into a Map.
-    return {"id": id, "Menu": jenis, "Harga": Harga};
+    return {"id": id, "Menu": jenis, "kategori": kategori, "Harga": Harga};
   }
 
   factory rekodMenu.fromJson(Map<String, dynamic> toMap) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:notification_center/notification_center.dart';
 import 'package:provider/provider.dart';
@@ -88,6 +89,7 @@ class _OrderPageState extends State<OrderPage> {
   List<rekodPesananPelanggan> order = <rekodPesananPelanggan>[];
   List<DropdownMenuItem<String>> dropDownList = <DropdownMenuItem<String>>[];
   List<rekodMenu> rekod_Menu = <rekodMenu>[];
+  List<rekodKategoriMenu> rekod_Kategori = <rekodKategoriMenu>[];
   DateTime selectedDate = DateTime.now();
   String TarikhPesanan = "Sila tetapkan tarikh pesanan anda";
   String tarikhOrder = "";
@@ -99,15 +101,18 @@ class _OrderPageState extends State<OrderPage> {
   num harga = 0.00;
   int usrID = -1;
   String? selectedMenu;
+  Map<String, List<rekodPesananPelanggan>> grouped = {};
+
 
   Future<void> loadData() async {
     NotificationCenter().subscribe('refreshData', _refreshView);
-    final menuListData = await selectTable('Menu Rekod', "");
-    rekod_Menu = menuListData.map((e) => rekodMenu.fromMap(e)).toList();
-    rekod_Menu.sort((a, b) => a.jenis.compareTo(b.jenis));
-    final list = sortMenuList(rekod_Menu);
     menuList.clear();
     dropDownList.clear();
+    final menuListData = await selectTable('Menu Rekod', "");
+    rekod_Menu = menuListData.map((e) => rekodMenu.fromMap(e)).toList();
+    final kategoriListData = await selectTable('Kategori Menu Rekod', "");
+    rekod_Kategori = kategoriListData.map((e) => rekodKategoriMenu.fromMap(e)).toList();
+    final list = sortMenuList(rekod_Menu);
 
     for (var i = 0; i < list.length; i++) {
       var element = list.elementAt(i);
@@ -120,43 +125,52 @@ class _OrderPageState extends State<OrderPage> {
         nama = "Box Satay";
         note = "• jika pesanan melebihi 200 cucuk";
       }else if (nama.toLowerCase().contains("kuah kacang")) {
+        nama = nama  + " (1 Kg)";
         textHarga = textHarga + " (1 Kg)";
       }
-      menuList.insert(menuList.length, element);
-
-      dropDownList.add(
-        DropdownMenuItem<String>(
-          value: "${element.id}",
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      nama,
-                      style: titleTextStyle,
-                    ),
-                    if (note.isNotEmpty)
-                      Text(
-                        note,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              Text(
-                "RM $textHarga",
-                style: textStyleNormal,
-              ),
-            ],
-          )
-        ),
+      print("rekod >>>  ${element.jenis}");
+      var kategori = rekod_Kategori.firstWhere(
+            (k) => k.id == element.kategori
       );
+      grouped.putIfAbsent(kategori.jenis, () => []);
+      grouped[kategori.jenis]!.add(rekodPesananPelanggan(-1, nama, 0, element.Harga, 0.00));
+      menuList.insert(menuList.length, element);
+      // order.insert(
+      //   order.length,
+      //   rekodPesananPelanggan(-1, nama, 0, element.Harga, 0.00));
+      // dropDownList.add(
+      //   DropdownMenuItem<String>(
+      //     value: "${element.id}",
+      //     child: Row(
+      //       children: [
+      //         Expanded(
+      //           child: Column(
+      //             crossAxisAlignment: CrossAxisAlignment.start,
+      //             mainAxisSize: MainAxisSize.min,
+      //             children: [
+      //               Text(
+      //                 nama,
+      //                 style: titleTextStyle,
+      //               ),
+      //               if (note.isNotEmpty)
+      //                 Text(
+      //                   note,
+      //                   style: TextStyle(
+      //                     fontSize: 12,
+      //                     color: Colors.grey.shade600,
+      //                   ),
+      //                 ),
+      //             ],
+      //           ),
+      //         ),
+      //         Text(
+      //           "RM $textHarga",
+      //           style: textStyleNormal,
+      //         ),
+      //       ],
+      //     )
+      //   ),
+      // );
     }
     darkMode = await loadDataDarkMode();
     if (mounted) {
@@ -208,7 +222,7 @@ class _OrderPageState extends State<OrderPage> {
         backgroundColor: color,
         foregroundColor: Colors.transparent,
         title: const Text(
-          "Selamat Datang ke Satay Ussop! 👋",
+          "Selamat Datang ke Sattay Ussop! 👋",
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -234,11 +248,9 @@ class _OrderPageState extends State<OrderPage> {
           ),
           onTap: () async {
             if (!((_formKeyDetail.currentState!.validate()) ||
-                (order.isEmpty && _formKey.currentState!.validate()) ||
                 _formKeyDate.currentState!.validate())) {
               return;
             }
-            print(total);
             String nama = namaController.text.isEmpty
                 ? "Customer"
                 : namaController.text;
@@ -260,7 +272,7 @@ class _OrderPageState extends State<OrderPage> {
                 order,
                 total,
                 0.00,
-                0.00,
+                total,
                 false,
               ),
             );
@@ -350,7 +362,9 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda melalui WhatsApp 
                     decoration: InputDecoration(labelText: ""),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
+                      if (value == null || value
+                          .trim()
+                          .isEmpty) {
                         return "Sila masukkan no. telefon anda untuk kami hubungi.";
                       }
                       return null;
@@ -375,322 +389,277 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda melalui WhatsApp 
             ),
 
             const SizedBox(height: 10),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text("Menu Order : ", style: textStyle),
-
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: selectedMenu,
-                          items: dropDownList,
-                          selectedItemBuilder: (context) {
-                            return menuList.map((element) {
-                              return Text(
-                                element.jenis.toLowerCase().contains("box") ? "Box Satay" : element.jenis,
-                                overflow: TextOverflow.ellipsis,
-                              );
-                            }).toList();
-                          },
-                          isExpanded: true,
-                          autovalidateMode:
-                              AutovalidateMode.onUserInteractionIfError,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return "Sila pilih menu pesanan anda.";
-                            }
-                            return null;
-                          },
-                          hint: Text("Sila pilih menu yang anda ingin pesan"),
-                          onChanged: (value) {
-                            var id = int.parse(value.toString());
-                            final index = menuList.indexWhere(
-                              (e) => e.id == id,
-                            );
-
-                            if (index == -1) {
-                              print("Menu tidak dijumpai: $id");
-                              return;
-                            }
-                            rekodMenu current = menuList.elementAt(index);
-                            setState(() {
-                              selectedMenu = value;
-                              jenis = current.jenis;
-                              harga = current.Harga;
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Text("Kuantiti       : ", style: textStyle),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: TextFormField(
-                          controller: kuantitiController,
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                          decoration: const InputDecoration(labelText: ""),
-                          autovalidateMode:
-                              AutovalidateMode.onUserInteractionIfError,
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return "Sila masukkan kuantiti yang ingin dipesan.";
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: ListTile(
-                  title: Text(
-                    "Tambah Pesanan",
-                    style: textStyleBtn,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              onTap: () async {
-                num kuantiti = 0;
-                if (_formKey.currentState!.validate()) {
-                  if (kuantitiController.text.contains(".")) {
-                    kuantiti = kuantitiController.text.toDoubleNumberFormat();
-                  } else {
-                    kuantiti = kuantitiController.text.totalIntNumber();
-                  }
-                  if (jenis.isNotEmpty && kuantiti > 0 && harga > 0) {
-                    num jumlah = kuantiti * harga;
-                    order.insert(
-                      order.length,
-                      rekodPesananPelanggan(-1, jenis, kuantiti, harga, jumlah),
-                    );
-                    setState(() {
-                      kuantitiController.clear();
-                      selectedMenu = null;
-                      jenis = "";
-                      harga = 0;
-                    });
-                  }
-                }
-              },
-            ),
+            headerCell("SENARAI MENU SATTAY USSOP"),
+            // Form(
+            //   key: _formKey,
+            //   child: Column(
+            //     children: [
+            //       Row(
+            //         children: [
+            //           Text("Menu Order : ", style: textStyle),
+            //
+            //           const SizedBox(width: 10),
+            //           Expanded(
+            //             child: DropdownButtonFormField<String>(
+            //               value: selectedMenu,
+            //               items: dropDownList,
+            //               selectedItemBuilder: (context) {
+            //                 return menuList.map((element) {
+            //                   return Text(
+            //                     element.jenis.toLowerCase().contains("box")
+            //                         ? "Box Satay"
+            //                         : element.jenis,
+            //                     overflow: TextOverflow.ellipsis,
+            //                   );
+            //                 }).toList();
+            //               },
+            //               isExpanded: true,
+            //               autovalidateMode:
+            //               AutovalidateMode.onUserInteractionIfError,
+            //               validator: (value) {
+            //                 if (value == null || value
+            //                     .trim()
+            //                     .isEmpty) {
+            //                   return "Sila pilih menu pesanan anda.";
+            //                 }
+            //                 return null;
+            //               },
+            //               hint: Text("Sila pilih menu yang anda ingin pesan"),
+            //               onChanged: (value) {
+            //                 var id = int.parse(value.toString());
+            //                 final index = menuList.indexWhere(
+            //                       (e) => e.id == id,
+            //                 );
+            //
+            //                 if (index == -1) {
+            //                   print("Menu tidak dijumpai: $id");
+            //                   return;
+            //                 }
+            //                 rekodMenu current = menuList.elementAt(index);
+            //                 setState(() {
+            //                   selectedMenu = value;
+            //                   jenis = current.jenis;
+            //                   harga = current.Harga;
+            //                 });
+            //               },
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //       const SizedBox(height: 10),
+            //       Row(
+            //         children: [
+            //           Text("Kuantiti       : ", style: textStyle),
+            //           const SizedBox(width: 10),
+            //           Expanded(
+            //             child: TextFormField(
+            //               controller: kuantitiController,
+            //               keyboardType: const TextInputType.numberWithOptions(
+            //                 decimal: true,
+            //               ),
+            //               decoration: const InputDecoration(labelText: ""),
+            //               autovalidateMode:
+            //               AutovalidateMode.onUserInteractionIfError,
+            //               validator: (value) {
+            //                 if (value == null || value
+            //                     .trim()
+            //                     .isEmpty) {
+            //                   return "Sila masukkan kuantiti yang ingin dipesan.";
+            //                 }
+            //                 return null;
+            //               },
+            //             ),
+            //           ),
+            //         ],
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // const SizedBox(height: 10),
+            // GestureDetector(
+            //   child: Container(
+            //     margin: const EdgeInsets.symmetric(horizontal: 10),
+            //     decoration: BoxDecoration(
+            //       color: color,
+            //       borderRadius: BorderRadius.circular(10),
+            //     ),
+            //     child: ListTile(
+            //       title: Text(
+            //         "Tambah Pesanan",
+            //         style: textStyleBtn,
+            //         textAlign: TextAlign.center,
+            //       ),
+            //     ),
+            //   ),
+            //   onTap: () async {
+            //     num kuantiti = 0;
+            //     if (_formKey.currentState!.validate()) {
+            //       if (kuantitiController.text.contains(".")) {
+            //         kuantiti = kuantitiController.text.toDoubleNumberFormat();
+            //       } else {
+            //         kuantiti = kuantitiController.text.totalIntNumber();
+            //       }
+            //       if (jenis.isNotEmpty && kuantiti > 0 && harga > 0) {
+            //         num jumlah = kuantiti * harga;
+            //         order.insert(
+            //           order.length,
+            //           rekodPesananPelanggan(-1, jenis, kuantiti, harga, jumlah),
+            //         );
+            //         setState(() {
+            //           kuantitiController.clear();
+            //           selectedMenu = null;
+            //           jenis = "";
+            //           harga = 0;
+            //         });
+            //       }
+            //     }
+            //   },
+            // ),
             const SizedBox(height: 20),
             Divider(thickness: 2, height: 10, color: Colors.grey),
-             // SingleChildScrollView(
-             //    child: Table(
-             //      border: TableBorder.all(color: Colors.grey),
-             //      columnWidths: const <int, TableColumnWidth>{
-             //        0: FlexColumnWidth(),
-             //        1: FixedColumnWidth(70),
-             //        2: FixedColumnWidth(60),
-             //        3: FixedColumnWidth(80),
-             //        4: FixedColumnWidth(80),
-             //      },
-             //      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-             //      children: [
-             //        TableRow(
-             //          children: [
-             //            headerCell("Produk"),
-             //            headerCell("Kuantiti"),
-             //            headerCell("Harga"),
-             //            headerCell("Jumlah"),
-             //            headerCell("Tindakan"),
-             //          ],
-             //        ),
-             //        // Data
-             //        ...order.asMap().entries.map((entry) {
-             //          final index = entry.key;
-             //          final current = entry.value;
-             //
-             //          String currentPesanan = current.pesanan.toStringAsFixed(
-             //            1,
-             //          );
-             //          if (currentPesanan.endsWith(".0")) {
-             //            currentPesanan = current.pesanan.toStringAsFixed(0);
-             //          }
-             //
-             //          return TableRow(
-             //            children: [
-             //              tableCell(
-             //                current.jenis,
-             //                onTap: () {
-             //                  showDialogTextRequired(
-             //                    context,
-             //                    "Masukkan data ${current.jenis}",
-             //                    index,
-             //                  );
-             //                },
-             //              ),
-             //              tableCell(currentPesanan),
-             //              tableCell(money(current.Harga)),
-             //              tableCell(money(current.Jumlah)),
-             //              // Actions
-             //              SizedBox(
-             //                height: 50,
-             //                child: Row(
-             //                  mainAxisAlignment: MainAxisAlignment.center,
-             //                  children: [
-             //                  Tooltip(
-             //                  message: "Edit",
-             //                  child:IconButton(
-             //                      icon: const Icon(Icons.edit),
-             //                      iconSize: 22,
-             //                      padding: EdgeInsets.zero,
-             //                      constraints: const BoxConstraints(
-             //                        minWidth: 24,
-             //                        minHeight: 24,
-             //                      ),
-             //                      splashRadius: 16,
-             //                      onPressed: () {
-             //                        showDialogTextRequired(
-             //                          context,
-             //                          "Masukkan data ${current.jenis}",
-             //                          index,
-             //                        );
-             //                      },
-             //                    )
-             //                  ),
-             //                Tooltip(
-             //                  message: "Edit",
-             //                  child:IconButton(
-             //                      icon: const Icon(
-             //                        Icons.remove_circle,
-             //                        color: Colors.red,
-             //                      ),
-             //                      iconSize: 22,
-             //                      padding: EdgeInsets.zero,
-             //                      constraints: const BoxConstraints(
-             //                        minWidth: 24,
-             //                        minHeight: 24,
-             //                      ),
-             //                      splashRadius: 16,
-             //                      onPressed: () {
-             //                        setState(() {
-             //                          order.removeAt(index);
-             //                        });
-             //                      },
-             //                    )
-             //                ),
-             //                  ],
-             //                ),
-             //              ),
-             //            ],
-             //          );
-             //        }),
-             //      ],
-             //    ),
-             //  ),
+            Expanded(
+              child: Column(
+                children: grouped.entries.map((entry) {
+                  String kategori = entry.key;
+                  List<rekodPesananPelanggan> menus = entry.value;
 
-            ...order.asMap().entries.map((entry) {
-              final index = entry.key;
-              final item = entry.value;
-              return Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Bahagian kiri
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item.jenis,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 8),
-
-                                Text(
-                                  "Kuantiti : ${item.pesanan}",
-                                  style: const TextStyle(fontSize: 15),
-                                ),
-                              ],
+                      // HEADER KATEGORI
+                      Container(
+                        margin: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: color,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.restaurant_menu,
+                              color: Colors.white,
                             ),
-                          ),
-
-                          // Bahagian kanan
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                "RM ${item.Jumlah.toStringAsFixed(2)}",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: color,
-                                ),
+                            const SizedBox(width: 10),
+                            Text(
+                              kategori,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
-
-                              const SizedBox(height: 15),
-
-                              Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit),
-                                    onPressed: () {
-                                      showDialogTextRequired(context, "Kemaskini order ${item.jenis}", index);
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        order.removeAt(index);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              );
 
-            }),
+
+                      // LIST MENU
+                      ...menus.map((item) {
+                        return buildMenu(item);
+                      }),
+
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+
+            // ...order.asMap().entries.map((entry) {
+            //   final index = entry.key;
+            //   final item = entry.value;
+            //   return Card(
+            //     elevation: 2,
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(16),
+            //     ),
+            //     child: Padding(
+            //       padding: const EdgeInsets.all(16),
+            //       child: Column(
+            //         children: [
+            //           Row(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               // Bahagian kiri
+            //               Expanded(
+            //                 child: Column(
+            //                   crossAxisAlignment: CrossAxisAlignment.start,
+            //                   children: [
+            //                     Text(
+            //                       item.jenis,
+            //                       style: const TextStyle(
+            //                         fontSize: 18,
+            //                         fontWeight: FontWeight.bold,
+            //                       ),
+            //                     ),
+            //
+            //                     const SizedBox(height: 8),
+            //
+            //                     Text(
+            //                       "Kuantiti : ${item.pesanan}",
+            //                       style: const TextStyle(fontSize: 15),
+            //                     ),
+            //                   ],
+            //                 ),
+            //               ),
+            //
+            //               // Bahagian kanan
+            //               Column(
+            //                 crossAxisAlignment: CrossAxisAlignment.end,
+            //                 children: [
+            //                   Text(
+            //                     "RM ${item.Jumlah.toStringAsFixed(2)}",
+            //                     style: TextStyle(
+            //                       fontSize: 20,
+            //                       fontWeight: FontWeight.bold,
+            //                       color: color,
+            //                     ),
+            //                   ),
+            //
+            //                   const SizedBox(height: 15),
+            //
+            //                   Row(
+            //                     children: [
+            //                       IconButton(
+            //                         icon: const Icon(Icons.edit),
+            //                         onPressed: () {
+            //                           showDialogTextRequired(context, "Kemaskini order ${item.jenis}", index);
+            //                         },
+            //                       ),
+            //                       IconButton(
+            //                         icon: const Icon(
+            //                           Icons.delete,
+            //                           color: Colors.red,
+            //                         ),
+            //                         onPressed: () {
+            //                           setState(() {
+            //                             order.removeAt(index);
+            //                           });
+            //                         },
+            //                       ),
+            //                     ],
+            //                   ),
+            //                 ],
+            //               ),
+            //             ],
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   );
+            //
+            // }),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(10),
               child: Column(
                 children: [
-                  order.isNotEmpty ? Divider(thickness: 2, height: 10, color: Colors.grey) : const SizedBox(height: 0),
+                  order.isNotEmpty
+                      ? Divider(thickness: 2, height: 10, color: Colors.grey)
+                      : const SizedBox(height: 0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -743,6 +712,40 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda melalui WhatsApp 
     }
 
     return child;
+  }
+
+  Widget buildMenu(rekodPesananPelanggan item) {
+    return Card(
+      margin: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 6,
+      ),
+      child: ListTile(
+        title: Text(item.jenis),
+        subtitle: Text(
+          "RM ${item.Harga.toStringAsFixed(2)}",
+        ),
+        trailing: QuantityButton(
+          quantity: item.pesanan,
+          colors: color,
+          onChanged: (qty) {
+            setState(() {
+              item.Harga = item.Harga.toDouble();
+              item.pesanan = qty;
+              item.Jumlah = qty * item.Harga;
+              if (qty > 0) {
+                order.insert(order.length, item);
+              } else {
+                var orderIndex = order.indexWhere((e) => e.jenis == item.jenis);
+                print("rekod >>>>>> ${item.jenis} >> $orderIndex");
+                order.removeAt(orderIndex);
+              }
+              print("rekod >>>>>> ${order.length}");
+            });
+          },
+        ),
+      ),
+    );
   }
 
   void _selectDate(BuildContext context) {
@@ -1068,5 +1071,107 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda melalui WhatsApp 
       usrID = -1;
       order.clear();
     });
+  }
+}
+class QuantityButton extends StatefulWidget {
+  final num quantity;
+  final ValueChanged<int> onChanged;
+  final Color colors;
+
+  const QuantityButton({
+    super.key,
+    required this.quantity,
+    required this.onChanged,
+    required this.colors,
+  });
+
+  @override
+  State<QuantityButton> createState() => _QuantityButtonState();
+}
+
+class _QuantityButtonState extends State<QuantityButton> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(
+      text: widget.quantity.toString(),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant QuantityButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.quantity.toString() != controller.text) {
+      controller.text = widget.quantity.toString();
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  void updateQty(int qty) {
+    widget.onChanged(qty);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: widget.colors),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            onTap: () {
+              int qty = int.tryParse(controller.text) ?? 0;
+              if (qty > 0) updateQty(qty - 1);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Icon(Icons.remove,
+                  color: widget.colors),
+            ),
+          ),
+
+          SizedBox(
+            width: 60,
+            child: TextField(
+              controller: controller,
+              textAlign: TextAlign.center,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                updateQty(int.tryParse(value) ?? 0);
+              },
+            ),
+          ),
+
+          InkWell(
+            onTap: () {
+              int qty = int.tryParse(controller.text) ?? 0;
+              updateQty(qty + 1);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Icon(Icons.add,
+                  color: widget.colors),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
