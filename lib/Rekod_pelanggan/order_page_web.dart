@@ -481,9 +481,9 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
                     ),
 
                     // LIST MENU
-                    ...menus.map((item) {
-                      return buildMenu(item);
-                    }),
+                    // ...menus.map((item) {
+                    //   return buildMenu(item);
+                    // }),
 
                   ],
                 );
@@ -596,98 +596,96 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
                     ),
                   ),
 
-                  const SizedBox(width: 8),
+              //     if (constraints.maxWidth > 250)
+              //     QuantityButton(
+              // quantity: item.pesanan,
+              // colors: color,
+              // onChanged: (qty) {
+              // setState(() {
+              // item.Harga = item.Harga.toDouble();
+              // item.pesanan = qty;
+              // item.Jumlah = qty * item.Harga.toDouble();
+              //
+              // var orderIndex =
+              // order.indexWhere((e) => e.jenis == item.jenis);
+              //
+              // if (qty > 0) {
+              // if (orderIndex >= 0) {
+              // order[orderIndex] = item;
+              // } else {
+              // order.insert(order.length, item);
+              // }
+              // } else {
+              // if (orderIndex >= 0) {
+              // order.removeAt(orderIndex);
+              // }
+              // }
+              // });
+              // },
+              // )
+              //     else
+              //       FittedBox(
+              //           child:
+              //           QuantityButton(
+              //             quantity: item.pesanan,
+              //             colors: color,
+              //             onChanged: (qty) {
+              //               setState(() {
+              //                 item.Harga = item.Harga.toDouble();
+              //                 item.pesanan = qty;
+              //                 item.Jumlah = qty * item.Harga.toDouble();
+              //
+              //                 var orderIndex =
+              //                 order.indexWhere((e) => e.jenis == item.jenis);
+              //
+              //                 if (qty > 0) {
+              //                   if (orderIndex >= 0) {
+              //                     order[orderIndex] = item;
+              //                   } else {
+              //                     order.insert(order.length, item);
+              //                   }
+              //                 } else {
+              //                   if (orderIndex >= 0) {
+              //                     order.removeAt(orderIndex);
+              //                   }
+              //                 }
+              //               });
+              //             },
+              //           )
+              //       ),
 
-                  if (constraints.maxWidth > 250)
+                  SizedBox(
+                    width: 100,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: QuantityButton(
+                        quantity: item.pesanan,
+                        colors: color,
+                        onChanged: (qty) {
+                          setState(() {
+                            item.Harga = item.Harga.toDouble();
+                            item.pesanan = qty;
+                            item.Jumlah = qty * item.Harga.toDouble();
 
-                  QuantityButton(
-              quantity: item.pesanan,
-              colors: color,
-              onChanged: (qty) {
-              setState(() {
-              item.Harga = item.Harga.toDouble();
-              item.pesanan = qty;
-              item.Jumlah = qty * item.Harga.toDouble();
+                            var orderIndex =
+                            order.indexWhere((e) => e.jenis == item.jenis);
 
-              var orderIndex =
-              order.indexWhere((e) => e.jenis == item.jenis);
-
-              if (qty > 0) {
-              if (orderIndex >= 0) {
-              order[orderIndex] = item;
-              } else {
-              order.insert(order.length, item);
-              }
-              } else {
-              if (orderIndex >= 0) {
-              order.removeAt(orderIndex);
-              }
-              }
-              });
-              },
-              )
-                  else
-                    FittedBox(
-                        child:
-                        QuantityButton(
-                          quantity: item.pesanan,
-                          colors: color,
-                          onChanged: (qty) {
-                            setState(() {
-                              item.Harga = item.Harga.toDouble();
-                              item.pesanan = qty;
-                              item.Jumlah = qty * item.Harga.toDouble();
-
-                              var orderIndex =
-                              order.indexWhere((e) => e.jenis == item.jenis);
-
-                              if (qty > 0) {
-                                if (orderIndex >= 0) {
-                                  order[orderIndex] = item;
-                                } else {
-                                  order.insert(order.length, item);
-                                }
+                            if (qty > 0) {
+                              if (orderIndex >= 0) {
+                                order[orderIndex] = item;
                               } else {
-                                if (orderIndex >= 0) {
-                                  order.removeAt(orderIndex);
-                                }
+                                order.insert(order.length, item);
                               }
-                            });
-                          },
-                        )
+                            } else {
+                              if (orderIndex >= 0) {
+                                order.removeAt(orderIndex);
+                              }
+                            }
+                          });
+                        },
+                      ),
                     ),
-                  // SizedBox(
-                  //   width: 100,
-                  //   child: FittedBox(
-                  //     fit: BoxFit.scaleDown,
-                  //     child: QuantityButton(
-                  //       quantity: item.pesanan,
-                  //       colors: color,
-                  //       onChanged: (qty) {
-                  //         setState(() {
-                  //           item.Harga = item.Harga.toDouble();
-                  //           item.pesanan = qty;
-                  //           item.Jumlah = qty * item.Harga.toDouble();
-                  //
-                  //           var orderIndex =
-                  //           order.indexWhere((e) => e.jenis == item.jenis);
-                  //
-                  //           if (qty > 0) {
-                  //             if (orderIndex >= 0) {
-                  //               order[orderIndex] = item;
-                  //             } else {
-                  //               order.insert(order.length, item);
-                  //             }
-                  //           } else {
-                  //             if (orderIndex >= 0) {
-                  //               order.removeAt(orderIndex);
-                  //             }
-                  //           }
-                  //         });
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
+                  ),
                 ],
               );
             }),
