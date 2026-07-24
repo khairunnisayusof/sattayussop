@@ -763,8 +763,12 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
 
   // addItem adds our User Class item to list.
   void addKategoriItem(rekodKategoriMenu usr, int index) {
-    final index = rekod_Kategori.indexWhere((e) => e.jenis == usr.jenis);
-    index == -1 ? rekod_Kategori.add(usr) : rekod_Kategori[index] = usr;
+    if (index < 0) {
+      rekod_Kategori.add(usr);
+    }else {
+      final index = rekod_Kategori.indexWhere((e) => e.id == usr.id);
+      rekod_Kategori[index] = usr;
+    }
     saveData();
   }
 
@@ -784,8 +788,12 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
 
   // addItem adds our User Class item to list.
   void addItem(rekodMenu usr, int index) {
-    final index = rekod_Menu.indexWhere((e) => e.jenis == usr.jenis);
-    index == -1 ? rekod_Menu.add(usr) : rekod_Menu[index] = usr;
+    if (index < 0) {
+      rekod_Menu.add(usr);
+    }else {
+      final index = rekod_Menu.indexWhere((e) => e.id == usr.id);
+      rekod_Menu[index] = usr;
+    }
     saveData();
   }
 

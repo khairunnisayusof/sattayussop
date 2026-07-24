@@ -40,6 +40,7 @@ class _OrderPageState extends State<OrderPage> {
   final _formKeyDate = GlobalKey<FormState>();
   final _formKey = GlobalKey<FormState>();
   bool darkMode = false;
+  bool firstTimeShow = true;
 
   final List<rekodMenu> menu = <rekodMenu>[];
   final num qty = 0;
@@ -105,6 +106,7 @@ class _OrderPageState extends State<OrderPage> {
 
 
   Future<void> loadData() async {
+    firstTimeShow = false;
     NotificationCenter().subscribe('refreshData', _refreshView);
     menuList.clear();
     dropDownList.clear();
@@ -210,6 +212,10 @@ class _OrderPageState extends State<OrderPage> {
   @override
   void initState() {
     super.initState();
+    if (firstTimeShow);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showNotice();
+    });
     loadData();
     print("rekod list >> ${rekod_Menu.length} | ${menuList.length}");
   }
@@ -279,417 +285,252 @@ class _OrderPageState extends State<OrderPage> {
           },
         ),
       ),
-      body: Form(
-        key: _formKeyDetail,
-        child: ListView(
-          padding: const EdgeInsets.all(15),
-          children: [
-            Text(
-              '''
-Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.
+      body: viewListOrder(),
+    );
+  }
 
-📌 Nota: Jumlah bayaran yang dipaparkan tidak termasuk caj penghantaran.
+  Future<void> showNotice() async {
+    bool agree = false;
 
-🚚 Penghantaran bergantung kepada ketersediaan runner pada waktu pesanan dibuat.
-
-Selepas kami menerima pesanan anda, kami akan menghubungi anda melalui WhatsApp untuk:
-
-✅ Mengesahkan pesanan anda.
-🚚 Memaklumkan sama ada penghantaran tersedia.
-💰 Memberikan jumlah bayaran keseluruhan termasuk caj penghantaran (jika berkenaan).''',
-              style: textStyle,
-              textAlign: .center,
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Text("Tarikh          : ", style: textStyle),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Form(
-                    key: _formKeyDate,
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: dateController,
-                          readOnly: true,
-                          onTap: () => _selectDate(context),
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Sila pilih tarikh';
-                            }
-                            return null;
-                          },
-                          decoration: InputDecoration(labelText: ""),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Text("Nama          : ", style: textStyle),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextFormField(
-                    controller: namaController,
-                    decoration: const InputDecoration(labelText: ""),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Sila masukkan nama anda';
-                      }
-                      return null;
-                    },
-                    focusNode: namaFocus,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Text("No Telefon  : ", style: textStyle),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextFormField(
-                    controller: phoneController,
-                    keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(labelText: ""),
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value
-                          .trim()
-                          .isEmpty) {
-                        return "Sila masukkan no. telefon anda untuk kami hubungi.";
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Text("Alamat         : ", style: textStyle),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    controller: alamatController,
-                    keyboardType: TextInputType.multiline,
-                    decoration: const InputDecoration(labelText: ""),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 10),
-            headerCell("SENARAI MENU SATTAY USSOP"),
-            // Form(
-            //   key: _formKey,
-            //   child: Column(
-            //     children: [
-            //       Row(
-            //         children: [
-            //           Text("Menu Order : ", style: textStyle),
-            //
-            //           const SizedBox(width: 10),
-            //           Expanded(
-            //             child: DropdownButtonFormField<String>(
-            //               value: selectedMenu,
-            //               items: dropDownList,
-            //               selectedItemBuilder: (context) {
-            //                 return menuList.map((element) {
-            //                   return Text(
-            //                     element.jenis.toLowerCase().contains("box")
-            //                         ? "Box Satay"
-            //                         : element.jenis,
-            //                     overflow: TextOverflow.ellipsis,
-            //                   );
-            //                 }).toList();
-            //               },
-            //               isExpanded: true,
-            //               autovalidateMode:
-            //               AutovalidateMode.onUserInteractionIfError,
-            //               validator: (value) {
-            //                 if (value == null || value
-            //                     .trim()
-            //                     .isEmpty) {
-            //                   return "Sila pilih menu pesanan anda.";
-            //                 }
-            //                 return null;
-            //               },
-            //               hint: Text("Sila pilih menu yang anda ingin pesan"),
-            //               onChanged: (value) {
-            //                 var id = int.parse(value.toString());
-            //                 final index = menuList.indexWhere(
-            //                       (e) => e.id == id,
-            //                 );
-            //
-            //                 if (index == -1) {
-            //                   print("Menu tidak dijumpai: $id");
-            //                   return;
-            //                 }
-            //                 rekodMenu current = menuList.elementAt(index);
-            //                 setState(() {
-            //                   selectedMenu = value;
-            //                   jenis = current.jenis;
-            //                   harga = current.Harga;
-            //                 });
-            //               },
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //       const SizedBox(height: 10),
-            //       Row(
-            //         children: [
-            //           Text("Kuantiti       : ", style: textStyle),
-            //           const SizedBox(width: 10),
-            //           Expanded(
-            //             child: TextFormField(
-            //               controller: kuantitiController,
-            //               keyboardType: const TextInputType.numberWithOptions(
-            //                 decimal: true,
-            //               ),
-            //               decoration: const InputDecoration(labelText: ""),
-            //               autovalidateMode:
-            //               AutovalidateMode.onUserInteractionIfError,
-            //               validator: (value) {
-            //                 if (value == null || value
-            //                     .trim()
-            //                     .isEmpty) {
-            //                   return "Sila masukkan kuantiti yang ingin dipesan.";
-            //                 }
-            //                 return null;
-            //               },
-            //             ),
-            //           ),
-            //         ],
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            // const SizedBox(height: 10),
-            // GestureDetector(
-            //   child: Container(
-            //     margin: const EdgeInsets.symmetric(horizontal: 10),
-            //     decoration: BoxDecoration(
-            //       color: color,
-            //       borderRadius: BorderRadius.circular(10),
-            //     ),
-            //     child: ListTile(
-            //       title: Text(
-            //         "Tambah Pesanan",
-            //         style: textStyleBtn,
-            //         textAlign: TextAlign.center,
-            //       ),
-            //     ),
-            //   ),
-            //   onTap: () async {
-            //     num kuantiti = 0;
-            //     if (_formKey.currentState!.validate()) {
-            //       if (kuantitiController.text.contains(".")) {
-            //         kuantiti = kuantitiController.text.toDoubleNumberFormat();
-            //       } else {
-            //         kuantiti = kuantitiController.text.totalIntNumber();
-            //       }
-            //       if (jenis.isNotEmpty && kuantiti > 0 && harga > 0) {
-            //         num jumlah = kuantiti * harga;
-            //         order.insert(
-            //           order.length,
-            //           rekodPesananPelanggan(-1, jenis, kuantiti, harga, jumlah),
-            //         );
-            //         setState(() {
-            //           kuantitiController.clear();
-            //           selectedMenu = null;
-            //           jenis = "";
-            //           harga = 0;
-            //         });
-            //       }
-            //     }
-            //   },
-            // ),
-            const SizedBox(height: 20),
-            Divider(thickness: 2, height: 10, color: Colors.grey),
-            Expanded(
-              child: Column(
-                children: grouped.entries.map((entry) {
-                  String kategori = entry.key;
-                  List<rekodPesananPelanggan> menus = entry.value;
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // HEADER KATEGORI
-                      Container(
-                        margin: const EdgeInsets.fromLTRB(12, 16, 12, 8),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          color: color,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.restaurant_menu,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              kategori,
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-
-                      // LIST MENU
-                      ...menus.map((item) {
-                        return buildMenu(item);
-                      }),
-
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-
-            // ...order.asMap().entries.map((entry) {
-            //   final index = entry.key;
-            //   final item = entry.value;
-            //   return Card(
-            //     elevation: 2,
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(16),
-            //     ),
-            //     child: Padding(
-            //       padding: const EdgeInsets.all(16),
-            //       child: Column(
-            //         children: [
-            //           Row(
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             children: [
-            //               // Bahagian kiri
-            //               Expanded(
-            //                 child: Column(
-            //                   crossAxisAlignment: CrossAxisAlignment.start,
-            //                   children: [
-            //                     Text(
-            //                       item.jenis,
-            //                       style: const TextStyle(
-            //                         fontSize: 18,
-            //                         fontWeight: FontWeight.bold,
-            //                       ),
-            //                     ),
-            //
-            //                     const SizedBox(height: 8),
-            //
-            //                     Text(
-            //                       "Kuantiti : ${item.pesanan}",
-            //                       style: const TextStyle(fontSize: 15),
-            //                     ),
-            //                   ],
-            //                 ),
-            //               ),
-            //
-            //               // Bahagian kanan
-            //               Column(
-            //                 crossAxisAlignment: CrossAxisAlignment.end,
-            //                 children: [
-            //                   Text(
-            //                     "RM ${item.Jumlah.toStringAsFixed(2)}",
-            //                     style: TextStyle(
-            //                       fontSize: 20,
-            //                       fontWeight: FontWeight.bold,
-            //                       color: color,
-            //                     ),
-            //                   ),
-            //
-            //                   const SizedBox(height: 15),
-            //
-            //                   Row(
-            //                     children: [
-            //                       IconButton(
-            //                         icon: const Icon(Icons.edit),
-            //                         onPressed: () {
-            //                           showDialogTextRequired(context, "Kemaskini order ${item.jenis}", index);
-            //                         },
-            //                       ),
-            //                       IconButton(
-            //                         icon: const Icon(
-            //                           Icons.delete,
-            //                           color: Colors.red,
-            //                         ),
-            //                         onPressed: () {
-            //                           setState(() {
-            //                             order.removeAt(index);
-            //                           });
-            //                         },
-            //                       ),
-            //                     ],
-            //                   ),
-            //                 ],
-            //               ),
-            //             ],
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   );
-            //
-            // }),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(10),
-              child: Column(
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("📢 Perhatian"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  order.isNotEmpty
-                      ? Divider(thickness: 2, height: 10, color: Colors.grey)
-                      : const SizedBox(height: 0),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "${jumlahItem} item",
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const Text(
-                        "Jumlah Bayaran",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ],
+                  const Text(
+                   "💰Jumlah bayaran yang dipaparkan tidak termasuk caj penghantaran.\n\n "
+                       "🚚 Penghantaran bergantung kepada ketersediaan runner.\n\n "
+                       "📌 Selepas pesanan diterima, kami akan menghubungi anda melalui WhatsApp untuk pengesahan dan memaklumkan jumlah bayaran keseluruhan."
                   ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      "RM ${total.toStringAsFixed(2)}",
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                    ),
-                  ),
+                  SizedBox(height: 10),
+                  CheckboxListTile(
+                    value: agree,
+                    title: const Text("Saya telah membaca."),
+                    onChanged: (value) {
+                      setState(() {
+                        agree = value!;
+                      });
+                    },
+                  )
                 ],
               ),
-            )
-          ],
-        ),
+              actions: [
+                ElevatedButton(
+                  onPressed: agree
+                      ? () => Navigator.pop(context)
+                      : null,
+                  child: const Text("Mula Membuat Pesanan"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget viewListOrder() {
+    return Form(
+      key: _formKeyDetail,
+      child: ListView(
+        padding: const EdgeInsets.all(15),
+        children: [
+          Text(
+            '''
+Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
+            style: textStyle,
+            textAlign: .center,
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Text("Tarikh          : ", style: textStyle),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Form(
+                  key: _formKeyDate,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: dateController,
+                        readOnly: true,
+                        onTap: () => _selectDate(context),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Sila pilih tarikh';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(labelText: ""),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Text("Nama          : ", style: textStyle),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextFormField(
+                  controller: namaController,
+                  decoration: const InputDecoration(labelText: ""),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Sila masukkan nama anda';
+                    }
+                    return null;
+                  },
+                  focusNode: namaFocus,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Text("No Telefon  : ", style: textStyle),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextFormField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(labelText: ""),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) {
+                    if (value == null || value
+                        .trim()
+                        .isEmpty) {
+                      return "Sila masukkan no. telefon anda untuk kami hubungi.";
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Text("Alamat         : ", style: textStyle),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  controller: alamatController,
+                  keyboardType: TextInputType.multiline,
+                  decoration: const InputDecoration(labelText: ""),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Divider(thickness: 2, height: 10, color: Colors.grey),
+          SizedBox(
+            height: 40,
+            child: Center(child: Text("SENARAI MENU SATTAY USSOP", style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ))),
+          ),
+          Expanded(
+            child: Column(
+              children: grouped.entries.map((entry) {
+                String kategori = entry.key;
+                List<rekodPesananPelanggan> menus = entry.value;
+                // var icon = Icons.restaurant_menu;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // HEADER KATEGORI
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          //  Icon(
+                          //   icon,
+                          //   color: Colors.white,
+                          // ),
+                          // const SizedBox(width: 10),
+                          Text(
+                            kategori,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+
+                    // LIST MENU
+                    ...menus.map((item) {
+                      return buildMenu(item);
+                    }),
+
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                order.isNotEmpty
+                    ? Divider(thickness: 2, height: 10, color: Colors.grey)
+                    : const SizedBox(height: 0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "${jumlahItem} item",
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    const Text(
+                      "Jumlah Bayaran",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    "RM ${total.toStringAsFixed(2)}",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
@@ -715,16 +556,34 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda melalui WhatsApp 
   }
 
   Widget buildMenu(rekodPesananPelanggan item) {
+    String note = "";
+    if (item.jenis.toLowerCase().contains("box")) {
+      note = "• jika pesanan melebihi 200 cucuk";
+    }
     return Card(
       margin: const EdgeInsets.symmetric(
         horizontal: 12,
         vertical: 6,
       ),
       child: ListTile(
-        title: Text(item.jenis),
-        subtitle: Text(
-          "RM ${item.Harga.toStringAsFixed(2)}",
+        title: Text(item.jenis,style: titleTextStyle),
+        subtitle: SizedBox(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("RM ${item.Harga.toStringAsFixed(2)}"),
+            if (note.isNotEmpty)
+              Text(
+                note,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+          ],
         ),
+      ),
         trailing: QuantityButton(
           quantity: item.pesanan,
           colors: color,
@@ -732,15 +591,18 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda melalui WhatsApp 
             setState(() {
               item.Harga = item.Harga.toDouble();
               item.pesanan = qty;
-              item.Jumlah = qty * item.Harga;
+              item.Jumlah = qty * item.Harga.toDouble();
+              var orderIndex = order.indexWhere((e) => e.jenis == item.jenis);
               if (qty > 0) {
-                order.insert(order.length, item);
+                if (orderIndex >= 0) {
+                  order[orderIndex] = item;
+                }else {
+                  order.insert(order.length, item);
+                }
               } else {
-                var orderIndex = order.indexWhere((e) => e.jenis == item.jenis);
-                print("rekod >>>>>> ${item.jenis} >> $orderIndex");
                 order.removeAt(orderIndex);
               }
-              print("rekod >>>>>> ${order.length}");
+              print("rekod >>>>>> ${item.jenis} >> >> ${item.Jumlah} >> ${total} >> ${order.length}");
             });
           },
         ),

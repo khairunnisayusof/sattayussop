@@ -1,82 +1,39 @@
 PODS:
-  - app_links (7.0.0):
-    - Flutter
-  - device_info_plus (0.0.1):
-    - Flutter
   - Flutter (1.0.0)
   - flutter_archive (0.0.1):
     - Flutter
     - ZIPFoundation (= 0.9.19)
   - open_file_ios (1.0.3):
     - Flutter
-  - package_info_plus (0.4.5):
-    - Flutter
   - printing (1.0.0):
-    - Flutter
-  - share_plus (0.0.1):
-    - Flutter
-  - shared_preferences_foundation (0.0.1):
-    - Flutter
-    - FlutterMacOS
-  - syncfusion_flutter_pdfviewer (0.0.1):
-    - Flutter
-  - url_launcher_ios (0.0.1):
     - Flutter
   - ZIPFoundation (0.9.19)
 
 DEPENDENCIES:
-  - app_links (from `.symlinks/plugins/app_links/ios`)
-  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_archive (from `.symlinks/plugins/flutter_archive/ios`)
   - open_file_ios (from `.symlinks/plugins/open_file_ios/ios`)
-  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - printing (from `.symlinks/plugins/printing/ios`)
-  - share_plus (from `.symlinks/plugins/share_plus/ios`)
-  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - syncfusion_flutter_pdfviewer (from `.symlinks/plugins/syncfusion_flutter_pdfviewer/ios`)
-  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
     - ZIPFoundation
 
 EXTERNAL SOURCES:
-  app_links:
-    :path: ".symlinks/plugins/app_links/ios"
-  device_info_plus:
-    :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
   flutter_archive:
     :path: ".symlinks/plugins/flutter_archive/ios"
   open_file_ios:
     :path: ".symlinks/plugins/open_file_ios/ios"
-  package_info_plus:
-    :path: ".symlinks/plugins/package_info_plus/ios"
   printing:
     :path: ".symlinks/plugins/printing/ios"
-  share_plus:
-    :path: ".symlinks/plugins/share_plus/ios"
-  shared_preferences_foundation:
-    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
-  syncfusion_flutter_pdfviewer:
-    :path: ".symlinks/plugins/syncfusion_flutter_pdfviewer/ios"
-  url_launcher_ios:
-    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
-  app_links: 6d01271b3907b0ee7325c5297c75d697c4226c4d
-  device_info_plus: bf2e3232933866d73fe290f2942f2156cdd10342
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_archive: cb3e0219e555897ba4b36f166baa1eca394890b9
-  open_file_ios: ece9c5358aec7b7ed7dc12fcb0f926ef6d6650f1
-  package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
-  printing: 233e1b73bd1f4a05615548e9b5a324c98588640b
-  share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
-  shared_preferences_foundation: 5086985c1d43c5ba4d5e69a4e8083a389e2909e6
-  syncfusion_flutter_pdfviewer: cfcf23c03816192575902e615fa50adc9f95b724
-  url_launcher_ios: bb13df5870e8c4234ca12609d04010a21be43dfa
+  flutter_archive: ad8edfd7f7d1bb12058d05424ba93e27d9930efe
+  open_file_ios: 46184d802ee7959203f6392abcfa0dd49fdb5be0
+  printing: 54ff03f28fe9ba3aa93358afb80a8595a071dd07
   ZIPFoundation: b8c29ea7ae353b309bc810586181fd073cb3312c
 
 PODFILE CHECKSUM: 3c63482e143d1b91d2d2560aee9fb04ecc74ac7e
