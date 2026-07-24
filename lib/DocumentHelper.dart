@@ -17,7 +17,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../supabaseServer.dart';
 import '../databaseLocal.dart';
 import 'DocumentHelper.dart';
-import 'package:share_plus/share_plus.dart';
 
 SharedPreferences? sharedPreferences;
 List<rekodStok> rekod_stok = <rekodStok>[];
