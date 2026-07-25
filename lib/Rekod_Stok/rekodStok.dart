@@ -93,6 +93,9 @@ class _RekodStokState extends State<RekodStok> {
               ],
             ),
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               showDialogRequired(
                 context,
                 "Pengesahan Memadam",

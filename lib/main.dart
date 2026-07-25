@@ -166,10 +166,12 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      loadDataDarkMode();
+      loadUserServer();
       loadSharedPreferences();
       _initPackageInfo();
+      setState(() {});
     });
   }
 
@@ -199,6 +201,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
+      loadUserServer();
       loadSharedPreferences();
     }
   }
@@ -207,7 +210,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     Container buildCollectionView;
     Container buildSettingViewOfDevices;
-    if (role.toString().capitalize() == 'Admin' || role.toString().capitalize() == 'Manager') {
+    if (write) {
       setState(() {
         if (!menuChoices.any((e) => e.title == "Rekod Gaji")) {
           menuChoices.insert(
@@ -226,6 +229,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         }
       });
     }
+    var isAdmin = (write && delete);
+    var isAdminManager = (write);
     buildCollectionView = Container(
       margin: EdgeInsets.only(top: 5),
       child: Center(
@@ -263,7 +268,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   );
                 } else if (index == 3) {
                   // _openPageWithPassword();
-                  if (role.toString().capitalize() == 'Admin' || role.toString().capitalize() == 'Manager') {
+                  if (isAdminManager) {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) =>
@@ -277,7 +282,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
                   }
                 } else if (index == 4) {
-                  if (role.toString().capitalize() == 'Admin' || role.toString().capitalize() == 'Manager') {
+                  if (isAdminManager) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => RekodCawangan()),
@@ -290,7 +295,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
                   }
                 } else if (index == 5) {
-                  if (role.toString().capitalize() == 'Admin' || role.toString().capitalize() == 'Manager') {
+                  if (isAdminManager) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => RekodBarang()),
@@ -396,7 +401,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               ),
             ),
             Divider(),
-            role.toString().capitalize() == 'Admin' ? GestureDetector(
+            isAdmin ? GestureDetector(
               child: ListTile(
                 leading: Container(
                   margin: EdgeInsets.only(top: 5, bottom: 5.0, left: 2.0),
@@ -426,8 +431,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 );
               },
             ) : SizedBox(height: 0),
-            role.toString().capitalize() == 'Admin' ? Divider() : SizedBox(height: 0),
-            role.toString().capitalize() == 'Admin' ? GestureDetector(
+            isAdmin ? Divider() : SizedBox(height: 0),
+            isAdmin ? GestureDetector(
               child: ListTile(
                 leading: Container(
                   margin: EdgeInsets.only(top: 5, bottom: 5.0, left: 2.0),
@@ -457,8 +462,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 );
               },
             ) : SizedBox(height: 0),
-            role.toString().capitalize() == 'Admin' ? Divider() : SizedBox(height: 0),
-            role.toString().capitalize() == 'Admin' ? GestureDetector(
+            isAdmin ? Divider() : SizedBox(height: 0),
+            isAdmin ? GestureDetector(
               child: ListTile(
                 leading: Container(
                   margin: EdgeInsets.only(top: 5, bottom: 5.0, left: 2.0),
@@ -488,8 +493,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 );
               },
             ) : SizedBox(height: 0),
-            role.toString().capitalize() == 'Admin' ? Divider() : SizedBox(height: 0),
-            (role.toString().capitalize() == 'Admin' || role.toString().capitalize() == 'Manager') ? GestureDetector(
+            isAdmin ? Divider() : SizedBox(height: 0),
+            isAdminManager ? GestureDetector(
               child: ListTile(
                 leading: Container(
                   margin: EdgeInsets.only(top: 5, bottom: 5.0, left: 2.0),
@@ -521,7 +526,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 );
               },
             ): SizedBox(height: 0) ,
-            (role.toString().capitalize() == 'Admin' || role.toString().capitalize() == 'Manager')  ? Divider() : SizedBox(height: 0),
+            isAdminManager ? Divider() : SizedBox(height: 0),
             GestureDetector(
               child: ListTile(
                 leading: Container(
@@ -578,7 +583,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               },
             ),
             Divider(),
-            (role.toString().capitalize() == 'Admin' || role.toString().capitalize() == 'Manager') ? GestureDetector(
+            isAdminManager ? GestureDetector(
               child: ListTile(
                 leading: Container(
                   margin: EdgeInsets.only(top: 5, bottom: 5.0, left: 2.0),
@@ -605,7 +610,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 fileLog.attachLogFile(context);
               },
             ): SizedBox(height: 0),
-            (role.toString().capitalize() == 'Admin' || role.toString().capitalize() == 'Manager')  ? Divider() : SizedBox(height: 0),
+            isAdminManager  ? Divider() : SizedBox(height: 0),
             GestureDetector(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -630,7 +635,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     role = '';
                   }
                   await sharedPreferences?.setInt("userId", 0);
-                  await sharedPreferences?.setString("role", '');
+                  await sharedPreferences?.setInt("roleID", 0);
                   loadData();
                   if (!mounted) return;
                   Navigator.pushReplacement(
@@ -680,12 +685,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         home: OrderPage(),
       );
     }
-    role = sharedPreferences?.getString("role") ?? '';
+
+    roleID = sharedPreferences?.getInt("roleID") ?? 0;
     user_id = sharedPreferences?.getInt("userId") ?? 0;
-    if (role.isEmpty) {
+
+    if (roleID <= 0) {
       return const LoginPage();
     }
-
 
     return Scaffold(
       appBar: PreferredSize(
@@ -922,9 +928,9 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda semula untuk:
   }
 
   Future<void> loadSharedPreferences() async {
-    loadDataServer();
-    print("start load shared");
     darkMode = await loadDataDarkMode();
+    await loadDataServer();
+    print("start load shared");
     setState(() {
     });
   }
@@ -935,15 +941,15 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda semula untuk:
       context,
       listen: false,
     );
-    bool dark = sharedPreferences?.getBool("darkModeStatus") ?? false;
-    if (dark) {
+    darkMode = sharedPreferences?.getBool("darkModeStatus") ?? false;
+    if (darkMode) {
       themeNotifier.setTheme(ThemeMode.dark);
       color = Colors.deepOrange;
     } else {
       themeNotifier.setTheme(ThemeMode.light);
       color = Colors.orange;
     }
-    return dark;
+    return darkMode;
   }
 
   // This block saves our list locally.

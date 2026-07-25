@@ -289,6 +289,9 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
                           );
                         },
                         onLongPress: () {
+                          if (!delete) {
+                            return;
+                          }
                           showDialogRequired(
                             context,
                             "Pengesahan Memadam",

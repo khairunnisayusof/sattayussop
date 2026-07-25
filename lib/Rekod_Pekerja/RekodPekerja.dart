@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import "package:sattayussop/DocumentHelper.dart";
+import 'package:sattayussop/login.dart';
 import 'package:string_capitalize/string_capitalize.dart';
 import 'package:notification_center/notification_center.dart';
 import '../databaseLocal.dart';
 import '../supabaseServer.dart';
+import 'package:flutter/material.dart';
+import 'package:bcrypt/bcrypt.dart';
+
 
 class selectRekodPekerja extends StatefulWidget {
   const selectRekodPekerja({super.key});
@@ -33,13 +37,15 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
   bool dark = sharedPreferences?.getBool("darkModeStatus") ?? false;
   Color color = Colors.orange;
   Color background = Colors.white;
+  Color colorBorder = Colors.black;
   Color textColor = Colors.black;
   final List<String> _rekodPekerjaView = <String>[];
   String titleFilter = "Senarai Semua Pekerja";
   bool filterCucuk = false;
   bool filterPekerja = false;
-  List<DropdownMenuItem> dropDownList = <DropdownMenuItem>[];
-  List<String> roleList = ["Admin", "Pekerja", "Manager"];
+  List<DropdownMenuItem<int>> dropDownList = <DropdownMenuItem<int>>[];
+  String _selected = "pekerja";
+  bool isPekerja = false;
 
   @override
   void initState() {
@@ -48,16 +54,15 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
       color = Colors.deepOrange;
       background = Colors.black12;
       textColor = Colors.white;
+      colorBorder = Colors.white;
     }
     refreshData();
-    for (var index = 0; index < roleList.length; index++) {
-      var role = roleList[index];
-      dropDownList.add(
-        DropdownMenuItem<String>(
-          value: role.isEmpty == true ? null : role,
-          child: Text(role),
-        ),
-      );
+    for (var index = 0; index < rekod_Role.length; index++) {
+      var role = rekod_Role.elementAt(index);
+      dropDownList.insert(dropDownList.length,  DropdownMenuItem<int>(
+        value: role.id,
+        child: Text(role.role),
+      ));
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
     loadData();
@@ -74,6 +79,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
 
   void _refreshView(bool refresh) {
     setState(() {
+      isPekerja = _selected == "pekerja";
       refreshData();
     });
   }
@@ -88,7 +94,8 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Card(
+            buildSegment(),
+            isPekerja ? Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -144,56 +151,13 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
                   ),
                 ],
               ),
-            ),
+            ) : const SizedBox(height: 10),
             Expanded(
-              child: ListView.builder(
-                itemCount: _rekodPekerjaView.length,
-                itemBuilder: (BuildContext context, int index) {
-                  String nama = _rekodPekerjaView.elementAt(index);
-                  rekodPekerja current =
-                      rekod_Pekerja[rekod_Pekerja.indexWhere(
-                        (element) => element.username == nama,
-                      )];
-                  return GestureDetector(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.all(5),
-                          alignment: Alignment.centerLeft,
-                          height: 25,
-                          color: Colors.transparent,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                current.nama.capitalizeEach(),
-                                style: textStyle,
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Divider(thickness: 1, height: 10, color: Colors.grey),
-                      ],
-                    ),
-                    onLongPress: () {
-                      showDialogRequired(
-                        context,
-                        "Pengesahan Memadam",
-                        "Adakah anda ingin memadam data ini",
-                        index,
-                      );
-                    },
-                    onTap: () {
-                      showDialogTextRequired(
-                        context,
-                        "Masukkan Data Pekerja",
-                        index,
-                      );
-                    },
-                  );
-                },
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 250),
+                child: isPekerja
+                    ? buildPekerjaList()
+                    : buildRoleList(),
               ),
             ),
           ],
@@ -230,10 +194,172 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
         backgroundColor: color,
         foregroundColor: Colors.white,
         onPressed: () {
-          showDialogTextRequired(context, "Masukkan Data", -1);
+          isPekerja ? showDialogTextRequired(context, "Masukkan Data", -1) : showDialogRoleTextRequired(context, "Masukkan Data", -1);
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  Widget buildSegment() {
+    return SegmentedButton<String>(
+      segments: const [
+        ButtonSegment(
+          value: 'role',
+          label: Text('Role'),
+          icon: Icon(Icons.category_outlined),
+        ),
+        ButtonSegment(
+          value: 'pekerja',
+          label: Text('Pekerja'),
+          icon: Icon(Icons.supervised_user_circle),
+        ),
+      ],
+      selected: {_selected},
+      onSelectionChanged: (value) {
+        setState(() {
+          _selected = value.first;
+          isPekerja = _selected == "pekerja";
+        });
+      },
+    );
+  }
+
+  Widget buildPekerjaList() {
+    return  ListView.builder(
+      itemCount: _rekodPekerjaView.length,
+      itemBuilder: (BuildContext context, int index) {
+        String nama = _rekodPekerjaView.elementAt(index);
+        rekodPekerja current =
+        rekod_Pekerja[rekod_Pekerja.indexWhere(
+              (element) => element.username == nama,
+        )];
+        return GestureDetector(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.all(5),
+                alignment: Alignment.centerLeft,
+                height: 25,
+                color: Colors.transparent,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      current.nama.capitalizeEach(),
+                      style: textStyle,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+              Divider(thickness: 1, height: 10, color: Colors.grey),
+            ],
+          ),
+          onLongPress: () {
+            if (!delete) {
+              return;
+            }
+            showDialogRequired(
+              context,
+              "Pengesahan Memadam",
+              "Adakah anda ingin memadam data ini",
+              index,
+            );
+          },
+          onTap: () {
+            showDialogTextRequired(
+              context,
+              "Masukkan Data Pekerja",
+              index,
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget buildRoleList() {
+    return ListView(
+      children: [
+
+        Table(
+          border: TableBorder.all(color: colorBorder),
+          children: [
+            TableRow(
+              children: [
+                buildHeader("Role"),
+              ],
+            ),
+          ],
+        ),
+
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: rekod_Role.length,
+          itemBuilder: (context, index) {
+
+            final current = rekod_Role[index];
+
+            return GestureDetector(
+              onTap: () {
+                showDialogRoleTextRequired(
+                  context,
+                  "Masukkan Data",
+                  index,
+                );
+              },
+              onLongPress: () {
+                if (!delete) {
+                  return;
+                }
+                showDialogRequired(
+                  context,
+                  "Pengesahan Memadam",
+                  "Adakah anda ingin memadam data ini",
+                  index,
+                );
+              },
+              child: Table(
+                border: TableBorder.all(color: colorBorder),
+                children: [
+                  TableRow(
+                    children: [
+                      buildCell(current.role),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget buildHeader(String text) {
+    return SizedBox(
+      height: 40,
+      child: Center(
+        child: Text(
+          text,
+          style: textStyle,
+        ),
+      ),
+    );
+  }
+
+  Widget buildCell(String text) {
+    return SizedBox(
+      height: 50,
+      child: Center(
+        child: Text(
+          text,
+          style: textStyleNormal,
+        ),
       ),
     );
   }
@@ -261,7 +387,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
               child: const Text('Ya'),
               onPressed: () {
                 Navigator.of(context).pop();
-                removeItem(index);
+                isPekerja ? removeItem(index) : removeRoleItem(index);
               },
             ),
           ],
@@ -269,6 +395,230 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
       },
     );
   }
+
+  void showDialogRoleTextRequired(BuildContext context, String title, int index) {
+    var myController = TextEditingController();
+    var myController1 = TextEditingController();
+    String errorText = "Sila masukkan beberapa digit";
+    final formKey = GlobalKey<FormState>();
+    int id = -1;
+    bool read = false;
+    bool write = false;
+    bool delete = false;
+    String hashPassword = "";
+    if (index >= 0) {
+      rekodRole current = rekod_Role.elementAt(index);
+      myController.text = current.role;
+      id = current.id;
+      read = current.read;
+      write = current.write;
+      delete = current.delete;
+      hashPassword = current.password;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                // height: MediaQuery.of(context).size.height / 3,
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      //position
+                      mainAxisSize: MainAxisSize.min,
+                      // wrap content in flutter
+                      children: <Widget>[
+                        Text(
+                          'Role:',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        TextFormField(
+                          // enableInteractiveSelection: false,
+                          // will disable paste operation
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return errorText;
+                            }
+                            return null;
+                          },
+                          enabled: true,
+                          autofocus: true,
+                          controller: myController,
+                          decoration: InputDecoration(),
+                          textInputAction:
+                          TextInputAction.next, // Moves focus to next.
+                        ),
+                        Text(
+                          'Password:',
+                          style: textStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                        TextFormField(
+                          // enableInteractiveSelection: false,
+                          // will disable paste operation
+                          validator: (value) {
+                            if ((value == null || value.isEmpty) &&
+                                hashPassword.isEmpty) {
+                              return errorText;
+                            }
+                            return null;
+                          },
+                          enabled: true,
+                          autofocus: true,
+                          controller: myController1,
+                          decoration: InputDecoration(),
+                          textInputAction:
+                          TextInputAction.next, // Moves focus to next.
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Baca :',
+                              style: textStyle,
+                              textAlign: TextAlign.left,
+                            ),
+                            Switch(
+                              value: read,
+                              onChanged: (value) {
+                                setState(() {
+                                  read = value;
+                                });
+                              },
+                              activeThumbColor: color,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Tulis :',
+                              style: textStyle,
+                              textAlign: TextAlign.left,
+                            ),
+                            Switch(
+                              value: write,
+                              onChanged: (value) {
+                                setState(() {
+                                  write = value;
+                                });
+                              },
+                              activeThumbColor: color,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Padam :',
+                              style: textStyle,
+                              textAlign: TextAlign.left,
+                            ),
+                            Switch(
+                              value: delete,
+                              onChanged: (value) {
+                                setState(() {
+                                  delete = value;
+                                });
+                              },
+                              activeThumbColor: color,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Batal'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Simpan'),
+              onPressed: () {
+                String namaRole = "";
+                String password = "";
+                if (formKey.currentState!.validate()) {
+                  // Handle the submit action
+                  if (!(myController.text.isEmpty)) {
+                    namaRole = myController.text.capitalizeEach();
+                  }
+                }
+                if (!(myController1.text.isEmpty)) {
+                  password = myController1.text.toLowerCase();
+                }
+                var passwordChecking = checkPassword(password, hashPassword);
+
+                if (formKey.currentState!.validate() && !passwordChecking &&
+                    hashPassword.isNotEmpty) {
+                  hashPassword = BCrypt.hashpw(
+                    password,
+                    BCrypt.gensalt(),
+                  );
+                  print("password change");
+                } else if (!formKey.currentState!.validate() &&
+                    myController1.text.isEmpty) {
+                  print("password error");
+                  return;
+                }
+                print("rekod hash password >>> $namaRole >> $hashPassword");
+                rekodRole current = rekodRole(
+                    namaRole, hashPassword, read, write, delete);
+                if (id > 0) {
+                  current.id = id;
+                  current.role = namaRole;
+                  current.password = hashPassword;
+                  current.read = read;
+                  current.write = write;
+                  current.delete = delete;
+                }
+                insertRoleItem(current, index);
+                Navigator.of(context).pop();
+                // Handle the submit action
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> insertRoleItem(rekodRole role, int index) async {
+    if (index >= 0) {
+      var id = rekod_Role[index].id;
+      role.id = id;
+      insertUpdateTable('Role Rekod', role.toMapServer(), id: id);
+    } else {
+      if (!rekod_Role.map((e) => e.role).contains(role.role)) {
+        insertUpdateTable('Role Rekod', role.toMapServer());
+      }
+    }
+    addRoleItem(role, index);
+  }
+
+  // addItem adds our User Class item to list.
+  void addRoleItem(rekodRole usr, int index) {
+    if (index < 0) {
+      rekod_Role.add(usr);
+    }else {
+      final index = rekod_Role.indexWhere((e) => e.id == usr.id);
+      rekod_Role[index] = usr;
+    }
+    saveData();
+  }
+
 
   void showDialogTextRequired(BuildContext context, String title, int index) {
     var myController = TextEditingController();
@@ -284,7 +634,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
     bool cucukSatay = false;
     bool accessApps = false;
     bool slipGaji = false;
-    String role = 'Pekerja';
+    int? role = null;
     if (index >= 0) {
       String nama = _rekodPekerjaView.elementAt(index);
       int indexSelected = rekod_Pekerja.indexWhere(
@@ -315,11 +665,13 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
       if (current.gajiSimpan > 0) {
         myController7.text = "${current.gajiSimpan}";
       }
-      if (current.role.isNotEmpty) {
-        role = current.role;
-      }
+      role = current.role >= 0 ? current.role : null;
     }
-    myController8.text = role.capitalize();
+    if (role != null) {
+      var _indexKategori = rekod_Role.indexWhere((e) => e.id == role);
+      myController8.text = rekod_Role
+          .elementAt(_indexKategori).role;
+    }
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -467,14 +819,22 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
                           style: textStyle,
                           textAlign: TextAlign.left,
                         ),
-                        DropdownButtonFormField(
+                        DropdownButtonFormField<int>(
                           isExpanded: true,
-                          initialValue: myController8.text,
-                          onChanged: (item) {
-                            role = item;
-                            myController8.text = role.capitalize();
-                          },
+                          value:role,
+                          hint: const Text("Pilih Kategori"),
                           items: dropDownList,
+                          onChanged: (item) {
+                            print("item >> ${item}");
+                            role = item;
+                            var result = rekod_Role.elementAt(
+                              rekod_Role.indexWhere(
+                                    (e) => e.id == role,
+                              ),
+                            );
+                            var nama = result.role;
+                            myController8.text = nama;
+                          },
                         ),
                         Row(
                           children: <Widget>[
@@ -561,10 +921,10 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
                       gajiHarian,
                       gajiSimpan,
                       cucukSatay,
-                      role,
+                      role ?? 2,
                       accessApps,
-                      rekod,
-                        slipGaji
+                        slipGaji,
+                      rekod
                     ),
                     index,
                   );
@@ -625,6 +985,17 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
     } else {
       rekod_Pekerja.add(usr);
     }
+    saveData();
+  }
+
+  void removeRoleItem(int index) {
+    var id = rekod_Role[index].id;
+    deleteRow('Role Rekod', id);
+    removeRoleInLocal(index);
+  }
+
+  void removeRoleInLocal(int index) {
+    rekod_Role.removeAt(index);
     saveData();
   }
 

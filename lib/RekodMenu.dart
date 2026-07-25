@@ -196,6 +196,9 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
                 );
               },
               onLongPress: () {
+                if (!delete) {
+                  return;
+                }
                 showDialogRequired(
                   context,
                   "Pengesahan Memadam",
@@ -257,6 +260,9 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
                 );
               },
               onLongPress: () {
+                if (!delete) {
+                  return;
+                }
                 showDialogRequired(
                   context,
                   "Pengesahan Memadam",

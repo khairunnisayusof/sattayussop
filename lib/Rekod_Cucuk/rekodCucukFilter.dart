@@ -439,8 +439,7 @@ class _selectRekodCucukFilterState extends State<selectRekodCucukFilter> {
           var menu = const [
             PopupMenuItem(value: '1', child: Text("Slip Gaji")),
           ];
-          return (role.toString().capitalize() == "Admin" ||
-                  role.toString().capitalize() == "Manager")
+          return write
               ? menu
               : [];
         },

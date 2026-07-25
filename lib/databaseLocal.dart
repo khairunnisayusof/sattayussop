@@ -58,6 +58,61 @@ class rekodMenu {
   }
 }
 
+class rekodRole {
+  int id = -1;
+  String role = '';
+  String password = '';
+  bool read = true;
+  bool write = false;
+  bool delete = false;
+
+  rekodRole(
+      this.role,
+      this.password,
+      this.read,
+      this.write,
+      this.delete
+      );
+
+  rekodRole.fromMap(
+      Map<String, dynamic> map,
+      ) // This Function helps to convert our Map into our User Object
+      : id = map["id"],
+        role = map["role"],
+        password = map["password"],
+        read = map["read"],
+        write = map["write"],
+        delete = map["delete"];
+
+  Map<String, dynamic> toMap() {
+    // This Function helps to convert our User Object into a Map.
+    return {
+      "id": id,
+      "role": role,
+      "password": password,
+      "read": read,
+      "write": write,
+      "delete": delete
+    };
+  }
+
+  Map<String, dynamic> toMapServer() {
+    // This Function helps to convert our User Object into a Map.
+    return {
+      "id": id,
+      "role": role,
+      "password": password,
+      "read": read,
+      "write": write,
+      "delete": delete
+    };
+  }
+
+  factory rekodRole.fromJson(Map<String, dynamic> toMap) {
+    return rekodRole.fromMap(toMap);
+  }
+}
+
 class rekodPekerja {
   int id = -1;
   String username = '';
@@ -70,7 +125,7 @@ class rekodPekerja {
   num gajiSimpan = 0.00;
   bool cucuk;
   List<dynamic> rekodAmbil;
-  String role = 'Pekerja';
+  int role = 0;
   bool akses_sistem = false;
   bool slip_gaji = false;
 
@@ -85,8 +140,8 @@ class rekodPekerja {
     this.cucuk,
     this.role,
     this.akses_sistem,
+    this.slip_gaji,
     this.rekodAmbil,
-      this.slip_gaji
   );
 
   rekodPekerja.fromMap(

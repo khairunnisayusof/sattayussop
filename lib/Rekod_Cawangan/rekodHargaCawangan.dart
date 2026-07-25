@@ -115,6 +115,9 @@ class _selectRekodHargaCawanganState extends State<selectRekodHargaCawangan> {
               ],
             ),
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               showDialogRequired(
                 context,
                 "Pengesahan Memadam",

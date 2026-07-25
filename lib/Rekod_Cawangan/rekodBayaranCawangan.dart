@@ -211,6 +211,9 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
                     ],
                   ),
                   onLongPress: () {
+                    if (!delete) {
+                      return;
+                    }
                     showDialogRequired(
                       context,
                       "Pengesahan Memadam",

@@ -144,6 +144,9 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
               );
             },
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               showDialogRequired(
                 context,
                 "Pengesahan Memadam",
@@ -183,14 +186,13 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
           var menu = const [
             PopupMenuItem(value: '1', child: Text("Rekod Bayaran")),
           ];
-          if (role.toString().capitalize() == "Admin") {
+          if (write && delete) {
             menu = const [
               PopupMenuItem(value: '1', child: Text("Rekod Bayaran")),
               PopupMenuItem(value: '2', child: Text("Padam Seluruh Data")),
             ];
           }
-          return (role.toString().capitalize() == "Admin" ||
-                  role.toString().capitalize() == "Manager")
+          return write
               ? menu
               : [];
         },
@@ -209,8 +211,7 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
       ),
       body: buildCollectionView,
       floatingActionButton:
-          (role.toString().capitalize() == "Admin" ||
-              role.toString().capitalize() == "Manager")
+          write
           ? FloatingActionButton(
               backgroundColor: color,
               foregroundColor: Colors.white,

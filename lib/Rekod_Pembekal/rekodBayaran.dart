@@ -214,6 +214,9 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
                     ],
                   ),
                   onLongPress: () {
+                    if (!delete) {
+                      return;
+                    }
                     showDialogRequired(
                       context,
                       "Pengesahan Memadam",

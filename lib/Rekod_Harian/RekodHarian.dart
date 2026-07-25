@@ -108,6 +108,9 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
               );
             },
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               _removeIndex = index;
               showDialogRequired(
                 context,
@@ -134,8 +137,7 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
           var menu = const [
             PopupMenuItem(value: '1', child: Text("Padam Seluruh Data")),
           ];
-          return (role.toString().capitalize() == "Admin" ||
-                  role.toString().capitalize() == "Manager")
+          return write
               ? menu
               : [];
         },

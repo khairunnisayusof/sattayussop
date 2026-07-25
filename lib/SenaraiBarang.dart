@@ -135,6 +135,9 @@ class _selectSenaraiBarangState extends State<selectSenaraiBarang> {
                     ],
                   ),
                   onLongPress: () {
+                    if (!delete) {
+                      return;
+                    }
                     showDialogRequired(
                       context,
                       "Pengesahan Memadam",

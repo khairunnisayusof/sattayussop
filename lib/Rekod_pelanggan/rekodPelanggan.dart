@@ -159,6 +159,9 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
               );
             },
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               showDialogRequired(
                 context,
                 "Pengesahan Memadam",

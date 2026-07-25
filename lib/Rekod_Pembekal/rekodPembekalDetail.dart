@@ -555,6 +555,9 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
                           );
                         },
                         onLongPress: () {
+                          if (!delete) {
+                            return;
+                          }
                           showDialogRequired(
                             context,
                             "Pengesahan Memadam",
@@ -565,8 +568,7 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
                       );
                     },
                   ),
-                  (role.toString().capitalize() == "Admin" ||
-                          role.toString().capitalize() == "Manager")
+                  write
                       ? Container(
                           alignment: Alignment.centerRight,
                           child: Row(
@@ -716,8 +718,7 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
           var menu = const [
             PopupMenuItem(value: '1', child: Text("Resit Order")),
           ];
-          return (role.toString().capitalize() == "Admin" ||
-                  role.toString().capitalize() == "Manager")
+          return write
               ? menu
               : [];
         },
@@ -736,8 +737,7 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
       ),
       body: buildCollectionView,
       floatingActionButton:
-          (role.toString().capitalize() == "Admin" ||
-              role.toString().capitalize() == "Manager")
+          write
           ? FloatingActionButton(
               backgroundColor: color,
               foregroundColor: Colors.white,

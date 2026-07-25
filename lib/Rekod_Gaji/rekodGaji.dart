@@ -116,6 +116,9 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
               );
             },
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               _removeIndex = index;
               showDialogRequired(
                 context,

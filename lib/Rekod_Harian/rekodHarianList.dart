@@ -91,6 +91,9 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
               ],
             ),
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               showDialogRequired(
                 context,
                 "Pengesahan Memadam",

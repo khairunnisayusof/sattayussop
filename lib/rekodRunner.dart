@@ -135,6 +135,9 @@ class _selectRekodRunnerState extends State<selectRekodRunner> {
                     ],
                   ),
                   onLongPress: () {
+                    if (!delete) {
+                      return;
+                    }
                     showDialogRequired(
                       context,
                       "Pengesahan Memadam",

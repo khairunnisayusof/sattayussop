@@ -1,3 +1,4 @@
+import 'package:bcrypt/bcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:sattayussop/main.dart';
 import 'package:sattayussop/supabaseServer.dart';
@@ -159,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> login() async {
     try {
       String username = usernameController.text.trim();
-      String password = passwordController.text;
+      String password = passwordController.text.toLowerCase();
 
       final user = await supabase
           .from('Pekerja Rekod')
@@ -173,22 +174,35 @@ class _LoginPageState extends State<LoginPage> {
         if (!mounted) return;
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text("User tidak wujud")));
+        ).showSnackBar(const SnackBar(content: Text("Sila mohon admin daftar anda ke Sistem Sattay Ussop!")));
         return;
       }
 
-      bool passwordCorrect;
+      var pekerjaList = rekodPekerja.fromJson(user);
+      roleID = pekerjaList.role;
+      user_id = pekerjaList.id;
+      bool akses_sistem = pekerjaList.akses_sistem;
 
-      if (user['role'].toString().capitalize() == 'Admin') {
-        passwordCorrect = password == adminPassword;
-      } else if (user['role'].toString().capitalize() == 'Manager') {
-        passwordCorrect = password == managerPassword;
-      } else {
-        passwordCorrect = password == pekerjaPassword;
+
+      final roleUser = await supabase
+          .from('Role Rekod')
+          .select()
+          .eq('id', roleID)
+          .maybeSingle();
+
+
+      if (roleUser == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Sila hubungi admin Sistem Sattay Ussop!")));
+        return;
       }
-
-      print("rekod user >>> $username >> $user");
-
+      var roleList = rekodRole.fromJson(roleUser);
+      var passwordHash = roleList.password;
+      role = roleList.role;
+      print("rekod user >>> $password == $passwordHash >> $roleID >> $role ");
+      bool passwordCorrect = checkPassword(password,passwordHash);
       if (!passwordCorrect) {
         if (!mounted) return;
         ScaffoldMessenger.of(
@@ -197,11 +211,6 @@ class _LoginPageState extends State<LoginPage> {
 
         return;
       }
-      var pekerjaList = rekodPekerja.fromJson(user);
-      role = pekerjaList.role;
-      user_id = pekerjaList.id;
-      bool akses_sistem = pekerjaList.akses_sistem;
-
       if (user_id <= 0) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -226,7 +235,7 @@ class _LoginPageState extends State<LoginPage> {
       }
       // final prefs = await sharedPreferences.getInstance();
       await sharedPreferences?.setInt("userId", user_id);
-      await sharedPreferences?.setString("role", role.capitalize());
+      await sharedPreferences?.setInt("roleID", roleID);
 
       // PENTING: check selepas await
       if (!mounted) return;
@@ -243,4 +252,11 @@ class _LoginPageState extends State<LoginPage> {
       ).showSnackBar(const SnackBar(content: Text("Log Masuk gagal!")));
     }
   }
+}
+
+bool checkPassword(String password, String hash) {
+  return BCrypt.checkpw(
+    password,
+    hash,
+  );
 }

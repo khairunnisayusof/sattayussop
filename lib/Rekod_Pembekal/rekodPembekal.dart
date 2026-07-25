@@ -97,6 +97,9 @@ class _RekodBarangState extends State<RekodBarang> {
               ],
             ),
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               showDialogRequired(
                 context,
                 "Pengesahan Memadam",
@@ -147,7 +150,7 @@ class _RekodBarangState extends State<RekodBarang> {
         centerTitle: true,
       ),
       body: buildCollectionView,
-      floatingActionButton: (role.toString().capitalize() == "Admin")
+      floatingActionButton: write
           ? FloatingActionButton(
               backgroundColor: color,
               foregroundColor: Colors.white,

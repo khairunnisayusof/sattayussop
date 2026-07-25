@@ -148,6 +148,9 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
               );
             },
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               showDialogRequired(
                 context,
                 "Pengesahan Memadam",
@@ -197,10 +200,7 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
             PopupMenuItem(value: '2', child: Text("Rekod Bayaran")),
             PopupMenuItem(value: '3', child: Text("Padam Seluruh Data")),
           ];
-          return (role.toString().capitalize() == "Admin" ||
-                  role.toString().capitalize() == "Manager")
-              ? menu
-              : [];
+          return write ? menu : [];
         },
       ),
     );

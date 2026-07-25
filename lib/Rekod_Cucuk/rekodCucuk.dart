@@ -142,6 +142,9 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
               );
             },
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               showDialogRequired(
                 context,
                 "Pengesahan Memadam",
@@ -180,19 +183,19 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
           var menu = const [
             PopupMenuItem(value: '1', child: Text("Rekod Terperinci")),
           ];
-          if (role.toString().capitalize() == "Manager") {
-            menu = const [
-              PopupMenuItem(value: '1', child: Text("Rekod Terperinci")),
-              PopupMenuItem(value: '2', child: Text("Ambil Gaji")),
-            ];
-          } else if (role.toString().capitalize() == "Admin") {
+          if (write && delete) {
             menu = const [
               PopupMenuItem(value: '1', child: Text("Rekod Terperinci")),
               PopupMenuItem(value: '2', child: Text("Ambil Gaji")),
               PopupMenuItem(value: '3', child: Text("Padam Seluruh Data")),
             ];
+          }else if (write) {
+            menu = const [
+              PopupMenuItem(value: '1', child: Text("Rekod Terperinci")),
+              PopupMenuItem(value: '2', child: Text("Ambil Gaji")),
+            ];
           }
-          return menu;
+            return menu;
         },
       ),
     );

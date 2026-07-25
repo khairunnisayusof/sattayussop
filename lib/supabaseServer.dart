@@ -11,7 +11,8 @@ Future<List<Map<String, dynamic>>> selectTable(
   String detailTable, {
   String thirdTable = '',
 }) async {
-  if (role == '' &&
+  if (roleID <= 0 &&
+      nameTable != 'Role Rekod' &&
       nameTable != 'Pekerja Rekod' &&
       nameTable != 'Menu Rekod' &&
       !kIsWeb) {
@@ -40,6 +41,9 @@ Future<Map<String, dynamic>> insertUpdateTable(
   int? id,
 }) async {
   print("insert record >> $nameTable | $id | $currentRecord");
+  if (role.toLowerCase() == "review") {
+    return currentRecord;
+  }
   if (id == null) {
     currentRecord.remove("id");
     final result = await supabase
@@ -64,13 +68,16 @@ Future<Map<String, dynamic>> insertUpdateTable(
 }
 
 Future<void> deleteRow(String nameTable, int id) async {
+  if (!delete) {
+    return;
+  }
   print("record delete >> $nameTable | $id");
   await supabase.from(nameTable).delete().eq('id', id);
   loadDataServer();
 }
 
 Future<void> deleteAllRecord(String nameTable) async {
-  if (role.toString().capitalize() != "Admin") {
+  if (!delete) {
     return;
   }
   await supabase.from(nameTable).delete().gte('id', 0);
@@ -86,7 +93,7 @@ Future<void> deleteAllRecordFromForeign(
   String columnName,
   int id,
 ) async {
-  if (role.toString().capitalize() != "Admin") {
+  if (!delete) {
     return;
   }
   try {
@@ -99,6 +106,17 @@ Future<void> deleteAllRecordFromForeign(
 
 Future<void> loadDataServer() async {
   try {
+    final roleList = await selectTable('Role Rekod', "");
+    rekod_Role = roleList
+        .map((item) => rekodRole.fromMap(item))
+        .toList();
+    rekod_Role.sort((a, b) => a.role.compareTo(b.role));
+    rekodRole current = rekod_Role.elementAt(rekod_Role.indexWhere((e) => e.id == roleID));
+    role = current.role;
+    read = current.read;
+    write = current.write;
+    delete = current.delete;
+
     final pekerjaList = await selectTable('Pekerja Rekod', "Ambil Gaji Rekod");
     rekod_Pekerja = pekerjaList
         .map((item) => rekodPekerja.fromMap(item))

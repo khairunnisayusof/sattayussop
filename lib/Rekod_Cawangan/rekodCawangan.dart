@@ -117,6 +117,9 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
               ],
             ),
             onLongPress: () {
+              if (!delete) {
+                return;
+              }
               showDialogRequired(
                 context,
                 "Pengesahan Memadam",
@@ -154,7 +157,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
           var menu = [
             PopupMenuItem(value: '1', child: Text("Padam Seluruh Data")),
           ];
-          return (role.toString().capitalize() == "Admin") ? menu : [];
+          return (write && delete) ? menu : [];
         },
       ),
     );
@@ -171,8 +174,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
       ),
       body: buildCollectionView,
       floatingActionButton:
-          (role.toString().capitalize() == "Admin" ||
-              role.toString().capitalize() == "Manager")
+          write
           ? FloatingActionButton(
               backgroundColor: color,
               foregroundColor: Colors.white,
