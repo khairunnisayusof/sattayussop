@@ -1403,7 +1403,7 @@ Future<void> openPrivacyPolicy() async {
 
   if (!await launchUrl(
     url,
-    mode: LaunchMode.inAppWebView,
+    mode: LaunchMode.inAppBrowserView,
   )) {
     throw Exception('Tidak boleh buka URL');
   }
