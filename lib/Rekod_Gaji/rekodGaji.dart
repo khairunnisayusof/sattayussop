@@ -156,13 +156,20 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
           }
         },
         itemBuilder: (BuildContext bc) {
-          return const [
+          var menu = const [
             PopupMenuItem(value: '1', child: Text("Ambil Gaji")),
-            PopupMenuItem(value: '2', child: Text("Slip Gaji")),
-            PopupMenuItem(value: '3', child: Text("Slip Gaji Tanpa KWSP")),
             PopupMenuItem(value: '4', child: Text("Rekod Terperinci")),
-            PopupMenuItem(value: '5', child: Text("Padam Seluruh Data")),
           ];
+          if (write && delete) {
+            menu = const [
+              PopupMenuItem(value: '1', child: Text("Ambil Gaji")),
+              PopupMenuItem(value: '2', child: Text("Slip Gaji")),
+              PopupMenuItem(value: '3', child: Text("Slip Gaji Tanpa KWSP")),
+              PopupMenuItem(value: '4', child: Text("Rekod Terperinci")),
+              PopupMenuItem(value: '5', child: Text("Padam Seluruh Data")),
+            ];
+          }
+          return menu;
         },
       ),
     );

@@ -5,6 +5,7 @@ import 'DocumentHelper.dart';
 import 'databaseLocal.dart';
 
 final supabase = Supabase.instance.client;
+final urlPrivacy = "https://ifgsuxodlpdesffnjigw.supabase.co/storage/v1/object/public/privacy%20policy/Privacy_Policy_ENG_BM.pdf";
 
 Future<List<Map<String, dynamic>>> selectTable(
   String nameTable,

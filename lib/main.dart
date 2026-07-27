@@ -102,7 +102,7 @@ class MyApp extends StatelessWidget {
     );
     ThemeMode themeMode = themeNotifier.themeMode;
     return MaterialApp(
-      title: 'Sattay Ussop',
+      title: 'Home',
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeMode,
@@ -130,9 +130,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final int _counter = 0;
   Icon more_rev_Icon = Icon(Icons.more_vert, color: Colors.white);
-  var title = "Sattay Ussop";
+  var title = "Home";
   Widget appBarTitle = Text(
-    "Sattay Ussop",
+    "Home",
     style: TextStyle(color: Colors.white),
   );
   Widget appBarSettingTitle = Text(
@@ -580,6 +580,34 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               ),
               onTap: () {
                 _sendLocationViaWsap();
+              },
+            ),
+            Divider(),
+            GestureDetector(
+              child: ListTile(
+                leading: Container(
+                  margin: EdgeInsets.only(top: 5, bottom: 5.0, left: 2.0),
+                  alignment: Alignment.centerLeft,
+                  width: 40.0,
+                  height: 40.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: color,
+                    image: DecorationImage(
+                      fit: BoxFit.fitWidth,
+                      alignment: Alignment.centerLeft,
+                      image: AssetImage("image/Privacy_Policy.png"),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  'Privacy Policy',
+                  style: textStyle,
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              onTap: () {
+                openPrivacyPolicy();
               },
             ),
             Divider(),

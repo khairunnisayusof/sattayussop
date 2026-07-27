@@ -67,7 +67,10 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
       rekodPekerja current = rekod_Pekerja.elementAt(index);
       var username = current.username;
       var nama = current.nama;
-      if (!current.cucuk) {
+      var role = current.role;
+      rekodRole roleList = rekod_Role.elementAt(rekod_Role.indexWhere((e) => e.id == role));
+      var nameRole = roleList.role;
+      if (!current.cucuk && nameRole.toLowerCase() != "review") {
         dropDownList.add(
           DropdownMenuItem<String>(
             value: username.isEmpty == true ? null : username,

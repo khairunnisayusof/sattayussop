@@ -1394,3 +1394,18 @@ extension NumberFormatExtension on String {
     return cleaned;
   }
 }
+
+Future<void> openPrivacyPolicy() async {
+
+  final Uri url = Uri.parse(
+      urlPrivacy
+  );
+
+  if (!await launchUrl(
+    url,
+    mode: LaunchMode.inAppWebView,
+  )) {
+    throw Exception('Tidak boleh buka URL');
+  }
+
+}
