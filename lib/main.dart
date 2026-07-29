@@ -19,13 +19,11 @@ import 'package:sattayussop/Rekod_pelanggan/rekodPelanggan.dart';
 import 'package:sattayussop/Rekod_Stok/rekodStok.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:string_capitalize/string_capitalize.dart';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../supabaseServer.dart';
 import 'login.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:share_plus/share_plus.dart';
 
 Future<void> main() async {
   // runApp(MyApp());
@@ -129,7 +127,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
-  final int _counter = 0;
   Icon more_rev_Icon = Icon(Icons.more_vert, color: Colors.white);
   var title = "Home";
   Widget appBarTitle = Text(
@@ -237,8 +234,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       child: Center(
         child: GridView.builder(
           primary: false,
-          padding: const EdgeInsets.all(5.0),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          padding: EdgeInsets.all(5.0),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisSpacing: 20.0,
             mainAxisSpacing: 40.0,
             childAspectRatio: 0.75,
@@ -319,22 +316,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           },
         ),
       ),
-      // GridView.count(
-      //     primary: false,
-      //     padding: const EdgeInsets.all(5.0),
-      //     crossAxisSpacing: 20.0,
-      //     mainAxisSpacing: 40.0,
-      //     childAspectRatio: 0.75,
-      //   // Create a grid with 2 columns. If you change the scrollDirection to
-      //   // horizontal, this produces 2 rows.
-      //   crossAxisCount: 3,
-      //     // Generate 100 widgets that display their index in the List.
-      //     children: List.generate(choices.length, (index) {
-      //         return Center(
-      //           child: SelectCard(choice: choices[index]),
-      //         );
-      //     })
-      // ),
     );
 
     buildSettingViewOfDevices = Container(
@@ -1022,43 +1003,49 @@ class SelectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle textStyle = TextStyle(
-      color: Colors.white,
-      fontSize: 16.0,
-      fontWeight: FontWeight.bold,
-    );
     Color color = Colors.orange;
     if (darkMode) {
       color = Colors.deepOrange;
     }
+
+    final isTablet = MediaQuery.of(context).size.width >= 800;
+
+    final double iconSize = isTablet ? 110 : 80;
+    final double titleSize = isTablet ? 28 : 16;
+
+    final TextStyle textStyle = TextStyle(
+      color: Colors.white,
+      fontSize: titleSize,
+      fontWeight: FontWeight.bold,
+    );
+    print("size width >>> ${MediaQuery.of(context).size.width}");
     return Card(
       semanticContainer: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      elevation: 5,
+      elevation: 6,
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       color: color,
       child: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(top: 5),
               alignment: Alignment.center,
-              width: 80.0,
-              height: 80.0,
+              width: iconSize,
+              height: iconSize,
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 image: DecorationImage(
-                  fit: BoxFit.fitWidth,
+                  fit: BoxFit.contain,
                   alignment: Alignment.topCenter,
                   image: AssetImage(choice.icon),
                 ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.all(5.0),
-              alignment: Alignment.center,
+            SizedBox(height: isTablet ? 20 : 5),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 choice.title,
                 style: textStyle,
