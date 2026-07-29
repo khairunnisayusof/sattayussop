@@ -72,12 +72,11 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
   @override
   void dispose() {
     if (!mounted) return;
-    // Clean up the controller when the widget is disposed.
-    loadDataServer();
     super.dispose();
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     setState(() {
       isPekerja = _selected == "pekerja";
       refreshData();

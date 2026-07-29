@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:notification_center/notification_center.dart';
 import 'package:string_capitalize/string_capitalize.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'DocumentHelper.dart';
@@ -32,7 +33,7 @@ Future<List<Map<String, dynamic>>> selectTable(
   }
 
   final data = await query.select(selectQuery);
-  print("select table $nameTable >> ${List<Map<String, dynamic>>.from(data)}");
+  // print("select table $nameTable >> ${List<Map<String, dynamic>>.from(data)}");
   return List<Map<String, dynamic>>.from(data);
 }
 
@@ -197,5 +198,8 @@ Future<void> loadDataServer() async {
   } catch (e, st) {
     print(e);
     print(st);
+  }finally {
+    NotificationCenter().notify('refreshData', data: true);
   }
+
 }

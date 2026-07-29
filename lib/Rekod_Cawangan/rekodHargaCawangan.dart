@@ -71,9 +71,12 @@ class _selectRekodHargaCawanganState extends State<selectRekodHargaCawangan> {
 
   @override
   void dispose() {
+    if (!mounted) return;
     // Clean up the controller when the widget is disposed.
+    super.dispose();
   }
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     setState(() {
       rekodCawangan current = rekod_Cawangan.elementAt(
         rekod_Cawangan.indexWhere((item) => item.nama == nama),

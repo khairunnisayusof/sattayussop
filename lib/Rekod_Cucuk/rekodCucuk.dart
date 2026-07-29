@@ -72,11 +72,11 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
     if (!mounted) return;
     // Clean up the controller when the widget is disposed.
     myController.dispose();
-    loadDataServer();
     super.dispose();
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     print("refresh data in rekod Cucuk");
     if (!refresh) {
       showDialog(

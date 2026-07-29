@@ -69,7 +69,9 @@ class _selectRekodHarianDetailState extends State<selectRekodHarianDetail> {
 
   @override
   void dispose() {
+    if (!mounted) return;
     // Clean up the controller when the widget is disposed.
+    super.dispose();
   }
 
   void _refreshView(bool refresh) {

@@ -37,12 +37,11 @@ class _RekodBarangState extends State<RekodBarang> {
   @override
   void dispose() {
     if (!mounted) return;
-    // Clean up the controller when the widget is disposed.
-    loadDataServer();
     super.dispose();
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     if (!refresh) {
       showDialog(
         context: context,

@@ -36,14 +36,12 @@ class _selectSenaraiBarangState extends State<selectSenaraiBarang> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     if (!mounted) return;
-    // Clean up the controller when the widget is disposed.
-    loadDataServer();
     super.dispose();
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     setState(() {
       senarai_Barang.sort((a, b) => a.nama.compareTo(b.nama));
     });

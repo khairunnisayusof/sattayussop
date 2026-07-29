@@ -44,11 +44,12 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
 
   @override
   void dispose() {
-    loadDataServer();
+    if (!mounted) return;
     super.dispose();
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     if (!refresh) {
       showDialog(
         context: context,

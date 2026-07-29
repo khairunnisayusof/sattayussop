@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:notification_center/notification_center.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:sattayussop/Rekod_Pembekal/rekodPembekal.dart';
 import 'package:sattayussop/Rekod_Gaji/rekodGaji.dart';
@@ -152,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   );
 
   List<Choice> menuChoices = List.from(choices);
-
+  bool isLoading = false;
   Future<void> _initPackageInfo() async {
     final info = await PackageInfo.fromPlatform();
       _packageInfo = info;
@@ -169,10 +170,16 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       loadUserServer();
       loadSharedPreferences();
       _initPackageInfo();
-      setState(() {});
     });
   }
 
+
+  void _refreshView(bool refresh) {
+    if (!mounted) return;
+    setState(() {
+      print("refresh record");
+    });
+  }
 
   // Future<void> checkLogin() async {
   //   sharedPreferences = await SharedPreferences.getInstance();
@@ -191,18 +198,11 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    if (!mounted) return;
     WidgetsBinding.instance.removeObserver(this);
-    loadDataServer();
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      loadUserServer();
-      loadSharedPreferences();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -701,7 +701,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (roleID <= 0) {
       return const LoginPage();
     }
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56), // 56 is default height
@@ -937,6 +936,7 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda semula untuk:
   }
 
   Future<void> loadSharedPreferences() async {
+    NotificationCenter().subscribe('refreshData', _refreshView);
     darkMode = await loadDataDarkMode();
     await loadDataServer();
     print("start load shared");
@@ -1018,7 +1018,6 @@ class SelectCard extends StatelessWidget {
       fontSize: titleSize,
       fontWeight: FontWeight.bold,
     );
-    print("size width >>> ${MediaQuery.of(context).size.width}");
     return Card(
       semanticContainer: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),

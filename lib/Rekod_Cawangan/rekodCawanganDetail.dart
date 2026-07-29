@@ -107,6 +107,7 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     setState(() {
       rekodCawangan currentCawangan = rekod_Cawangan.elementAt(
         rekod_Cawangan.indexWhere((e) => e.id == cawanganId),
@@ -1091,8 +1092,8 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
     );
     setState(() {
       target.rekod = selectDetailCawangan;
+      saveData();
     });
-    saveData();
   }
 
   void removeItemSelected(String menu) {

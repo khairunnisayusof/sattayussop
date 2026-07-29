@@ -79,10 +79,13 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
 
   @override
   void dispose() {
+    if (!mounted) return;
     // Clean up the controller when the widget is disposed.
+    super.dispose();
   }
 
   void _refreshView() {
+    if (!mounted) return;
     setState(() {
       _rekodGajiDetail.clear();
       jumlahHarian = 0.00;

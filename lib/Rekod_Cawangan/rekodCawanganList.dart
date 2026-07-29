@@ -77,6 +77,7 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     setState(() {
       print("cawangan >> $cawangan_id");
       rekodCawangan current = rekod_Cawangan.elementAt(
@@ -334,6 +335,7 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
     var current = rekodCawanganDetail.fromMap(result);
     usr.id = current.id;
     print("id <<< $usr");
+    insertStok(usr.epochTime, usr.tarikh, usr.hari);
     addItem(usr);
   }
 
@@ -384,7 +386,7 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
 
   // This block saves our list locally.
   void saveData() {
-    saveDataLocal();
     updateStok(tarikhRekod);
+    saveDataLocal();
   }
 }

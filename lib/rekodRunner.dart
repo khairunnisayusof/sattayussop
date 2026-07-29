@@ -38,12 +38,11 @@ class _selectRekodRunnerState extends State<selectRekodRunner> {
   void dispose() {
     // Clean up the controller when the widget is disposed.
     if (!mounted) return;
-    // Clean up the controller when the widget is disposed.
-    loadDataServer();
     super.dispose();
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     setState(() {
       rekod_Runner.sort((a, b) => a.username.compareTo(b.username));
     });

@@ -81,10 +81,13 @@ class _selectRekodCucukFilterState extends State<selectRekodCucukFilter> {
 
   @override
   void dispose() {
+    if (!mounted) return;
     // Clean up the controller when the widget is disposed.
+    super.dispose();
   }
 
   void _refreshView() {
+    if (!mounted) return;
     setState(() {
       _rekodCucukDetail.clear();
       jumlahSatay = 0;

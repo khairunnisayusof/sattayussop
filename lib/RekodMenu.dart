@@ -40,10 +40,7 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     if (!mounted) return;
-    // Clean up the controller when the widget is disposed.
-    loadDataServer();
     super.dispose();
   }
 

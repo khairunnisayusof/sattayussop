@@ -64,10 +64,13 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
 
   @override
   void dispose() {
+    if (!mounted) return;
     // Clean up the controller when the widget is disposed.
+    super.dispose();
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     setState(() {
       rekodCawangan currentCawangan = rekod_Cawangan.elementAt(selectIndex);
       cawanganId = currentCawangan.id;

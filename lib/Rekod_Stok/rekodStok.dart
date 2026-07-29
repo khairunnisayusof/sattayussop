@@ -47,8 +47,6 @@ class _RekodStokState extends State<RekodStok> {
   @override
   void dispose() {
     if (!mounted) return;
-    // Clean up the controller when the widget is disposed.
-    loadDataServer();
     super.dispose();
   }
 

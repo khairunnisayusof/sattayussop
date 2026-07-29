@@ -121,8 +121,9 @@ class _selectRekodPelangganDetailState
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is disposed.
     if (!mounted) return;
+    // Clean up the controller when the widget is disposed.
+    super.dispose();
   }
 
   void _refreshView(bool refresh) {

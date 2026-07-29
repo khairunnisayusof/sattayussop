@@ -44,11 +44,6 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
   void dispose() {
     // Clean up the controller when the widget is disposed.
     if (!mounted) return;
-    rekodList current = rekod_List.elementAt(
-      rekod_List.indexWhere((e) => e.id == id),
-    );
-    _rekodHarianDetail = List<rekodHarianDetail>.from(current.rekod).toList();
-    _rekodHarianDetail.sort((a, b) => a.id.compareTo(b.id));
     super.dispose();
   }
 

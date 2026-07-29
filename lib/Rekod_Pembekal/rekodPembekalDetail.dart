@@ -67,7 +67,9 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
 
   @override
   void dispose() {
+    if (!mounted) return;
     // Clean up the controller when the widget is disposed.
+    super.dispose();
   }
 
   @override
@@ -91,6 +93,7 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     setState(() {
       rekodPembekalList currentBarang = rekod_Pembekal.elementAt(
         rekod_Pembekal.indexWhere((e) => e.id == selectIndex),

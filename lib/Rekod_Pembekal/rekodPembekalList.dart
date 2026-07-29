@@ -68,6 +68,7 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     setState(() {
       rekodPembekalList current = rekod_Pembekal.elementAt(
         rekod_Pembekal.indexWhere((e) => e.id == selectedIndex),

@@ -80,6 +80,7 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     print("listen rekod pelanggan list");
     setState(() {});
   }
@@ -89,7 +90,6 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
     if (!mounted) return;
     // Clean up the controller when the widget is disposed.
     myController.dispose();
-    loadDataServer();
     super.dispose();
   }
 

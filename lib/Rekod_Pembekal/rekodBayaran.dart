@@ -64,10 +64,13 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
 
   @override
   void dispose() {
+    if (!mounted) return;
     // Clean up the controller when the widget is disposed.
+    super.dispose();
   }
 
   void _refreshView(bool refresh) {
+    if (!mounted) return;
     setState(() {
       rekodPembekalList currentPembekal = rekod_Pembekal.elementAt(
         rekod_Pembekal.indexWhere((e) => e.id == selectIndex),
