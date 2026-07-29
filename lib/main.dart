@@ -102,6 +102,7 @@ class MyApp extends StatelessWidget {
     );
     ThemeMode themeMode = themeNotifier.themeMode;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Home',
       theme: lightTheme,
       darkTheme: darkTheme,
@@ -709,7 +710,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     );
     if (kIsWeb) {
       return const MaterialApp(
-        debugShowCheckedModeBanner: false,
         home: OrderPage(),
       );
     }

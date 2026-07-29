@@ -230,7 +230,15 @@ class _OrderPageState extends State<OrderPage> {
         ),
         centerTitle: true,
       ),
-
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            showDialogTextSupportRequired(context,"Perlukan Bantuan?\nSila hantarkan mesej kepada kami.");
+          },
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          icon: const Icon(Icons.help_outline_rounded),
+          label: const Text("Bantuan"),
+        ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(15),
         color: Colors.white,
@@ -257,7 +265,7 @@ class _OrderPageState extends State<OrderPage> {
             String nama = namaController.text.isEmpty
                 ? "Customer"
                 : namaController.text;
-            String noTel = phoneController.text;
+            String noTel = phoneController.text.cleanNumber();
             String alamat = alamatController.text;
 
             insertServer(
@@ -1148,6 +1156,152 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
     );
   }
 
+
+  void showDialogTextSupportRequired(
+      BuildContext context,
+      String title) {
+    final formKey = GlobalKey<FormState>();
+    final myController = TextEditingController();
+    final myController1 = TextEditingController();
+    final myController2 = TextEditingController();
+    final FocusNode myFocusNode = FocusNode();
+    showDialog(context: context,builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, dialogSetState) {
+          return AlertDialog(
+            title: Text(title),
+            content: SizedBox(
+              height: MediaQuery.of(context).size.height / 3,
+              child: SingleChildScrollView(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Nama :', style: textStyle),
+                      SizedBox(height: 4),
+                      TextFormField(
+                        controller: myController,
+                        focusNode: myFocusNode,
+                        autofocus: true,
+                        autovalidateMode:
+                        AutovalidateMode.onUserInteraction,
+                        textInputAction: TextInputAction.next,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Sila masukkan nama anda";
+                          }
+                          return null;
+                        },
+                          decoration: buildDecoration("Masukkan nama anda").copyWith(
+                            prefixIcon: const Icon(Icons.person),
+                          ),
+                      ),
+                      SizedBox(height: 2),
+                      Text('No Telefon :', style: textStyle),
+                      SizedBox(height: 4),
+                      TextFormField(
+                        controller: myController1,
+                        keyboardType: TextInputType.phone,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Sila masukkan no telefon anda untuk kami hubungi";
+                          }
+                          return null;
+                        },
+                        decoration: buildDecoration("Masukkan no telefon anda").copyWith(
+                          prefixIcon: const Icon(Icons.phone),
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text('Mesej :', style: textStyle),
+                      SizedBox(height: 4),
+                      TextFormField(
+                        controller: myController2,
+                        minLines: 4,
+                        maxLines: 6,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Sila masukkan message anda";
+                          }
+                          return null;
+                        },
+                        decoration: buildDecoration("Huraikan masalah anda").copyWith(
+                          prefixIcon: const Icon(Icons.message),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: Text("Batal"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              TextButton(
+                child: Text("Simpan"),
+                onPressed: () {
+                  if (!formKey.currentState!.validate()) return;
+                  String nama = myController.text;
+                  String noTel = myController1.text.cleanNumber();
+                  String message = myController2.text;
+
+                 sendTodiscordSupport(nama, noTel, message);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    },
+    );
+  }
+
+  InputDecoration buildDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: color, width: 2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 15,
+        vertical: 15,
+      ),
+    );
+  }
+
+  void sendTodiscordSupport(String nama,String tel, String message) async {
+    try {
+      final res = await supabase.functions.invoke(
+        'support-user',
+        body: {"name": nama, "telefon": tel, "message": message},
+      );
+
+      print("respond data ${res.data}");
+    } catch (e) {
+      print("respond data error $e");
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Bantuan anda berjaya dihantar.')),
+    );
+    showDialogSupportRequired(
+      context,
+      "Bantuan Berjaya",
+      'Bantuan anda berjaya dihantar.',
+    );
+  }
+
   void showDialogRequired(BuildContext context, String title, String message) {
     showDialog(
       context: context,
@@ -1165,6 +1319,27 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
                   context,
                   MaterialPageRoute(builder: (context) => OrderPage()),
                 );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showDialogSupportRequired(BuildContext context, String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                // resetAllForm();
+                Navigator.of(context).pop();
               },
             ),
           ],
