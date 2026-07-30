@@ -567,9 +567,9 @@ class _selectRekodPelangganDetailState
             // Delay code execution by 1 second
             // Pop the page immediately
             Navigator.of(context).pop();
-            Future.delayed(Duration(seconds: 1), () {
-              loadData();
-            });
+            // Future.delayed(Duration(seconds: 1), () {
+            //   loadData();
+            // });
           },
         ),
         foregroundColor: Colors.transparent,
@@ -1315,6 +1315,5 @@ class _selectRekodPelangganDetailState
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Simpan Data')));
-    // loadData();
   }
 }

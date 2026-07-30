@@ -65,7 +65,6 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
     if (dark) {
       color = Colors.deepOrange;
     }
-    loadData();
     selectedIndex = widget.selectIndex;
     menuList = widget.menuList;
     rekodCawangan current = rekod_Cawangan.elementAt(selectedIndex);

@@ -287,6 +287,5 @@ class _RekodBarangState extends State<RekodBarang> {
   // This block saves our list locally.
   void saveData() {
     saveDataLocal();
-    loadData();
   }
 }

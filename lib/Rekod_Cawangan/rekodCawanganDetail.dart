@@ -1107,6 +1107,5 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Simpan Data')));
-    // loadData();
   }
 }

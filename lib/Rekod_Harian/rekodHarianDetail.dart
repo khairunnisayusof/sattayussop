@@ -63,7 +63,6 @@ class _selectRekodHarianDetailState extends State<selectRekodHarianDetail> {
     selectIndex = widget.selectIndex;
     selectedHarian = widget.selectedHarian;
     _refreshView(false);
-    loadData();
     super.initState();
   }
 
@@ -77,7 +76,6 @@ class _selectRekodHarianDetailState extends State<selectRekodHarianDetail> {
   void _refreshView(bool refresh) {
     if (!mounted) return;
     setState(() {
-      print("refresh data in rekodHarianDetail");
 
       rekodHarians = rekod_List.elementAt(selectedHarian);
       tarikh = rekodHarians?.tarikh ?? "";

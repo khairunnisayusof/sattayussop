@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
@@ -40,6 +41,22 @@ String fileHarian = 'Rekod_Harian.csv';
 String fileStok = 'Rekod_Stok.csv';
 String filePembekal = 'Rekod_Pembekal.csv';
 String fileCawangan = 'Rekod_Cawangan.csv';
+
+String databaseRole = "rekodRole";
+String databaseKategori = "rekodKategori";
+String databaseKategoriMenu = "rekodKategoriMenu";
+String databaseMenu = "rekodMenu";
+String databasePekerja = "rekodPekerja";
+String databaseStok = "rekodStok";
+String databaseHarian = "rekodHarian";
+String databaseCucuk = "rekodCucuk";
+String databasePelanggan = "rekodPelanggan";
+String databaseCawangan = "rekodCawangan";
+String databaseRunner = "rekodRunner";
+String databaseGaji = "rekodGaji";
+String databasePembekal = "rekodPembekal";
+String databaseBarang = "senaraiBarang";
+
 var font = pw.Font.helvetica();
 DataStorage fileLog = DataStorage();
 String path = "";
@@ -54,102 +71,65 @@ bool delete = false;
 String urlTempahan = "https://sattayussop.pages.dev/";
 
 Future<void> saveDataLocal() async {
-  // await sharedPreferences?.remove("rekodMenu");
-  // await sharedPreferences?.remove("rekodPekerja");
-  // await sharedPreferences?.remove("rekodHarian");
-  // await sharedPreferences?.remove("rekodCucuk");
-  // await sharedPreferences?.remove("rekodCawangan");
-  // await sharedPreferences?.remove("rekodPelanggan");
-  // await sharedPreferences?.remove("rekodRunner");
-  // await sharedPreferences?.remove("potonganGaji");
-  // await sharedPreferences?.remove("rekodGaji");
-  // await sharedPreferences?.remove("rekodPembekal");
-  // await sharedPreferences?.remove("rekodStok");
   try {
-    final jsonstringPekerja = jsonEncode(
-      rekod_Pekerja.map((e) => e.toMap()).toList(),
-    );
-    await sharedPreferences?.setString("rekodPekerja", jsonstringPekerja);
-
-    final jsonstringRole = jsonEncode(
-      rekod_Role.map((e) => e.toMap()).toList(),
-    );
-    await sharedPreferences?.setString("rekodRole", jsonstringRole);
-
-    final jsonstringKategoriMenu = jsonEncode(
-        rekod_Kategori.map((e) => e.toMap()).toList());
-    await sharedPreferences?.setString("rekodKategori", jsonstringKategoriMenu);
-
-    final jsonstringMenu = jsonEncode(
-        rekod_Menu.map((e) => e.toMap()).toList());
-    await sharedPreferences?.setString("rekodMenu", jsonstringMenu);
-
-    final jsonstringHarian = jsonEncode(
-      rekod_List.map((e) => e.toMap()).toList(),
-    );
-    await sharedPreferences?.setString("rekodHarian", jsonstringHarian);
-
-    final jsonstringCucuk = jsonEncode(
-      rekod_Cucuk.map((e) => e.toMap()).toList(),
-    );
-    await sharedPreferences?.setString("rekodCucuk", jsonstringCucuk);
-
-    final jsonstringCawangan = jsonEncode(
-      rekod_Cawangan.map((e) => e.toMap()).toList(),
-    );
-    await sharedPreferences?.setString("rekodCawangan", jsonstringCawangan);
-
-    final jsonstringPelanggan = jsonEncode(
-      rekod_Pelanggan.map((e) => e.toMap()).toList(),
-    );
-    await sharedPreferences?.setString("rekodPelanggan", jsonstringPelanggan);
-
-    final jsonstringRunner = jsonEncode(
-      rekod_Runner.map((e) => e.toMap()).toList(),
-    );
-    await sharedPreferences?.setString("rekodRunner", jsonstringRunner);
-
-    final jsonstringGai = jsonEncode(rekod_Gaji.map((e) => e.toMap()).toList());
-    await sharedPreferences?.setString("rekodGaji", jsonstringGai);
-
-    final jsonstringPembekal = jsonEncode(
-      rekod_Pembekal.map((e) => e.toMap()).toList(),
-    );
-    await sharedPreferences?.setString("rekodPembekal", jsonstringPembekal);
-
-    final jsonstringSenaraibarang = jsonEncode(
-      senarai_Barang.map((e) => e.toMap()).toList(),
-    );
-    await sharedPreferences?.setString(
-        "senaraiBarang", jsonstringSenaraibarang);
-
-    final jsonstringStok = jsonEncode(
-        rekod_stok.map((e) => e.toMap()).toList());
-    await sharedPreferences?.setString("rekodStok", jsonstringStok);
-
-    loadData();
+    await Future.wait([
+      saveData(databasePekerja, rekod_Pekerja),
+      saveData(databaseRole, rekod_Role),
+      saveData(databaseKategori, rekod_Kategori),
+      saveData(databaseMenu, rekod_Menu),
+      saveData(databaseHarian, rekod_List),
+      saveData(databaseCucuk, rekod_Cucuk),
+      saveData(databaseCawangan, rekod_Cawangan),
+      saveData(databasePelanggan, rekod_Pelanggan),
+      saveData(databaseRunner, rekod_Runner),
+      saveData(databaseGaji, rekod_Gaji),
+      saveData(databasePembekal, rekod_Pembekal),
+      saveData(databaseBarang, senarai_Barang),
+      saveData(databaseStok, rekod_stok),
+    ]);
   } catch (e, st) {
     print(e);
     print(st);
   }finally {
-    NotificationCenter().notify('refreshData', data: true);
+    print("finished save data local");
+    loadData();
   }
+}
+
+Future<void> saveData(
+    String key,
+    List<dynamic> list,
+    ) async {
+  final prefs = sharedPreferences;
+  if (prefs == null) return;
+  await prefs.setString(
+    key,
+    jsonEncode(list.map((e) => e.toMap()).toList()),
+  );
 }
 
 void loadUserServer() {
   try {
     roleID = sharedPreferences?.getInt("roleID") ?? 0;
     user_id = sharedPreferences?.getInt("userId") ?? 0;
-    final roleString = sharedPreferences?.getString("rekodRole");
-    if (roleString != null) {
-      final List data = jsonDecode(roleString);
-      rekod_Role = data
-          .map((e) => rekodRole.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_Role.sort((a, b) => a.role.compareTo(b.role));
-    }
-    rekodRole current = rekod_Role.elementAt(
-        rekod_Role.indexWhere((e) => e.id == roleID));
+
+    if (roleID <= 0) return;
+
+    final roleString = sharedPreferences?.getString(databaseRole);
+
+    if (roleString == null || roleString.isEmpty) return;
+
+    final List data = jsonDecode(roleString);
+
+    rekod_Role = data
+        .map((e) => rekodRole.fromMap(Map<String, dynamic>.from(e)))
+        .toList()
+      ..sort((a, b) => a.role.compareTo(b.role));
+
+    final index = rekod_Role.indexWhere((e) => e.id == roleID);
+
+    if (index == -1) return;
+    final current = rekod_Role[index];
     role = current.role;
     read = current.read;
     write = current.write;
@@ -158,7 +138,10 @@ void loadUserServer() {
     print(e);
     print(st);
   } finally {
-    NotificationCenter().notify('refreshData', data: true);
+    if (roleID <= 0) {
+      print("finished load User Server");
+      NotificationCenter().notify('refreshData', data: true);
+    }
   }
 }
 
@@ -168,147 +151,116 @@ Future<void> loadData() async {
     path = await fileLog._localPath;
 
     loadUserServer();
+    rekod_Pekerja = await loadList(
+      key: databasePekerja,
+      fromMap: rekodPekerja.fromMap,
+      sort: (a, b) => a.username.compareTo(b.username),
+    );
 
-    final userString = sharedPreferences?.getString("rekodPekerja");
-    if (userString != null) {
-      final List data = jsonDecode(userString);
-      rekod_Pekerja = data
-          .map((e) => rekodPekerja.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_Pekerja.sort((a, b) => a.username.compareTo(b.username));
-    } else {
-      await sharedPreferences?.remove("rekodPekerja");
-    }
+    rekod_Kategori = await loadList(
+      key: databaseKategoriMenu,
+      fromMap: rekodKategoriMenu.fromMap,
+      afterLoad: (list) =>
+      List<rekodKategoriMenu>.from(sortMenuList(list)),
+    );
 
-    final kategoriList = sharedPreferences?.getString("rekodKategoriMenu");
-    if (kategoriList != null) {
-      final List data = jsonDecode(kategoriList);
-      rekod_Kategori = data
-          .map((e) => rekodKategoriMenu.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      final list = sortMenuList(rekod_Kategori);
-      rekod_Kategori = list as List<rekodKategoriMenu>;
-    } else {
-      await sharedPreferences?.remove("rekodKategori");
-    }
+    rekod_Menu = await loadList(
+      key: databaseMenu,
+      fromMap: rekodMenu.fromMap,
+      sort: (a, b) => a.jenis.compareTo(b.jenis),
+    );
 
-    final menuList = sharedPreferences?.getString("rekodMenu");
-    if (menuList != null) {
-      final List data = jsonDecode(menuList);
-      rekod_Menu = data
-          .map((e) => rekodMenu.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_Menu.sort((a, b) => a.jenis.compareTo(b.jenis));
-    } else {
-      await sharedPreferences?.remove("rekodMenu");
-    }
+    rekod_List = await loadList(
+      key: databaseHarian,
+      fromMap: rekodList.fromMap,
+      sort: (a, b) => a.epochTime.compareTo(b.epochTime),
+    );
 
-    final jsonString = sharedPreferences?.getString("rekodHarian");
-    if (jsonString != null) {
-      final List data = jsonDecode(jsonString);
-      rekod_List = data
-          .map((e) => rekodList.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_List.sort((a, b) => a.epochTime.compareTo(b.epochTime));
-    } else {
-      await sharedPreferences?.remove("rekodHarian");
-    }
+    rekod_Cucuk = await loadList(
+      key: databaseCucuk,
+      fromMap: rekodCucuk.fromMap,
+      sort: (a, b) => a.epochTime.compareTo(b.epochTime),
+    );
 
+    rekod_Cawangan = await loadList(
+      key: databaseCawangan,
+      fromMap: rekodCawangan.fromMap,
+      sort: (a, b) => a.userName.compareTo(b.userName),
+    );
 
-    final rekodCucukjsonString = sharedPreferences?.getString("rekodCucuk");
-    if (rekodCucukjsonString != null) {
-      final List data = jsonDecode(rekodCucukjsonString);
-      rekod_Cucuk = data
-          .map((e) => rekodCucuk.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_Cucuk.sort((a, b) => a.epochTime.compareTo(b.epochTime));
-    } else {
-      await sharedPreferences?.remove("rekodCucuk");
-    }
+    rekod_Pelanggan = await loadList(
+      key: databasePelanggan,
+      fromMap: rekodPelanggan.fromMap,
+      sort: (a, b) => a.epochTime.compareTo(b.epochTime),
+    );
 
-    final cawanganListjsonString = sharedPreferences?.getString(
-        "rekodCawangan");
-    if (cawanganListjsonString != null) {
-      final List data = jsonDecode(cawanganListjsonString);
-      rekod_Cawangan = data
-          .map((e) => rekodCawangan.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_Cawangan.sort((a, b) => a.userName.compareTo(b.userName));
-    } else {
-      await sharedPreferences?.remove("rekodCawangan");
-    }
+    rekod_Runner = await loadList(
+      key: databaseRunner,
+      fromMap: rekodRunner.fromMap,
+      sort: (a, b) => a.username.compareTo(b.username),
+    );
 
-    final pelangganList = sharedPreferences?.getString("rekodPelanggan");
-    if (pelangganList != null) {
-      final List data = jsonDecode(pelangganList);
-      rekod_Pelanggan = data
-          .map((e) => rekodPelanggan.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_Pelanggan.sort((a, b) => a.epochTime.compareTo(b.epochTime));
-    } else {
-      await sharedPreferences?.remove("rekodPelanggan");
-    }
+    rekod_Gaji = await loadList(
+      key: databaseGaji,
+      fromMap: rekodGaji.fromMap,
+      sort: (a, b) => a.epochTime.compareTo(b.epochTime),
+    );
 
-    final runnerString = sharedPreferences?.getString("rekodRunner");
-    if (runnerString != null) {
-      final List data = jsonDecode(runnerString);
-      rekod_Runner = data
-          .map((e) => rekodRunner.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_Runner.sort((a, b) => a.username.compareTo(b.username));
-    } else {
-      await sharedPreferences?.remove("rekodRunner");
-    }
+    rekod_Pembekal = await loadList(
+      key: databasePembekal,
+      fromMap: rekodPembekalList.fromMap,
+      sort: (a, b) => a.username.compareTo(b.username),
+    );
 
-    final gajiString = sharedPreferences?.getString("rekodGaji");
-    if (gajiString != null) {
-      final List data = jsonDecode(gajiString);
-      rekod_Gaji = data
-          .map((e) => rekodGaji.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_Gaji.sort((a, b) => a.epochTime.compareTo(b.epochTime));
-    } else {
-      await sharedPreferences?.remove("rekodGaji");
-    }
+    senarai_Barang = await loadList(
+      key: databaseBarang,
+      fromMap: rekodBarang.fromMap,
+      sort: (a, b) => a.nama.compareTo(b.nama),
+    );
 
-    final pembekalString = sharedPreferences?.getString("rekodPembekal");
-    if (pembekalString != null) {
-      final List data = jsonDecode(pembekalString);
-      rekod_Pembekal = data
-          .map((e) => rekodPembekalList.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_Pembekal.sort((a, b) => a.username.compareTo(b.username));
-    } else {
-      await sharedPreferences?.remove("rekodPembekal");
-    }
+    rekod_stok = await loadList(
+      key: databaseStok,
+      fromMap: rekodStok.fromMap,
+      sort: (a, b) => a.epochTime.compareTo(b.epochTime),
+    );
 
-    final senaraiBarangString = sharedPreferences?.getString("senaraiBarang");
-    if (senaraiBarangString != null) {
-      final List data = jsonDecode(senaraiBarangString);
-      senarai_Barang = data
-          .map((e) => rekodBarang.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      senarai_Barang.sort((a, b) => a.nama.compareTo(b.nama));
-    } else {
-      await sharedPreferences?.remove("senaraiBarang");
-    }
-
-    final listString = sharedPreferences?.getString("rekodStok");
-    if (listString != null) {
-      final List data = jsonDecode(listString);
-      rekod_stok = data
-          .map((e) => rekodStok.fromMap(Map<String, dynamic>.from(e)))
-          .toList();
-      rekod_stok.sort((a, b) => a.epochTime.compareTo(b.epochTime));
-    } else {
-      await sharedPreferences?.remove("rekodStok");
-    }
   } catch (e, st) {
     print(e);
     print(st);
   } finally {
+    print("finished load data local");
     NotificationCenter().notify('refreshData', data: true);
   }
+}
+
+Future<List<T>> loadList<T>({
+  required String key,
+  required T Function(Map<String, dynamic>) fromMap,
+  int Function(T a, T b)? sort,
+  List<T> Function(List<T>)? afterLoad,
+}) async {
+  final prefs = sharedPreferences;
+  if (prefs == null) return [];
+
+  final json = prefs.getString(key);
+
+  if (json == null) return [];
+
+  final List data = jsonDecode(json);
+
+  List<T> list = data
+      .map((e) => fromMap(Map<String, dynamic>.from(e)))
+      .toList();
+
+  if (sort != null) {
+    list.sort(sort);
+  }
+
+  if (afterLoad != null) {
+    list = afterLoad(list);
+  }
+
+  return list;
 }
 
 void insertStok(String epochTime, String tarikhRekod, String hariRekod) async {
@@ -694,6 +646,7 @@ void saveDataStok(rekodStok usr) {
   //     updateStok(tarikh0);
   //   }
   // }
+  print("finished save data stok");
   NotificationCenter().notify('refreshData', data: true);
 }
 

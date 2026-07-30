@@ -583,7 +583,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   ),
                 ),
                 title: Text(
-                  'Privacy Policy',
+                  'Dasar Privasi',
                   style: textStyle,
                   textAlign: TextAlign.left,
                 ),
@@ -646,7 +646,25 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   }
                   await sharedPreferences?.setInt("userId", 0);
                   await sharedPreferences?.setInt("roleID", 0);
-                  loadData();
+                  setState(() {
+                    write = false;
+                    read = true;
+                    delete = false;
+                  });
+                  await sharedPreferences?.remove(databasePekerja);
+                  await sharedPreferences?.remove(databaseRole);
+                  await sharedPreferences?.remove(databaseKategori);
+                  await sharedPreferences?.remove(databaseKategoriMenu);
+                  await sharedPreferences?.remove(databaseMenu);
+                  await sharedPreferences?.remove(databaseStok);
+                  await sharedPreferences?.remove(databaseHarian);
+                  await sharedPreferences?.remove(databaseCucuk);
+                  await sharedPreferences?.remove(databasePelanggan);
+                  await sharedPreferences?.remove(databaseCawangan);
+                  await sharedPreferences?.remove(databaseRunner);
+                  await sharedPreferences?.remove(databaseGaji);
+                  await sharedPreferences?.remove(databasePembekal);
+                  await sharedPreferences?.remove(databaseBarang);
                   if (!mounted) return;
                   Navigator.pushReplacement(
                     context,

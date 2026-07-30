@@ -47,7 +47,6 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
 
   void _refreshView(bool refresh) {
     if (!mounted) return;
-    print("refresh data in rekodHarian ${rekod_List.length}");
     setState(() {});
     if (!refresh) {
       showDialog(

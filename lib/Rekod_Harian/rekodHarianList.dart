@@ -36,7 +36,6 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
     tarikh = current.tarikh;
     id = current.id;
     _refreshView(true);
-    loadData();
     super.initState();
   }
 
@@ -50,7 +49,6 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
   void _refreshView(bool refresh) {
     if (!mounted) return;
     setState(() {
-      print("refresh data in rekodHarianList");
       rekodList current = rekod_List.elementAt(selectIndex);
       _rekodHarianDetail = List<rekodHarianDetail>.from(current.rekod).toList();
       _rekodHarianDetail.sort((a, b) => a.id.compareTo(b.id));

@@ -234,11 +234,13 @@ class _OrderPageState extends State<OrderPage> {
           onPressed: () {
             showDialogTextSupportRequired(context,"Perlukan Bantuan?\nSila hantarkan mesej kepada kami.");
           },
-          backgroundColor: color,
+          backgroundColor: Colors.orangeAccent,
           foregroundColor: Colors.white,
           icon: const Icon(Icons.help_outline_rounded),
           label: const Text("Bantuan"),
         ),
+        // floatingActionButtonLocation:
+        // FloatingActionButtonLocation.endDocked,
       bottomNavigationBar: Container(
         padding: const EdgeInsets.all(15),
         color: Colors.white,
@@ -467,6 +469,7 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
                       ),
                     ),
                   ),
+                  const SizedBox(height: 60),
                 ],
               ),
             )

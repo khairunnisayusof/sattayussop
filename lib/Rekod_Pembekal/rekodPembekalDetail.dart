@@ -403,7 +403,6 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Simpan Data')));
-    // loadData();
   }
 
   @override

@@ -108,98 +108,112 @@ Future<void> deleteAllRecordFromForeign(
 
 Future<void> loadDataServer() async {
   try {
-    final roleList = await selectTable('Role Rekod', "");
+    final results = await Future.wait([
+      selectTable('Kategori Menu Rekod', ""),
+      selectTable('Menu Rekod', ""),
+      selectTable('Role Rekod', "")
+    ]);
+
+    final kategoriList = results[0];
+    rekod_Kategori = kategoriList.map((e) => rekodKategoriMenu.fromMap(e)).toList();
+    rekod_Kategori.sort((a, b) => a.jenis.compareTo(b.jenis));
+
+    final menuList = results[1];
+    rekod_Menu = menuList.map((e) => rekodMenu.fromMap(e)).toList();
+    rekod_Menu.sort((a, b) => a.jenis.compareTo(b.jenis));
+
+    final roleList = results[2];
     rekod_Role = roleList
         .map((item) => rekodRole.fromMap(item))
         .toList();
     rekod_Role.sort((a, b) => a.role.compareTo(b.role));
-    rekodRole current = rekod_Role.elementAt(rekod_Role.indexWhere((e) => e.id == roleID));
-    role = current.role;
-    read = current.read;
-    write = current.write;
-    delete = current.delete;
+    final index = rekod_Role.indexWhere((e) => e.id == roleID);
 
-    final pekerjaList = await selectTable('Pekerja Rekod', "Ambil Gaji Rekod");
+    if (index != -1) {
+      final current = rekod_Role[index];
+      role = current.role;
+      read = current.read;
+      write = current.write;
+      delete = current.delete;
+    } else {
+      role = "";
+      read = false;
+      write = false;
+      delete = false;
+    }
+
+    if (role.isEmpty && !kIsWeb) {
+      return;
+    }
+
+    final resultsUser = await Future.wait([
+      selectTable('Pekerja Rekod', "Ambil Gaji Rekod"),
+      selectTable('Stok Rekod', "Stok Detail Rekod"),
+      selectTable('Harian Rekod', "Harian Detail Rekod"),
+      selectTable('Cucuk Rekod', "Cucuk Detail Rekod", thirdTable: 'Jumlah Cucuk Satay Rekod'),
+      selectTable('Gaji Rekod', "Gaji Detail Rekod"),
+      selectTable('Pelanggan Rekod', "Pelanggan Detail Rekod"),
+      selectTable('Cawangan Rekod',"Cawangan Detail Rekod",thirdTable: 'Cawangan Bayaran Rekod'),
+      selectTable('Pembekal Rekod', "Pembekal Detail Rekod", thirdTable: 'Pembekal Bayaran Rekod'),
+      selectTable('Runner Rekod', ""),
+      selectTable('Senarai Barang Rekod', "")
+    ]);
+
+    final pekerjaList = resultsUser[0];
     rekod_Pekerja = pekerjaList
         .map((item) => rekodPekerja.fromMap(item))
         .toList();
     rekod_Pekerja.sort((a, b) => a.username.compareTo(b.username));
 
-    final kategoriList = await selectTable('Kategori Menu Rekod', "");
-    rekod_Kategori = kategoriList.map((e) => rekodKategoriMenu.fromMap(e)).toList();
-    rekod_Kategori.sort((a, b) => a.jenis.compareTo(b.jenis));
 
-    final menuList = await selectTable('Menu Rekod', "");
-    rekod_Menu = menuList.map((e) => rekodMenu.fromMap(e)).toList();
-    rekod_Menu.sort((a, b) => a.jenis.compareTo(b.jenis));
-
-    final runnerList = await selectTable('Runner Rekod', "");
-    rekod_Runner = runnerList.map((e) => rekodRunner.fromMap(e)).toList();
-    rekod_Runner.sort((a, b) => a.username.compareTo(b.username));
-
-    final barangList = await selectTable('Senarai Barang Rekod', "");
-    senarai_Barang = barangList.map((e) => rekodBarang.fromMap(e)).toList();
-    senarai_Barang.sort((a, b) => a.nama.compareTo(b.nama));
-
-    if (role.toString().isEmpty && !kIsWeb) {
-      return;
-    }
-
-    final recordData = await selectTable('Stok Rekod', "Stok Detail Rekod");
+    final recordData = resultsUser[1];
     rekod_stok = recordData.map((item) => rekodStok.fromMap(item)).toList();
     rekod_stok.sort((a, b) => a.epochTime.compareTo(b.epochTime));
 
-    final dataAll = await selectTable('Harian Rekod', "Harian Detail Rekod");
+    final dataAll = resultsUser[2];
     rekod_List = dataAll.map((e) => rekodList.fromMap(e)).toList();
     rekod_List.sort((a, b) => a.epochTime.compareTo(b.epochTime));
 
-    final cucukData = await selectTable(
-      'Cucuk Rekod',
-      "Cucuk Detail Rekod",
-      thirdTable: 'Jumlah Cucuk Satay Rekod',
-    );
+    final cucukData = resultsUser[3];
     rekod_Cucuk = cucukData.map((item) => rekodCucuk.fromMap(item)).toList();
     rekod_Cucuk.sort((a, b) => a.epochTime.compareTo(b.epochTime));
 
-    final cawanganData = await selectTable(
-      'Cawangan Rekod',
-      "Cawangan Detail Rekod",
-      thirdTable: 'Cawangan Bayaran Rekod',
-    );
-    rekod_Cawangan = cawanganData
-        .map((item) => rekodCawangan.fromMap(item))
-        .toList();
-    rekod_Cawangan.sort((a, b) => a.nama.compareTo(b.nama));
-
-    final gajiRekod = await selectTable('Gaji Rekod', "Gaji Detail Rekod");
+    final gajiRekod = resultsUser[4];
     rekod_Gaji = gajiRekod.map((item) => rekodGaji.fromMap(item)).toList();
     rekod_Gaji.sort((a, b) => a.epochTime.compareTo(b.epochTime));
 
-    final pelangganRekod = await selectTable(
-      'Pelanggan Rekod',
-      "Pelanggan Detail Rekod",
-    );
+    final pelangganRekod = resultsUser[5];
     rekod_Pelanggan = pelangganRekod
         .map((item) => rekodPelanggan.fromMap(item))
         .toList();
     rekod_Pelanggan.sort((a, b) => a.epochTime.compareTo(b.epochTime));
 
-    final pembekalRekod = await selectTable(
-      'Pembekal Rekod',
-      "Pembekal Detail Rekod",
-      thirdTable: 'Pembekal Bayaran Rekod',
-    );
+    final cawanganData = resultsUser[6];
+    rekod_Cawangan = cawanganData
+        .map((item) => rekodCawangan.fromMap(item))
+        .toList();
+    rekod_Cawangan.sort((a, b) => a.nama.compareTo(b.nama));
+
+    final pembekalRekod = resultsUser[7];
     rekod_Pembekal = pembekalRekod
         .map((item) => rekodPembekalList.fromMap(item))
         .toList();
     rekod_Pembekal.sort((a, b) => a.username.compareTo(b.username));
 
-    saveDataLocal();
+    final runnerList = resultsUser[8];
+    rekod_Runner = runnerList.map((e) => rekodRunner.fromMap(e)).toList();
+    rekod_Runner.sort((a, b) => a.username.compareTo(b.username));
+
+    final barangList = resultsUser[9];
+    senarai_Barang = barangList.map((e) => rekodBarang.fromMap(e)).toList();
+    senarai_Barang.sort((a, b) => a.nama.compareTo(b.nama));
+
   } catch (e, st) {
     print(e);
     print(st);
   }finally {
-    NotificationCenter().notify('refreshData', data: true);
+    print("finished load data from server");
+    saveDataLocal();
   }
 
 }
