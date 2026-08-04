@@ -385,7 +385,7 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
 
   // This block saves our list locally.
   void saveData() {
-    updateStok(tarikhRekod);
+    refreshAllStok(tarikhRekod);
     saveDataLocal();
   }
 }

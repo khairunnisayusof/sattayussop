@@ -301,6 +301,6 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
   // This block saves our list locally.
   void saveData() {
     saveDataLocal();
-    updateStok(tarikh);
+    refreshAllStok(tarikh);
   }
 }

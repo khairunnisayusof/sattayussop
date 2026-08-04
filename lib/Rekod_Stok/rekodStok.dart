@@ -302,6 +302,6 @@ class _RekodStokState extends State<RekodStok> {
 
   // This block saves our list locally.
   void saveData() {
-    updateStok(tarikhRekod);
+    refreshAllStok(tarikhRekod);
   }
 }

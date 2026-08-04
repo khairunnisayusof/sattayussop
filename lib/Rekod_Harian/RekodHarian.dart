@@ -148,7 +148,7 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
         ),
         foregroundColor: Colors.transparent,
         title: Text("Rekod Harian", style: TextStyle(color: Colors.white)),
-        actions: <Widget>[],
+        actions: <Widget>[settingButton],
         centerTitle: true,
       ),
       body: buildCollectionView,
@@ -274,6 +274,6 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
   Future<void> saveData() async {
     saveDataLocal();
     // Future.delayed(Duration(seconds: 2), () {
-    updateStok(tarikhRekod);
+    refreshAllStok(tarikhRekod);
   }
 }

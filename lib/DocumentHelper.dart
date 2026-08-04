@@ -68,6 +68,7 @@ bool read = false;
 bool write = false;
 bool delete = false;
 
+bool isLoading = false;
 String urlTempahan = "https://sattayussop.pages.dev/";
 
 Future<void> saveDataLocal() async {
@@ -230,6 +231,9 @@ Future<void> loadData() async {
   } finally {
     print("finished load data local");
     NotificationCenter().notify('refreshData', data: true);
+    if (isLoading) {
+      NotificationCenter().notify('finishLoad', data: true);
+    }
   }
 }
 
@@ -309,11 +313,11 @@ void insertStok(String epochTime, String tarikhRekod, String hariRekod) async {
     rekod_stok.add(
       rekodStok(epochTime, tarikhRekod, hariRekod, 0.00, 0.00, rekod),
     );
-    updateStok(tarikhRekod);
+    refreshAllStok(tarikhRekod);
   }
 }
 
-void updateStok(String tarikh) async {
+Future<void> updateStok(String tarikh) async {
   print("update stock $tarikh");
   if (rekod_Menu.isEmpty) {
     NotificationCenter().notify('refreshData', data: false);
@@ -627,6 +631,23 @@ void updateStok(String tarikh) async {
   }
 }
 
+Future<void> refreshAllStok(String tarikh) async {
+  await updateStok(tarikh);
+
+  for (final stok in rekod_stok) {
+    if (stok.tarikh != tarikh) {
+      await updateStok(stok.tarikh);
+    }
+  }
+}
+
+// This block saves our list locally.
+void saveDataStok(rekodStok usr) {
+  insertUpdateTable('Stok Rekod', usr.toMapServer(), id: usr.id);
+  print("finished save data stok");
+  // NotificationCenter().notify('refreshData', data: true);
+}
+
 void removeItem(String tarikh) {
   try {
     final stok = rekod_stok.firstWhere((e) => e.tarikh == tarikh);
@@ -637,18 +658,6 @@ void removeItem(String tarikh) {
   }
 }
 
-// This block saves our list locally.
-void saveDataStok(rekodStok usr) {
-  insertUpdateTable('Stok Rekod', usr.toMapServer(), id: usr.id);
-  // for (final current in rekod_stok) {
-  //   final tarikh0 = current.tarikh;
-  //   if (tarikh0 != usr.tarikh) {
-  //     updateStok(tarikh0);
-  //   }
-  // }
-  print("finished save data stok");
-  NotificationCenter().notify('refreshData', data: true);
-}
 
 Map<String, dynamic> sortMenu(Map<String, dynamic> menu) {
   final order = ["Ayam", "Daging", "Perut", "Nasi"];

@@ -796,7 +796,7 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
   // This block saves our list locally.
   void saveData() {
     saveDataLocal();
-    updateStok(tarikh);
+    refreshAllStok(tarikh);
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Simpan Data')));

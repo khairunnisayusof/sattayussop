@@ -450,6 +450,6 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
   void saveData() {
     saveDataLocal();
     // Future.delayed(Duration(seconds: 2), () {
-    updateStok(tarikhRekod);
+    refreshAllStok(tarikhRekod);
   }
 }

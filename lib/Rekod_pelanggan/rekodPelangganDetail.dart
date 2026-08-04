@@ -1311,7 +1311,7 @@ class _selectRekodPelangganDetailState
   // This block saves our list locally.
   void saveData() {
     saveDataLocal();
-    updateStok(tarikhRekod);
+    refreshAllStok(tarikhRekod);
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Simpan Data')));

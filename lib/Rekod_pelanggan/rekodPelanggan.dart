@@ -515,6 +515,6 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
   void saveData() {
     saveDataLocal();
     print("save rekod pelanggan >> $tarikhRekod");
-    updateStok(tarikhRekod);
+    refreshAllStok(tarikhRekod);
   }
 }

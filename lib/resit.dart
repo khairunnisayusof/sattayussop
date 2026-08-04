@@ -47,7 +47,7 @@ class PdfInvoicePelanggan {
     if (current.tarikhOrder.isEmpty) {
       current.tarikhOrder = tarikhOrder;
       saveDataLocal();
-      updateStok(current.tarikh);
+      refreshAllStok(current.tarikh);
     }
     if (invoice.isEmpty) {
       int totalOrder = rekod_Pelanggan

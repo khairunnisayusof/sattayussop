@@ -153,7 +153,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   );
 
   List<Choice> menuChoices = List.from(choices);
-  bool isLoading = false;
   Future<void> _initPackageInfo() async {
     final info = await PackageInfo.fromPlatform();
       _packageInfo = info;
@@ -178,6 +177,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     if (!mounted) return;
     setState(() {
       print("refresh record");
+      isLoading = false;
     });
   }
 
@@ -220,7 +220,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           );
         }
       });
-    }else {
+    } else {
       setState(() {
         if (menuChoices.any((e) => e.title == "Rekod Gaji")) {
           menuChoices.removeAt(3);
@@ -277,7 +277,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                       context,
                       MaterialPageRoute(builder: (context) => RekodCawangan()),
                     );
-
                   }
                 } else if (index == 4) {
                   if (isAdminManager) {
@@ -290,7 +289,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                       context,
                       MaterialPageRoute(builder: (context) => RekodBarang()),
                     );
-
                   }
                 } else if (index == 5) {
                   if (isAdminManager) {
@@ -338,7 +336,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   ),
                   child: Container(
                     alignment: Alignment.centerLeft,
-                    width: MediaQuery.of(context).size.width - 100.0,
+                    width: MediaQuery
+                        .of(context)
+                        .size
+                        .width - 100.0,
                     height: 30,
                     child: Text(
                       " Tetapan Rekod",
@@ -507,7 +508,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   ),
                 );
               },
-            ): SizedBox(height: 0) ,
+            ) : SizedBox(height: 0),
             isAdminManager ? Divider() : SizedBox(height: 0),
             GestureDetector(
               child: ListTile(
@@ -619,8 +620,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               onTap: () {
                 fileLog.attachLogFile(context);
               },
-            ): SizedBox(height: 0),
-            isAdminManager  ? Divider() : SizedBox(height: 0),
+            ) : SizedBox(height: 0),
+            isAdminManager ? Divider() : SizedBox(height: 0),
             GestureDetector(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10),
@@ -628,7 +629,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   color: color,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child:ListTile(
+                child: ListTile(
                   title: Text(
                     role.isNotEmpty ? 'Log Keluar' : 'Log Masuk',
                     style: TextStyle(
@@ -640,46 +641,49 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   ),
                 ),
               ),
-                onTap: () async {
-                  if (role.isNotEmpty) {
-                    role = '';
-                  }
-                  await sharedPreferences?.setInt("userId", 0);
-                  await sharedPreferences?.setInt("roleID", 0);
-                  setState(() {
-                    write = false;
-                    read = true;
-                    delete = false;
-                  });
-                  await sharedPreferences?.remove(databasePekerja);
-                  await sharedPreferences?.remove(databaseRole);
-                  await sharedPreferences?.remove(databaseKategori);
-                  await sharedPreferences?.remove(databaseKategoriMenu);
-                  await sharedPreferences?.remove(databaseMenu);
-                  await sharedPreferences?.remove(databaseStok);
-                  await sharedPreferences?.remove(databaseHarian);
-                  await sharedPreferences?.remove(databaseCucuk);
-                  await sharedPreferences?.remove(databasePelanggan);
-                  await sharedPreferences?.remove(databaseCawangan);
-                  await sharedPreferences?.remove(databaseRunner);
-                  await sharedPreferences?.remove(databaseGaji);
-                  await sharedPreferences?.remove(databasePembekal);
-                  await sharedPreferences?.remove(databaseBarang);
-                  if (!mounted) return;
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const MyHomePage(),
-                    ),
-                  );
-                },
+              onTap: () async {
+                if (role.isNotEmpty) {
+                  role = '';
+                }
+                await sharedPreferences?.setInt("userId", 0);
+                await sharedPreferences?.setInt("roleID", 0);
+                setState(() {
+                  write = false;
+                  read = true;
+                  delete = false;
+                });
+                await sharedPreferences?.remove(databasePekerja);
+                await sharedPreferences?.remove(databaseRole);
+                await sharedPreferences?.remove(databaseKategori);
+                await sharedPreferences?.remove(databaseKategoriMenu);
+                await sharedPreferences?.remove(databaseMenu);
+                await sharedPreferences?.remove(databaseStok);
+                await sharedPreferences?.remove(databaseHarian);
+                await sharedPreferences?.remove(databaseCucuk);
+                await sharedPreferences?.remove(databasePelanggan);
+                await sharedPreferences?.remove(databaseCawangan);
+                await sharedPreferences?.remove(databaseRunner);
+                await sharedPreferences?.remove(databaseGaji);
+                await sharedPreferences?.remove(databasePembekal);
+                await sharedPreferences?.remove(databaseBarang);
+                if (!mounted) return;
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MyHomePage(),
+                  ),
+                );
+              },
             ),
             Container(
               padding: const EdgeInsets.all(12.0),
               alignment: Alignment.bottomRight,
               child: Text(
                 "V ${_packageInfo.version}",
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .bodyMedium,
               ),
             ),
           ],
@@ -731,10 +735,32 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           AppBar(title: appBarSettingTitle, centerTitle: true),
         ][_selectedIndex],
       ),
-      body: <Widget>[
-        buildCollectionView,
-        buildSettingViewOfDevices,
-      ][_selectedIndex],
+      body: Stack(
+        children: [
+          <Widget>[
+            buildCollectionView,
+            buildSettingViewOfDevices,
+          ][_selectedIndex],
+          if (isLoading)
+            Container(
+              color: Colors.black38,
+              child: const Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text(
+                      "Sila tunggu\nSedang mendapatkan rekod terkini...",
+                      style: TextStyle(color: Colors.white),
+                      textAlign: .center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -948,18 +974,23 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda semula untuk:
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (isLoading) {
+      return;
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   Future<void> loadSharedPreferences() async {
-    NotificationCenter().subscribe('refreshData', _refreshView);
-    darkMode = await loadDataDarkMode();
-    await loadDataServer();
     print("start load shared");
+    NotificationCenter().subscribe('finishLoad', _refreshView);
+    darkMode = await loadDataDarkMode();
     setState(() {
+      isLoading = true;
     });
+    await loadDataServer();
   }
 
   //  This block loads our previously-stored list with key 'list'.

@@ -1103,7 +1103,7 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
 
   // This block saves our list locally.
   void saveData() {
-    updateStok(tarikh);
+    refreshAllStok(tarikh);
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Simpan Data')));
