@@ -42,6 +42,7 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
   void dispose() {
     if (!mounted) return;
     myController.dispose();
+    loadDataServer();
     super.dispose();
   }
 

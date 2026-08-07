@@ -47,6 +47,7 @@ class _RekodStokState extends State<RekodStok> {
   @override
   void dispose() {
     if (!mounted) return;
+    loadDataServer();
     super.dispose();
   }
 

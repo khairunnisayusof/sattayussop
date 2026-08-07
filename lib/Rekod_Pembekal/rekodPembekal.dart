@@ -37,6 +37,7 @@ class _RekodBarangState extends State<RekodBarang> {
   @override
   void dispose() {
     if (!mounted) return;
+    loadDataServer();
     super.dispose();
   }
 

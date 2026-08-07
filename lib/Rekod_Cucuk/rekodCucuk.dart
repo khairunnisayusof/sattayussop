@@ -71,6 +71,7 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
   void dispose() {
     if (!mounted) return;
     // Clean up the controller when the widget is disposed.
+    loadDataServer();
     myController.dispose();
     super.dispose();
   }

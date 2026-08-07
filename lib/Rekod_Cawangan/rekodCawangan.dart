@@ -45,6 +45,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
   @override
   void dispose() {
     if (!mounted) return;
+    loadDataServer();
     super.dispose();
   }
 

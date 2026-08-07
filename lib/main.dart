@@ -979,6 +979,7 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda semula untuk:
     } else {
       setState(() {
         _selectedIndex = index;
+        loadDataServer();
       });
     }
   }

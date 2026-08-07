@@ -67,6 +67,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
     if (!mounted) return;
     // Clean up the controller when the widget is disposed.
     myController.dispose();
+    loadDataServer();
     super.dispose();
   }
 

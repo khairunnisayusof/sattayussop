@@ -1258,7 +1258,7 @@ class _selectRekodPelangganDetailState
       currentList.orderMenu = _rekodMenu;
       currentList.jumlahBayaran = jumlahSebenar;
       currentList.baki = baki;
-      print("start rekod kira >>> $jumlahSebenar | $pendahuluan  | $baki");
+      print("start rekod kira >>> $jumlahSebenar | $pendahuluan  | $_rekodMenu");
       insertServerPelanggan(currentList);
     });
   }
@@ -1304,6 +1304,8 @@ class _selectRekodPelangganDetailState
   }
 
   void removeItemSelected(int index) {
+    rekodPesananPelanggan current = _rekodMenu.elementAt(index);
+    deleteRow('Pelanggan Detail Rekod',current.id);
     _rekodMenu.removeAt(index);
     kiraJualan();
   }

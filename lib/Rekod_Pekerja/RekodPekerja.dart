@@ -72,6 +72,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
   @override
   void dispose() {
     if (!mounted) return;
+    loadDataServer();
     super.dispose();
   }
 
