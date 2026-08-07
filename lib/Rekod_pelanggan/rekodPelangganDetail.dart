@@ -1213,7 +1213,7 @@ class _selectRekodPelangganDetailState
 
   Future<void> insertServer(rekodPesananPelanggan usr, int index) async {
     print("pelanggan id in save >> $pelangganID");
-    if (index > 0) {
+    if (index >= 0) {
       await insertUpdateTable(
         'Pelanggan Detail Rekod',
         usr.toMapServer(),
