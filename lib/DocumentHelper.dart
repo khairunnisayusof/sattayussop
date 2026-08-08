@@ -67,7 +67,7 @@ String role = '';
 bool read = false;
 bool write = false;
 bool delete = false;
-
+bool internetAvailable = false;
 bool isLoading = false;
 String urlTempahan = "https://sattayussop.pages.dev/";
 
@@ -231,9 +231,6 @@ Future<void> loadData() async {
   } finally {
     print("finished load data local");
     NotificationCenter().notify('refreshData', data: true);
-    if (isLoading) {
-      NotificationCenter().notify('finishLoad', data: true);
-    }
   }
 }
 

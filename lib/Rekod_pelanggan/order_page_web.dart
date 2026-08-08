@@ -108,9 +108,9 @@ class _OrderPageState extends State<OrderPage> {
     NotificationCenter().subscribe('refreshData', _refreshView);
     menuList.clear();
     dropDownList.clear();
-    final menuListData = await selectTable('Menu Rekod', "");
+    final menuListData = await selectTable('Menu Rekod');
     rekod_Menu = menuListData.map((e) => rekodMenu.fromMap(e)).toList();
-    final kategoriListData = await selectTable('Kategori Menu Rekod', "");
+    final kategoriListData = await selectTable('Kategori Menu Rekod');
     rekod_Kategori = kategoriListData.map((e) => rekodKategoriMenu.fromMap(e)).toList();
     final list = sortMenuList(rekod_Menu);
 
@@ -209,12 +209,12 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   void initState() {
-    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showNotice();
     });
     loadData();
     print("rekod list >> ${rekod_Menu.length} | ${menuList.length}");
+    super.initState();
   }
 
   @override
@@ -1397,10 +1397,10 @@ class _QuantityButtonState extends State<QuantityButton> {
 
   @override
   void initState() {
-    super.initState();
     controller = TextEditingController(
       text: widget.quantity.toString(),
     );
+    super.initState();
   }
 
   @override

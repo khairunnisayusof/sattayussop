@@ -156,45 +156,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   Future<void> _initPackageInfo() async {
     final info = await PackageInfo.fromPlatform();
       _packageInfo = info;
-    setState(() {
-    });
+      print("package info setup");
   }
 
   @override
   void initState() {
-    super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadDataDarkMode();
       loadUserServer();
       loadSharedPreferences();
-      _initPackageInfo();
     });
+    super.initState();
   }
-
-
-  void _refreshView(bool refresh) {
-    if (!mounted) return;
-    setState(() {
-      print("refresh record");
-      isLoading = false;
-    });
-  }
-
-  // Future<void> checkLogin() async {
-  //   sharedPreferences = await SharedPreferences.getInstance();
-  //   bool login = sharedPreferences?.getBool("login") ?? false;
-  //   final session = Supabase.instance.client.auth.currentSession;
-  //   if (!mounted) return;
-  //
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (_) =>
-  //       session != null ? const MyHomePage() : const LoginPage(),
-  //     ),
-  //   );
-  // }
 
   @override
   void dispose() {
@@ -209,7 +182,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     Container buildCollectionView;
     Container buildSettingViewOfDevices;
     if (write) {
-      setState(() {
         if (!menuChoices.any((e) => e.title == "Rekod Gaji")) {
           menuChoices.insert(
             3,
@@ -219,13 +191,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             ),
           );
         }
-      });
     } else {
-      setState(() {
         if (menuChoices.any((e) => e.title == "Rekod Gaji")) {
           menuChoices.removeAt(3);
         }
-      });
     }
     var isAdmin = (write && delete);
     var isAdminManager = (write);
@@ -651,6 +620,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                   write = false;
                   read = true;
                   delete = false;
+                  isLoading = false;
                 });
                 await sharedPreferences?.remove(databasePekerja);
                 await sharedPreferences?.remove(databaseRole);
@@ -712,7 +682,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
       ),
     );
     if (kIsWeb) {
-      return const MaterialApp(
+      return MaterialApp(
         home: OrderPage(),
       );
     }
@@ -740,25 +710,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           <Widget>[
             buildCollectionView,
             buildSettingViewOfDevices,
-          ][_selectedIndex],
-          if (isLoading)
-            Container(
-              color: Colors.black38,
-              child: const Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text(
-                      "Sila tunggu\nSedang mendapatkan rekod terkini...",
-                      style: TextStyle(color: Colors.white),
-                      textAlign: .center,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          ][_selectedIndex]
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -860,6 +812,27 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     );
   }
 
+  Future<void> showLoadingDialog() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return const AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // CircularProgressIndicator(),
+              // SizedBox(height: 16),
+              Text(
+                "Sila Tunggu\nSedang mendapatkan rekod terkini...",
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   void showDialogRequired(
       BuildContext context,
@@ -974,25 +947,44 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda semula untuk:
   }
 
   void _onItemTapped(int index) {
-    if (isLoading) {
-      return;
-    } else {
       setState(() {
+        print("setState on tap");
         _selectedIndex = index;
-        loadDataServer();
       });
-    }
+      loadDataServer();
   }
 
   Future<void> loadSharedPreferences() async {
     print("start load shared");
-    NotificationCenter().subscribe('finishLoad', _refreshView);
+    await _initPackageInfo();
     darkMode = await loadDataDarkMode();
+    // Load data local dahulu
+    await loadData();
+    if (roleID <= 0) {
+      return;
+    }
+    isLoading = true;
+    if (!mounted) return;
+    // Jangan block UI dengan CircularProgressIndicator
+    showLoadingDialog();
+    final success = await loadDataServer();
+    if (!mounted) return;
     setState(() {
-      isLoading = true;
+      isLoading = false;
+      Navigator.of(context).pop(); // tutup dialog
     });
-    await loadDataServer();
+    if (!success) {
+      print("⚠️ Data server tidak dapat dimuatkan");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Kemunginan tiada sambungan Internet. Sila semak Internet anda.",
+          ),
+        ),
+      );
+    }
   }
+
 
   //  This block loads our previously-stored list with key 'list'.
   Future<bool> loadDataDarkMode() async {
@@ -1008,6 +1000,7 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda semula untuk:
       themeNotifier.setTheme(ThemeMode.light);
       color = Colors.orange;
     }
+    print("setup darkMode");
     return darkMode;
   }
 
@@ -1018,10 +1011,10 @@ Selepas kami menerima pesanan anda, kami akan menghubungi anda semula untuk:
     } else {
       darkMode = true;
     }
-    print("data save >> $darkMode");
     sharedPreferences?.setBool("darkModeStatus", darkMode);
       loadDataDarkMode();
     setState(() {
+      print("setState data save >> $darkMode");
     });
   }
 }

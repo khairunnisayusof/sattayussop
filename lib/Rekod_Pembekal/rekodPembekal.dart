@@ -30,7 +30,7 @@ class _RekodBarangState extends State<RekodBarang> {
       color = Colors.deepOrange;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadData();
+    loadDataServer();
     super.initState();
   }
 

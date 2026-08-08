@@ -40,7 +40,7 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
       colorBorder = Colors.white;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadData();
+    loadDataServer();
     for (var index = 0; index < rekod_Menu.length; index++) {
       rekodMenu current = rekod_Menu.elementAt(index);
       if (current.jenis.toLowerCase().contains("satay")) {

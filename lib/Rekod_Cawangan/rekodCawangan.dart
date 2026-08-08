@@ -33,7 +33,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
       color = Colors.deepOrange;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadData();
+    loadDataServer();
     menuList = rekod_Menu
         .where((e) => e.jenis.toLowerCase().contains("satay"))
         .toList();

@@ -65,7 +65,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
       ));
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadData();
+    loadDataServer();
     super.initState();
   }
 

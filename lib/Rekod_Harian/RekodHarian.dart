@@ -34,7 +34,7 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
       color = Colors.deepOrange;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadData();
+    loadDataServer();
     super.initState();
   }
 

@@ -159,6 +159,18 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> login() async {
     try {
+      final internetAvailable = await hasInternet();
+      if (!internetAvailable) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "Tiada sambungan Internet. Sila semak Internet anda.",
+            ),
+          ),
+        );
+        return;
+      }
       String username = usernameController.text.trim();
       String password = passwordController.text.toLowerCase();
 
