@@ -90,9 +90,9 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
       currentCawangan.rekod,
     ).toList();
     rekodCawanganDetail current = selectDetailCawangan.elementAt(
-      selectedDetail,
+      selectDetailCawangan.indexWhere((e) => e.id == selectedDetail),
     );
-    id = current.id;
+    id = selectedDetail;
     tarikh = current.tarikh;
     _rekodCawanganDetail = current;
     _refreshView(true);

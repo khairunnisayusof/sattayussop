@@ -142,7 +142,7 @@ class _selectRekodCawanganListState extends State<selectRekodCawanganList> {
                 MaterialPageRoute(
                   builder: (context) => selectRekodCawanganDetail(
                     selectIndex: selectedIndex,
-                    selectedDetail: index,
+                    selectedDetail: _rekodCawanganDetail[index].id,
                   ),
                 ),
               );
