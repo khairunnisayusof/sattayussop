@@ -6,7 +6,7 @@ import 'package:string_capitalize/string_capitalize.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'DocumentHelper.dart';
 import 'databaseLocal.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+// import 'package:connectivity_plus/connectivity_plus.dart';
 
 
 final supabase = Supabase.instance.client;

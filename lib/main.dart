@@ -1047,6 +1047,7 @@ class SelectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color color = Colors.orange;
+
     if (darkMode) {
       color = Colors.deepOrange;
     }
@@ -1061,6 +1062,7 @@ class SelectCard extends StatelessWidget {
       fontSize: titleSize,
       fontWeight: FontWeight.bold,
     );
+
     return Card(
       semanticContainer: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -1072,26 +1074,34 @@ class SelectCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Container(
-              alignment: Alignment.center,
+            // ICON - fixed area
+            SizedBox(
               width: iconSize,
               height: iconSize,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                image: DecorationImage(
-                  fit: BoxFit.contain,
-                  alignment: Alignment.topCenter,
-                  image: AssetImage(choice.icon),
-                ),
+              child: Image.asset(
+                choice.icon,
+                fit: BoxFit.contain,
               ),
             ),
-            SizedBox(height: isTablet ? 20 : 5),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(
-                choice.title,
-                style: textStyle,
-                textAlign: TextAlign.center,
+
+            SizedBox(
+              height: isTablet ? 15 : 8,
+            ),
+
+            // TITLE - fixed area
+            SizedBox(
+              height: isTablet ? 70 : 45,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Center(
+                  child: Text(
+                    choice.title,
+                    style: textStyle,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
             ),
           ],
