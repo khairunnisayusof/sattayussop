@@ -260,7 +260,7 @@ class _OrderPageState extends State<OrderPage> {
             ),
           ),
           onTap: () async {
-            if (!((_formKeyDetail.currentState!.validate()) ||
+            if (!(_formKeyDetail.currentState!.validate() ||
                 _formKeyDate.currentState!.validate())) {
               return;
             }
@@ -269,7 +269,6 @@ class _OrderPageState extends State<OrderPage> {
                 : namaController.text;
             String noTel = phoneController.text.cleanNumber();
             String alamat = alamatController.text;
-
             insertServer(
               rekodPelanggan(
                 invoice,
@@ -1099,29 +1098,57 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
     );
   }
 
-  Future<void> insertServer(rekodPelanggan usr) async {
-    final result = await insertUpdateTable(
-      supabasePelanggan,
-      usr.toMapServer(),
+  Future<void> showLoadingDialog() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return const AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // CircularProgressIndicator(),
+              // SizedBox(height: 16),
+              Text(
+                "Sila Tunggu\nSedang menghantar pesanan anda...",
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
     );
-    var resultRekod = rekodPelanggan.fromMap(result);
-    setState(() {
-      usrID = resultRekod.id;
-    });
-    if (order.isNotEmpty) {
-      for (var index = 0; index < order.length; index++) {
-        var element = order.elementAt(index);
-        element.pelanggan_id = usrID;
-        insertPelagganDetail(element, usr);
-      }
-      }
-    if (!rekod_stok.map((item) => item.tarikh).contains(usr.tarikh)) {
-      List<dynamic> rekod = <rekodStokDetail>[];
-      rekod_stok.add(
-        rekodStok(epochTime, tarikhRekod, hariRekod, 0.00, 0.00, rekod),
+  }
+
+  Future<void> insertServer(rekodPelanggan usr) async {
+    showLoadingDialog();
+    try {
+      final result = await insertUpdateTable(
+        supabasePelanggan,
+        usr.toMapServer(),
       );
+      var resultRekod = rekodPelanggan.fromMap(result);
+      setState(() {
+        usrID = resultRekod.id;
+      });
+      if (order.isNotEmpty) {
+        for (var index = 0; index < order.length; index++) {
+          var element = order.elementAt(index);
+          element.pelanggan_id = usrID;
+          await insertPelagganDetail(element, usr);
+        }
+      }
+      if (!rekod_stok.map((item) => item.tarikh).contains(usr.tarikh)) {
+        List<dynamic> rekod = <rekodStokDetail>[];
+        rekod_stok.add(
+          rekodStok(epochTime, tarikhRekod, hariRekod, 0.00, 0.00, rekod),
+        );
+      }
+    } catch (e) {
+      print("get gagal: $e");
+    } finally {
+      sendTodiscord(usr);
     }
-    sendTodiscord(usr);
   }
 
   Future<void> insertPelagganDetail(
@@ -1135,7 +1162,6 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
     );
     resultRekod = rekodPesananPelanggan.fromMap(result);
     usr.id = resultRekod.id;
-    sendTodiscord(usr);
   }
 
   void sendTodiscord(rekodPelanggan usr) async {
@@ -1148,15 +1174,17 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
       print("respond data ${res.data}");
     } catch (e) {
       print("respond data error $e");
+    }finally {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pesanan anda berjaya dihantar.')),
+      );
+      Navigator.of(context).pop(); // tutup dialog
+      showDialogRequired(
+        context,
+        "Pesanan Berjaya",
+        'Pesanan anda berjaya dihantar.',
+      );
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Pesanan anda berjaya dihantar.')),
-    );
-    showDialogRequired(
-      context,
-      "Pesanan Berjaya",
-      'Pesanan anda berjaya dihantar.',
-    );
   }
 
 
