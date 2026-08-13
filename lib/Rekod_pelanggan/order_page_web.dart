@@ -106,6 +106,7 @@ class _OrderPageState extends State<OrderPage> {
 
   Future<void> loadData() async {
     NotificationCenter().subscribe('refreshData', _refreshView);
+    await loadDataServer();
     menuList.clear();
     dropDownList.clear();
     final menuListData = await selectTable(supabaseMenu);
@@ -128,7 +129,6 @@ class _OrderPageState extends State<OrderPage> {
         nama = nama  + " (1 Kg)";
         textHarga = textHarga + " (1 Kg)";
       }
-      print("rekod >>>  ${element.jenis}");
       var kategori = rekod_Kategori.firstWhere(
             (k) => k.id == element.kategori
       );
