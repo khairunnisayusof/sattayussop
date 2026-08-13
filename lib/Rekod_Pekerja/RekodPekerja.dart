@@ -65,14 +65,14 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
       ));
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadDataServer();
+    processServerData(supabasePekerja);
     super.initState();
   }
 
   @override
   void dispose() {
     if (!mounted) return;
-    loadDataServer();
+    // loadDataServer();
     super.dispose();
   }
 
@@ -599,10 +599,10 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
     if (index >= 0) {
       var id = rekod_Role[index].id;
       role.id = id;
-      insertUpdateTable('Role Rekod', role.toMapServer(), id: id);
+      insertUpdateTable(supabaseRole, role.toMapServer(), id: id);
     } else {
       if (!rekod_Role.map((e) => e.role).contains(role.role)) {
-        insertUpdateTable('Role Rekod', role.toMapServer());
+        insertUpdateTable(supabaseRole, role.toMapServer());
       }
     }
     addRoleItem(role, index);
@@ -970,9 +970,9 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
           .id;
       pekerja.id = id;
       print("rekod >>> $id | ${pekerja.toMapServer()} ");
-      insertUpdateTable('Pekerja Rekod', pekerja.toMapServer(), id: id);
+      insertUpdateTable(supabasePekerja, pekerja.toMapServer(), id: id);
     } else {
-      insertUpdateTable('Pekerja Rekod', pekerja.toMapServer());
+      insertUpdateTable(supabasePekerja, pekerja.toMapServer());
     }
     addItem(pekerja, index);
   }
@@ -990,7 +990,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
 
   void removeRoleItem(int index) {
     var id = rekod_Role[index].id;
-    deleteRow('Role Rekod', id);
+    deleteRow(supabaseRole, id);
     removeRoleInLocal(index);
   }
 
@@ -1005,7 +1005,7 @@ class _selectRekodPekerjaState extends State<selectRekodPekerja> {
       (element) => element.username == nama,
     );
     var id = rekod_Pekerja.elementAt(indexDeleted).id;
-    deleteRow('Pekerja Rekod', id);
+    deleteRow(supabasePekerja, id);
     removeInLocal(index);
   }
 

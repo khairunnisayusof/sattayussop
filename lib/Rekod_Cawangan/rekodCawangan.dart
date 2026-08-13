@@ -33,7 +33,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
       color = Colors.deepOrange;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadDataServer();
+    processServerData(supabaseCawangan);
     menuList = rekod_Menu
         .where((e) => e.jenis.toLowerCase().contains("satay"))
         .toList();
@@ -45,7 +45,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
   @override
   void dispose() {
     if (!mounted) return;
-    loadDataServer();
+    // loadDataServer();
     super.dispose();
   }
 
@@ -71,7 +71,6 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
       );
     } else {
       setState(() {
-        rekod_Cawangan.sort((a, b) => a.id.compareTo(b.id));
         if (newRekod) {
           newRekod = false;
           Navigator.push(
@@ -269,7 +268,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
   }
 
   Future<void> insertServer(rekodCawangan usr) async {
-    final result = await insertUpdateTable('Cawangan Rekod', usr.toMapServer());
+    final result = await insertUpdateTable(supabaseCawangan, usr.toMapServer());
     var current = rekodStok.fromMap(result);
     usr.id = current.id;
     addItem(usr);
@@ -285,7 +284,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
 
   void removeItemInServer(int index) {
     var id = rekod_Cawangan[index].id;
-    deleteRow('Cawangan Rekod', id);
+    deleteRow(supabaseCawangan, id);
     removeItem(index);
   }
 
@@ -301,7 +300,7 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
   }
 
   void removeAllServer() {
-    deleteAllRecord("Cawangan Rekod");
+    deleteAllRecord(supabaseCawangan);
     saveData();
   }
 

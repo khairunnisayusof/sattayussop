@@ -20,42 +20,9 @@ import '../databaseLocal.dart';
 import 'DocumentHelper.dart';
 
 SharedPreferences? sharedPreferences;
-List<rekodStok> rekod_stok = <rekodStok>[];
-List<rekodList> rekod_List = <rekodList>[];
-List<rekodCawangan> rekod_Cawangan = <rekodCawangan>[];
-List<rekodCucuk> rekod_Cucuk = <rekodCucuk>[];
-List<rekodPelanggan> rekod_Pelanggan = <rekodPelanggan>[];
-List<rekodKategoriMenu> rekod_Kategori = <rekodKategoriMenu>[];
-List<rekodMenu> rekod_Menu = <rekodMenu>[];
-List<rekodPekerja> rekod_Pekerja = <rekodPekerja>[];
-List<rekodRole> rekod_Role = <rekodRole>[];
-List<rekodRunner> rekod_Runner = <rekodRunner>[];
-List<rekodGaji> rekod_Gaji = <rekodGaji>[];
-List<rekodPembekalList> rekod_Pembekal = <rekodPembekalList>[];
-List<rekodBarang> senarai_Barang = <rekodBarang>[];
-bool loginApps = false;
 
 String zipFileName =
     'Rekod Sattay Ussop ${DateFormat('MMMM yyyy').format(DateTime.now())}.zip';
-String fileHarian = 'Rekod_Harian.csv';
-String fileStok = 'Rekod_Stok.csv';
-String filePembekal = 'Rekod_Pembekal.csv';
-String fileCawangan = 'Rekod_Cawangan.csv';
-
-String databaseRole = "rekodRole";
-String databaseKategori = "rekodKategori";
-String databaseKategoriMenu = "rekodKategoriMenu";
-String databaseMenu = "rekodMenu";
-String databasePekerja = "rekodPekerja";
-String databaseStok = "rekodStok";
-String databaseHarian = "rekodHarian";
-String databaseCucuk = "rekodCucuk";
-String databasePelanggan = "rekodPelanggan";
-String databaseCawangan = "rekodCawangan";
-String databaseRunner = "rekodRunner";
-String databaseGaji = "rekodGaji";
-String databasePembekal = "rekodPembekal";
-String databaseBarang = "senaraiBarang";
 
 var font = pw.Font.helvetica();
 DataStorage fileLog = DataStorage();
@@ -76,7 +43,7 @@ Future<void> saveDataLocal() async {
     await Future.wait([
       saveData(databasePekerja, rekod_Pekerja),
       saveData(databaseRole, rekod_Role),
-      saveData(databaseKategori, rekod_Kategori),
+      saveData(databaseKategoriMenu, rekod_Kategori),
       saveData(databaseMenu, rekod_Menu),
       saveData(databaseHarian, rekod_List),
       saveData(databaseCucuk, rekod_Cucuk),
@@ -267,7 +234,7 @@ Future<List<T>> loadList<T>({
 void insertStok(String epochTime, String tarikhRekod, String hariRekod) async {
   if (!rekod_stok.map((item) => item.tarikh).contains(tarikhRekod)) {
     final result = await insertUpdateTable(
-      'Stok Rekod',
+      supabaseStok,
       (rekodStok(
         epochTime,
         tarikhRekod,
@@ -304,7 +271,7 @@ void insertStok(String epochTime, String tarikhRekod, String hariRekod) async {
         0,
         false,
       );
-      await insertUpdateTable('Stok Detail Rekod', rekodDetail.toMapServer());
+      await insertUpdateTable(supabaseStokDetail, rekodDetail.toMapServer());
       rekod.add(rekodDetail);
     }
     rekod_stok.add(
@@ -597,7 +564,7 @@ Future<void> updateStok(String tarikh) async {
         );
         if (id >= 0) {
           await insertUpdateTable(
-            'Stok Detail Rekod',
+            supabaseStokDetail,
             currentStok.toMapServer(),
             id: id,
           );
@@ -640,7 +607,7 @@ Future<void> refreshAllStok(String tarikh) async {
 
 // This block saves our list locally.
 void saveDataStok(rekodStok usr) {
-  insertUpdateTable('Stok Rekod', usr.toMapServer(), id: usr.id);
+  insertUpdateTable(supabaseStok, usr.toMapServer(), id: usr.id);
   print("finished save data stok");
   // NotificationCenter().notify('refreshData', data: true);
 }
@@ -649,7 +616,7 @@ void removeItem(String tarikh) {
   try {
     final stok = rekod_stok.firstWhere((e) => e.tarikh == tarikh);
     var id = stok.id;
-    deleteRow('Stok Rekod', id);
+    deleteRow(supabaseStok, id);
   } catch (_) {
     return;
   }

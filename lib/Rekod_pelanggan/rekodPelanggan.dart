@@ -484,7 +484,7 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
 
   Future<void> insertServer(rekodPelanggan usr) async {
     final result = await insertUpdateTable(
-      'Pelanggan Rekod',
+      supabasePelanggan,
       usr.toMapServer(),
     );
     var resultRekod = rekodPelanggan.fromMap(result);
@@ -502,7 +502,7 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
   void removeItemInServer(int index) {
     tarikhRekod = rekod_Pelanggan[index].tarikh;
     var id = rekod_Pelanggan[index].id;
-    deleteRow('Pelanggan Rekod', id);
+    deleteRow(supabasePelanggan, id);
     removeItem(index);
   }
 

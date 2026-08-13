@@ -18,9 +18,9 @@ Future<List<Map<String, dynamic>>> selectTable(
       String thirdTable = '',
 }) async {
   if (roleID <= 0 &&
-      nameTable != 'Role Rekod' &&
-      nameTable != 'Pekerja Rekod' &&
-      nameTable != 'Menu Rekod' &&
+      nameTable != supabaseRole &&
+      nameTable != supabasePekerja &&
+      nameTable != supabaseMenu &&
       !kIsWeb) {
     return [];
   }
@@ -58,7 +58,7 @@ Future<Map<String, dynamic>> insertUpdateTable(
         .select()
         .single();
 
-    loadDataServer();
+    processServerData(nameTable);
     return result;
   } else {
     final result = await supabase
@@ -68,7 +68,7 @@ Future<Map<String, dynamic>> insertUpdateTable(
         .select()
         .single();
 
-    loadDataServer();
+    processServerData(nameTable);
     return result;
   }
 }
@@ -79,7 +79,7 @@ Future<void> deleteRow(String nameTable, int id) async {
   }
   print("record delete >> $nameTable | $id");
   await supabase.from(nameTable).delete().eq('id', id);
-  loadDataServer();
+  processServerData(nameTable);
 }
 
 Future<void> deleteAllRecord(String nameTable) async {
@@ -90,8 +90,7 @@ Future<void> deleteAllRecord(String nameTable) async {
   final name = nameTable.replaceAll(' ', '_').toLowerCase();
 
   await supabase.rpc('truncate_$name');
-  print(name);
-  loadDataServer();
+  processServerData(nameTable);
 }
 
 Future<void> deleteAllRecordFromForeign(
@@ -104,7 +103,7 @@ Future<void> deleteAllRecordFromForeign(
   }
   try {
     await supabase.from(nameTable).delete().eq(columnName, id);
-    loadDataServer();
+    processServerData(nameTable);
   } catch (e) {
     print("Delete gagal: $e");
   }
@@ -113,15 +112,47 @@ Future<void> deleteAllRecordFromForeign(
 
 Future<bool> hasInternet() async {
   try {
-    final results = await selectTable('Role Rekod');
+    final results = await selectTable(supabaseRole);
     return results.isNotEmpty;
   } catch (e) {
     return false;
   }
 }
 
-Future<bool> loadDataServer() async {
-  print("🔥 loadDataServer START");
+Future<void> processServerData(String tableName) async {
+  switch (tableName) {
+    case supabaseKategoriMenu || supabaseMenu || supabaseRole || supabaseRunner || supabaseBarang:
+      loadDataServer(nameTable: tableName);
+      break;
+    case supabasePekerja || supabaseAmbilGaji:
+      loadDataServer(nameTable: supabasePekerja,secondTable: supabaseAmbilGaji);
+      break;
+    case supabaseStok || supabaseStokDetail :
+      loadDataServer(nameTable: supabaseStok,secondTable: supabaseStokDetail);
+      break;
+    case supabaseHarian || supabaseHarianDetail:
+      loadDataServer(nameTable: supabaseHarian,secondTable: supabaseHarianDetail);
+      break;
+    case supabaseCucuk || supabaseCucukDetail || supabaseJumlahCucuk:
+      loadDataServer(nameTable: supabaseCucuk,secondTable: supabaseCucukDetail,thirdTable: supabaseJumlahCucuk);
+      break;
+    case supabaseGaji || supabaseGajiDetail:
+      loadDataServer(nameTable: supabaseGaji,secondTable: supabaseGajiDetail);
+      break;
+    case supabasePelanggan || supabasePelangganDetail:
+      loadDataServer(nameTable: supabasePelanggan,secondTable: supabasePelangganDetail);
+      break;
+    case supabaseCawangan || supabaseCawanganDetail ||supabaseCawanganBayaran :
+      loadDataServer(nameTable: supabaseCawangan,secondTable: supabaseCawanganDetail,thirdTable: supabaseCawanganBayaran);
+      break;
+    case supabasePembekal || supabasePembekalDetail || supabasePembekalBayaran:
+      loadDataServer(nameTable: supabasePembekal,secondTable: supabasePembekalDetail,thirdTable: supabasePembekalBayaran);
+      break;
+  }
+  print("💾 get local: $tableName");
+}
+
+Future<bool> loadDataServer({String nameTable = '', String secondTable = '', String thirdTable = ''}) async {
   try {
     // Check Internet dahulu
     internetAvailable = await hasInternet();
@@ -131,26 +162,22 @@ Future<bool> loadDataServer() async {
     }
       print("✅ Internet ada");
 
+    if (nameTable.isNotEmpty) {
+      final result = await selectTable(nameTable,detailTable: secondTable,thirdTable: thirdTable);
+      print("result nameTable not empty >> ${nameTable} | ${secondTable} | ${thirdTable}");
+      await processTableData(nameTable, result);
+      return true;
+    }
 
     final results = await Future.wait([
-      selectTable('Kategori Menu Rekod'),
-      selectTable('Menu Rekod'),
-      selectTable('Role Rekod')
+      selectTable(supabaseKategoriMenu),
+      selectTable(supabaseMenu),
+      selectTable(supabaseRole)
     ]);
+    await processTableData(supabaseKategoriMenu, results[0]);
+    await processTableData(supabaseMenu, results[1]);
+    await processTableData(supabaseRole, results[2]);
 
-    final kategoriList = results[0];
-    rekod_Kategori = kategoriList.map((e) => rekodKategoriMenu.fromMap(e)).toList();
-    rekod_Kategori.sort((a, b) => a.jenis.compareTo(b.jenis));
-
-    final menuList = results[1];
-    rekod_Menu = menuList.map((e) => rekodMenu.fromMap(e)).toList();
-    rekod_Menu.sort((a, b) => a.jenis.compareTo(b.jenis));
-
-    final roleList = results[2];
-    rekod_Role = roleList
-        .map((item) => rekodRole.fromMap(item))
-        .toList();
-    rekod_Role.sort((a, b) => a.role.compareTo(b.role));
     final index = rekod_Role.indexWhere((e) => e.id == roleID);
 
     if (index != -1) {
@@ -168,76 +195,122 @@ Future<bool> loadDataServer() async {
 
     if (role.isNotEmpty && !kIsWeb) {
       final resultsUser = await Future.wait([
-        selectTable('Pekerja Rekod', detailTable: "Ambil Gaji Rekod"),
-        selectTable('Stok Rekod', detailTable: "Stok Detail Rekod"),
-        selectTable('Harian Rekod', detailTable: "Harian Detail Rekod"),
-        selectTable('Cucuk Rekod', detailTable: "Cucuk Detail Rekod",
-            thirdTable: 'Jumlah Cucuk Satay Rekod'),
-        selectTable('Gaji Rekod', detailTable: "Gaji Detail Rekod"),
-        selectTable('Pelanggan Rekod', detailTable: "Pelanggan Detail Rekod"),
-        selectTable('Cawangan Rekod', detailTable: "Cawangan Detail Rekod",
-            thirdTable: 'Cawangan Bayaran Rekod'),
-        selectTable('Pembekal Rekod', detailTable: "Pembekal Detail Rekod",
-            thirdTable: 'Pembekal Bayaran Rekod'),
-        selectTable('Runner Rekod'),
-        selectTable('Senarai Barang Rekod')
+        selectTable(supabasePekerja, detailTable: supabaseAmbilGaji),
+        selectTable(supabaseStok, detailTable: supabaseStokDetail),
+        selectTable(supabaseHarian, detailTable: supabaseHarianDetail),
+        selectTable(supabaseCucuk, detailTable: supabaseCucukDetail, thirdTable: supabaseJumlahCucuk),
+        selectTable(supabaseGaji, detailTable: supabaseGajiDetail),
+        selectTable(supabasePelanggan, detailTable: supabasePelangganDetail),
+        selectTable(supabaseCawangan, detailTable: supabaseCawanganDetail, thirdTable: supabaseCawanganBayaran),
+        selectTable(supabasePembekal, detailTable: supabasePembekalDetail, thirdTable: supabasePembekalBayaran),
+        selectTable(supabaseRunner),
+        selectTable(supabaseBarang)
       ]);
-
-      final pekerjaList = resultsUser[0];
-      rekod_Pekerja = pekerjaList
-          .map((item) => rekodPekerja.fromMap(item))
-          .toList();
-      rekod_Pekerja.sort((a, b) => a.username.compareTo(b.username));
-
-
-      final recordData = resultsUser[1];
-      rekod_stok = recordData.map((item) => rekodStok.fromMap(item)).toList();
-      rekod_stok.sort((a, b) => a.epochTime.compareTo(b.epochTime));
-
-      final dataAll = resultsUser[2];
-      rekod_List = dataAll.map((e) => rekodList.fromMap(e)).toList();
-      rekod_List.sort((a, b) => a.epochTime.compareTo(b.epochTime));
-
-      final cucukData = resultsUser[3];
-      rekod_Cucuk = cucukData.map((item) => rekodCucuk.fromMap(item)).toList();
-      rekod_Cucuk.sort((a, b) => a.epochTime.compareTo(b.epochTime));
-
-      final gajiRekod = resultsUser[4];
-      rekod_Gaji = gajiRekod.map((item) => rekodGaji.fromMap(item)).toList();
-      rekod_Gaji.sort((a, b) => a.epochTime.compareTo(b.epochTime));
-
-      final pelangganRekod = resultsUser[5];
-      rekod_Pelanggan = pelangganRekod
-          .map((item) => rekodPelanggan.fromMap(item))
-          .toList();
-      rekod_Pelanggan.sort((a, b) => a.epochTime.compareTo(b.epochTime));
-
-      final cawanganData = resultsUser[6];
-      rekod_Cawangan = cawanganData
-          .map((item) => rekodCawangan.fromMap(item))
-          .toList();
-      rekod_Cawangan.sort((a, b) => a.nama.compareTo(b.nama));
-
-      final pembekalRekod = resultsUser[7];
-      rekod_Pembekal = pembekalRekod
-          .map((item) => rekodPembekalList.fromMap(item))
-          .toList();
-      rekod_Pembekal.sort((a, b) => a.username.compareTo(b.username));
-
-      final runnerList = resultsUser[8];
-      rekod_Runner = runnerList.map((e) => rekodRunner.fromMap(e)).toList();
-      rekod_Runner.sort((a, b) => a.username.compareTo(b.username));
-
-      final barangList = resultsUser[9];
-      senarai_Barang = barangList.map((e) => rekodBarang.fromMap(e)).toList();
-      senarai_Barang.sort((a, b) => a.nama.compareTo(b.nama));
-      await saveDataLocal();
+      await processTableData(supabasePekerja, resultsUser[0]);
+      await processTableData(supabaseStok, resultsUser[1]);
+      await processTableData(supabaseHarian, resultsUser[2]);
+      await processTableData(supabaseCucuk, resultsUser[3]);
+      await processTableData(supabaseGaji, resultsUser[4]);
+      await processTableData(supabasePelanggan, resultsUser[5]);
+      await processTableData(supabaseCawangan, resultsUser[6]);
+      await processTableData(supabasePembekal, resultsUser[7]);
+      await processTableData(supabaseRunner, resultsUser[8]);
+      await processTableData(supabaseBarang, resultsUser[9]);
     }
-    print("🔥 loadDataServer END");
     return true;
   } catch (e, st) {
     print(e);
     print(st);
     return false;
   }
+}
+
+Future<void> processTableData(
+    String tableName,
+    List<Map<String, dynamic>> data,
+    ) async {
+
+  print("📦 Processing table: $tableName");
+  print("📊 Record count: ${data.length}");
+  final List<Map<String, dynamic>> records = data.map((e) => Map<String, dynamic>.from(e)).toList();
+
+  switch (tableName) {
+    case supabaseKategoriMenu:
+      rekod_Kategori = records
+          .map((e) => rekodKategoriMenu.fromMap(e))
+          .toList();
+      rekod_Kategori.sort(
+            (a, b) => a.jenis.compareTo(b.jenis),
+      );
+      break;
+    case supabaseMenu:
+      rekod_Menu = records
+          .map((e) => rekodMenu.fromMap(e))
+          .toList();
+      rekod_Menu.sort(
+            (a, b) => a.jenis.compareTo(b.jenis),
+      );
+      break;
+    case supabaseRole:
+      rekod_Role = records
+          .map((e) => rekodRole.fromMap(e))
+          .toList();
+
+      rekod_Role.sort(
+            (a, b) => a.role.compareTo(b.role),
+      );
+      break;
+    case supabasePekerja:
+      rekod_Pekerja = records
+          .map((item) => rekodPekerja.fromMap(item))
+          .toList();
+      rekod_Pekerja.sort((a, b) => a.username.compareTo(b.username));
+      break;
+    case supabaseStok:
+      rekod_stok = records.map((item) => rekodStok.fromMap(item)).toList();
+      rekod_stok.sort((a, b) => a.epochTime.compareTo(b.epochTime));
+      break;
+    case supabaseHarian:
+      rekod_List = records.map((e) => rekodList.fromMap(e)).toList();
+      rekod_List.sort((a, b) => a.epochTime.compareTo(b.epochTime));
+      break;
+    case supabaseCucuk:
+      rekod_Cucuk = records.map((item) => rekodCucuk.fromMap(item)).toList();
+      rekod_Cucuk.sort((a, b) => a.epochTime.compareTo(b.epochTime));
+      break;
+    case supabaseGaji:
+      rekod_Gaji = records.map((item) => rekodGaji.fromMap(item)).toList();
+      rekod_Gaji.sort((a, b) => a.epochTime.compareTo(b.epochTime));
+      break;
+    case supabasePelanggan:
+      rekod_Pelanggan = records
+          .map((item) => rekodPelanggan.fromMap(item))
+          .toList();
+      rekod_Pelanggan.sort((a, b) => a.epochTime.compareTo(b.epochTime));
+      break;
+    case supabaseCawangan:
+      rekod_Cawangan = records
+          .map((item) => rekodCawangan.fromMap(item))
+          .toList();
+      rekod_Cawangan.sort((a, b) => a.nama.compareTo(b.nama));
+      break;
+    case supabasePembekal:
+      rekod_Pembekal = records
+          .map((item) => rekodPembekalList.fromMap(item))
+          .toList();
+      rekod_Pembekal.sort((a, b) => a.username.compareTo(b.username));
+      break;
+    case supabaseRunner:
+      rekod_Runner = records.map((e) => rekodRunner.fromMap(e)).toList();
+      rekod_Runner.sort((a, b) => a.username.compareTo(b.username));
+      break;
+    case supabaseBarang:
+      senarai_Barang = records.map((e) => rekodBarang.fromMap(e)).toList();
+      senarai_Barang.sort((a, b) => a.nama.compareTo(b.nama));
+      break;
+  }
+  // Save selepas table berjaya diproses
+  await saveDataLocal();
+
+  print("💾 Saved local: $tableName");
 }

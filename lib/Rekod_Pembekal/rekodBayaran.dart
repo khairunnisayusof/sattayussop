@@ -552,12 +552,12 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
   Future<void> insertServer(rekodBayaranPembekal usr, int index) async {
     if (index >= 0) {
       await insertUpdateTable(
-        'Pembekal Bayaran Rekod',
+        supabasePembekalBayaran,
         usr.toMapServer(),
         id: selectIndex,
       );
     } else {
-      await insertUpdateTable('Pembekal Bayaran Rekod', usr.toMapServer());
+      await insertUpdateTable(supabasePembekalBayaran, usr.toMapServer());
     }
     addItem(usr, index);
   }
@@ -621,7 +621,7 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
         current.bayaranPenuh = false;
       }
       await insertUpdateTable(
-        'Pembekal Detail Rekod',
+        supabasePembekalDetail,
         current.toMapServer(),
         id: current.id,
       );
@@ -638,7 +638,7 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
       currentPembekal.rekodBayaran = rekodBayaran;
     });
     await insertUpdateTable(
-      'Pembekal Rekod',
+      supabasePembekal,
       currentPembekal.toMapServer(),
       id: PembekalId,
     );
@@ -647,7 +647,7 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
 
   void removeItemInServer(int index) {
     var id = rekodBayaran[index].id;
-    deleteRow('Pembekal Bayaran Rekod', id);
+    deleteRow(supabasePembekalBayaran, id);
     removeItem(index);
   }
 

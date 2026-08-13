@@ -30,14 +30,14 @@ class _RekodBarangState extends State<RekodBarang> {
       color = Colors.deepOrange;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadDataServer();
+    processServerData(supabasePembekal);
     super.initState();
   }
 
   @override
   void dispose() {
     if (!mounted) return;
-    loadDataServer();
+    // loadDataServer();
     super.dispose();
   }
 
@@ -245,7 +245,7 @@ class _RekodBarangState extends State<RekodBarang> {
   }
 
   Future<void> insertServer(rekodPembekalList usr) async {
-    final result = await insertUpdateTable('Pembekal Rekod', usr.toMapServer());
+    final result = await insertUpdateTable(supabasePembekal, usr.toMapServer());
     var current = rekodPembekalList.fromMap(result);
     usr.id = current.id;
     addItem(usr);
@@ -261,7 +261,7 @@ class _RekodBarangState extends State<RekodBarang> {
 
   void removeItemInServer(int index) {
     var id = rekod_Pembekal[index].id;
-    deleteRow('Pembekal Rekod', id);
+    deleteRow(supabasePembekal, id);
     removeItem(index);
   }
 
@@ -276,7 +276,7 @@ class _RekodBarangState extends State<RekodBarang> {
   }
 
   void removeAllServer() {
-    deleteAllRecord("Pembekal Rekod");
+    deleteAllRecord(supabasePembekal);
     removeAll();
   }
 

@@ -278,7 +278,7 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
   }
 
   Future<void> insertItem(rekodHarianDetail detail) async {
-    await insertUpdateTable('Harian Detail Rekod', detail.toMapServer());
+    await insertUpdateTable(supabaseHarianDetail, detail.toMapServer());
     addItem(detail);
   }
 
@@ -295,7 +295,7 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
 
   void removeItem(int index) {
     var id = _rekodHarianDetail[index].id;
-    deleteRow('Harian Detail Rekod', id);
+    deleteRow(supabaseHarianDetail, id);
   }
 
   // This block saves our list locally.

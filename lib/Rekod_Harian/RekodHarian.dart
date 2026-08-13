@@ -34,7 +34,7 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
       color = Colors.deepOrange;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadDataServer();
+    processServerData(supabaseHarian);
     super.initState();
   }
 
@@ -42,7 +42,7 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
   void dispose() {
     if (!mounted) return;
     myController.dispose();
-    loadDataServer();
+    // loadDataServer();
     super.dispose();
   }
 
@@ -245,7 +245,7 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
 
   Future<void> insertHarian(rekodList usr) async {
     if (!rekod_List.map((item) => item.epochTime).contains(usr.epochTime)) {
-      await insertUpdateTable('Harian Rekod', usr.toMapServer());
+      await insertUpdateTable(supabaseHarian, usr.toMapServer());
     }
     addItem(usr);
     insertStok(epochTime, tarikhRekod, hariRekod);
@@ -261,12 +261,12 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
   void removeItemInServer(int index) {
     tarikhRekod = rekod_List[index].tarikh;
     var id = rekod_List[index].id;
-    deleteRow('Harian Rekod', id);
+    deleteRow(supabaseHarian, id);
     removeItem(index);
   }
 
   void removeAll() {
-    deleteAllRecord("Harian Rekod");
+    deleteAllRecord(supabaseHarian);
     rekod_List.clear();
     saveData();
   }

@@ -175,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
       String password = passwordController.text.toLowerCase();
 
       final user = await supabase
-          .from('Pekerja Rekod')
+          .from(supabasePekerja)
           .select()
           .ilike('nama', username.trim())
           .maybeSingle();
@@ -197,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
 
 
       final roleUser = await supabase
-          .from('Role Rekod')
+          .from(supabaseRole)
           .select()
           .eq('id', roleID)
           .maybeSingle();

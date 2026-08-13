@@ -1215,13 +1215,13 @@ class _selectRekodPelangganDetailState
     print("pelanggan id in save >> $pelangganID");
     if (index >= 0) {
       await insertUpdateTable(
-        'Pelanggan Detail Rekod',
+        supabasePelangganDetail,
         usr.toMapServer(),
         id: usr.id,
       );
     } else {
       final result = await insertUpdateTable(
-        'Pelanggan Detail Rekod',
+        supabasePelangganDetail,
         usr.toMapServer(),
       );
       var resultRekod = rekodPesananPelanggan.fromMap(result);
@@ -1265,7 +1265,7 @@ class _selectRekodPelangganDetailState
 
   Future<void> insertServerPelanggan(rekodPelanggan usr) async {
     final result = await insertUpdateTable(
-      'Pelanggan Rekod',
+      supabasePelanggan,
       usr.toMapServer(),
       id: pelangganID,
     );
@@ -1305,7 +1305,7 @@ class _selectRekodPelangganDetailState
 
   void removeItemSelected(int index) {
     rekodPesananPelanggan current = _rekodMenu.elementAt(index);
-    deleteRow('Pelanggan Detail Rekod',current.id);
+    deleteRow(supabasePelangganDetail,current.id);
     _rekodMenu.removeAt(index);
     kiraJualan();
   }

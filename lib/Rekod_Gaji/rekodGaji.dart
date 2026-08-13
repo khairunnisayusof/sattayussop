@@ -37,7 +37,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
       color = Colors.deepOrange;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadDataServer();
+    processServerData(supabaseGaji);
     for (var index = 0; index < rekod_Pekerja.length; index++) {
       rekodPekerja current = rekod_Pekerja.elementAt(index);
       var username = current.username;
@@ -67,7 +67,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
     if (!mounted) return;
     // Clean up the controller when the widget is disposed.
     myController.dispose();
-    loadDataServer();
+    // loadDataServer();
     super.dispose();
   }
 
@@ -362,7 +362,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
   }
 
   Future<void> insertServer(rekodGaji usr) async {
-    final result = await insertUpdateTable('Gaji Rekod', usr.toMapServer());
+    final result = await insertUpdateTable(supabaseGaji, usr.toMapServer());
     var resultRekod = rekodGaji.fromMap(result);
     _rekodPekerja.sort((a, b) => a.username.compareTo(b.username));
     for (var index = 0; index < _rekodPekerja.length; index++) {
@@ -386,7 +386,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
   }
 
   Future<void> insertDetailServer(rekodGajiDetail usr) async {
-    await insertUpdateTable('Gaji Detail Rekod', usr.toMapServer());
+    await insertUpdateTable(supabaseGajiDetail, usr.toMapServer());
   }
 
   // addItem adds our User Class item to list.
@@ -398,7 +398,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
   void removeItemInServer(int index) {
     tarikhRekod = rekod_Gaji[index].tarikh;
     var id = rekod_Gaji[index].id;
-    deleteRow('Gaji Rekod', id);
+    deleteRow(supabaseGaji, id);
     removeItem(index);
   }
 
@@ -408,7 +408,7 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
   }
 
   void removeAll() {
-    deleteAllRecord("Gaji Rekod");
+    deleteAllRecord(supabaseGaji);
     rekod_Gaji.clear();
     for (var index = 0; index < rekod_Pekerja.length; index++) {
       rekodPekerja current = rekod_Pekerja.elementAt(index);

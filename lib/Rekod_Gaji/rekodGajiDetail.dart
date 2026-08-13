@@ -644,11 +644,11 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
   Future<void> insertDetailServer(rekodGajiDetail usr, int index) async {
     index >= 0
         ? await insertUpdateTable(
-            'Gaji Detail Rekod',
+      supabaseGajiDetail,
             usr.toMapServer(),
             id: usr.id,
           )
-        : await insertUpdateTable('Gaji Detail Rekod', usr.toMapServer());
+        : await insertUpdateTable(supabaseGajiDetail, usr.toMapServer());
     addItem(usr, index);
   }
 
@@ -677,7 +677,7 @@ class _selectRekodGajiDetailState extends State<selectRekodGajiDetail> {
 
   void removeItemInServer(int index) {
     var id = _rekodGajiDetail[index].id;
-    deleteRow('Gaji Detail Rekod', id);
+    deleteRow(supabaseGajiDetail, id);
     removeItemSelected(index);
   }
 

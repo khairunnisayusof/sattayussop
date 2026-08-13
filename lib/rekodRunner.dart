@@ -399,8 +399,8 @@ class _selectRekodRunnerState extends State<selectRekodRunner> {
 
   Future<void> insertServer(rekodRunner usr, int index) async {
     index >= 0
-        ? await insertUpdateTable('Runner Rekod', usr.toMapServer(), id: usr.id)
-        : await insertUpdateTable('Runner Rekod', usr.toMapServer());
+        ? await insertUpdateTable(supabaseRunner, usr.toMapServer(), id: usr.id)
+        : await insertUpdateTable(supabaseRunner, usr.toMapServer());
     addItem(usr, index);
   }
 
@@ -415,7 +415,7 @@ class _selectRekodRunnerState extends State<selectRekodRunner> {
 
   void removeItem(int index) {
     var id = rekod_Runner[index].id;
-    deleteRow('Runner Rekod', id);
+    deleteRow(supabaseRunner, id);
     removeInLocal(index);
   }
 

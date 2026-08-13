@@ -39,7 +39,7 @@ class _RekodStokState extends State<RekodStok> {
       color = Colors.deepOrange;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadDataServer();
+    processServerData(supabaseStok);
     rekod_stok.sort((a, b) => a.epochTime.compareTo(b.epochTime));
     super.initState();
   }
@@ -47,7 +47,7 @@ class _RekodStokState extends State<RekodStok> {
   @override
   void dispose() {
     if (!mounted) return;
-    loadDataServer();
+    // loadDataServer();
     super.dispose();
   }
 

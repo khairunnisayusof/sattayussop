@@ -316,10 +316,10 @@ class _selectSenaraiBarangState extends State<selectSenaraiBarang> {
     if (index >= 0) {
       var id = senarai_Barang[index].id;
       barang.id = id;
-      insertUpdateTable('Senarai Barang Rekod', barang.toMapServer(), id: id);
+      insertUpdateTable(supabaseBarang, barang.toMapServer(), id: id);
     } else {
       if (!senarai_Barang.map((item) => item.nama).contains(barang.nama)) {
-        insertUpdateTable('Senarai Barang Rekod', barang.toMapServer());
+        insertUpdateTable(supabaseBarang, barang.toMapServer());
       }
     }
     addItem(barang, index);
@@ -340,7 +340,7 @@ class _selectSenaraiBarangState extends State<selectSenaraiBarang> {
 
   void removeItemInServer(int index) {
     var id = senarai_Barang[index].id;
-    deleteRow('Senarai Barang Rekod', id);
+    deleteRow(supabaseBarang, id);
     removeItem(index);
   }
 

@@ -424,12 +424,12 @@ class _selectRekodHargaCawanganState extends State<selectRekodHargaCawangan> {
     print("save record >> ${target.id} | $cawanganID");
     if (cawanganID >= 0) {
       await insertUpdateTable(
-        'Cawangan Rekod',
+        supabaseCawangan,
         target.toMapServer(),
         id: cawanganID,
       );
     } else {
-      await insertUpdateTable('Cawangan Rekod', target.toMapServer());
+      await insertUpdateTable(supabaseCawangan, target.toMapServer());
     }
 
     saveData();

@@ -1,4 +1,65 @@
+import 'package:intl/intl.dart';
+
 import 'DocumentHelper.dart';
+
+List<rekodStok> rekod_stok = <rekodStok>[];
+List<rekodList> rekod_List = <rekodList>[];
+List<rekodCawangan> rekod_Cawangan = <rekodCawangan>[];
+List<rekodCucuk> rekod_Cucuk = <rekodCucuk>[];
+List<rekodPelanggan> rekod_Pelanggan = <rekodPelanggan>[];
+List<rekodKategoriMenu> rekod_Kategori = <rekodKategoriMenu>[];
+List<rekodMenu> rekod_Menu = <rekodMenu>[];
+List<rekodPekerja> rekod_Pekerja = <rekodPekerja>[];
+List<rekodRole> rekod_Role = <rekodRole>[];
+List<rekodRunner> rekod_Runner = <rekodRunner>[];
+List<rekodGaji> rekod_Gaji = <rekodGaji>[];
+List<rekodPembekalList> rekod_Pembekal = <rekodPembekalList>[];
+List<rekodBarang> senarai_Barang = <rekodBarang>[];
+bool loginApps = false;
+
+const String fileHarian = 'Rekod_Harian.csv';
+const String fileStok = 'Rekod_Stok.csv';
+const String filePembekal = 'Rekod_Pembekal.csv';
+const String fileCawangan = 'Rekod_Cawangan.csv';
+
+const String databaseRole = "rekodRole";
+const String databaseKategoriMenu = "rekodKategoriMenu";
+const String databaseMenu = "rekodMenu";
+const String databasePekerja = "rekodPekerja";
+const String databaseStok = "rekodStok";
+const String databaseHarian = "rekodHarian";
+const String databaseCucuk = "rekodCucuk";
+const String databasePelanggan = "rekodPelanggan";
+const String databaseCawangan = "rekodCawangan";
+const String databaseRunner = "rekodRunner";
+const String databaseGaji = "rekodGaji";
+const String databasePembekal = "rekodPembekal";
+const String databaseBarang = "senaraiBarang";
+
+const String supabaseKategoriMenu = 'Kategori Menu Rekod';
+const String supabaseRole = 'Role Rekod';
+const String supabaseMenu = 'Menu Rekod';
+const String supabasePekerja = 'Pekerja Rekod';
+const String supabaseAmbilGaji = 'Ambil Gaji Rekod';
+const String supabaseStok = 'Stok Rekod';
+const String supabaseStokDetail = 'Stok Detail Rekod';
+const String supabaseHarian = 'Harian Rekod';
+const String supabaseHarianDetail = 'Harian Detail Rekod';
+const String supabaseCucuk = 'Cucuk Rekod';
+const String supabaseCucukDetail = 'Cucuk Detail Rekod';
+const String supabaseJumlahCucuk = 'Jumlah Cucuk Satay Rekod';
+const String supabaseGaji = 'Gaji Rekod';
+const String supabaseGajiDetail = 'Gaji Detail Rekod';
+const String supabasePelanggan = 'Pelanggan Rekod';
+const String supabasePelangganDetail = 'Pelanggan Detail Rekod';
+const String supabaseCawangan = 'Cawangan Rekod';
+const String supabaseCawanganDetail = 'Cawangan Detail Rekod';
+const String supabaseCawanganBayaran = 'Cawangan Bayaran Rekod';
+const String supabasePembekal = 'Pembekal Rekod';
+const String supabasePembekalDetail = 'Pembekal Detail Rekod';
+const String supabasePembekalBayaran = 'Pembekal Bayaran Rekod';
+const String supabaseRunner = 'Runner Rekod';
+const String supabaseBarang = 'Senarai Barang Rekod';
 
 class rekodKategoriMenu {
   int id = -1;
@@ -160,7 +221,7 @@ class rekodPekerja {
       role = map["role"],
         akses_sistem = map["akses sistem"],
         slip_gaji = map["slip gaji"],
-      rekodAmbil = (map["Ambil Gaji Rekod"] ?? [])
+      rekodAmbil = (map[supabaseAmbilGaji] ?? [])
           .map((e) => rekodAmbilGaji.fromMap(Map<String, dynamic>.from(e)))
           .toList();
 
@@ -179,7 +240,7 @@ class rekodPekerja {
       "role": role,
       "akses sistem": akses_sistem,
       "slip gaji" : slip_gaji,
-      "Ambil Gaji Rekod": rekodAmbil.map((e) => e.toMap()).toList(),
+      supabaseAmbilGaji: rekodAmbil.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -220,7 +281,7 @@ class rekodList {
       epochTime = map["epochTime"],
       tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
       hari = map["hari"],
-      rekod = (map["Harian Detail Rekod"] ?? [])
+      rekod = (map[supabaseHarianDetail] ?? [])
           .map((e) => rekodHarianDetail.fromMap(Map<String, dynamic>.from(e)))
           .toList();
 
@@ -231,7 +292,7 @@ class rekodList {
       "epochTime": epochTime,
       "tarikh": tarikh,
       "hari": hari,
-      "Harian Detail Rekod": rekod.map((e) => e.toMap()).toList(),
+      supabaseHarianDetail: rekod.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -348,11 +409,11 @@ class rekodCawangan {
     : id = map["id"],
       userName = "${map["nama"]}_${map["id"]}",
       nama = map["nama"],
-      rekod = (map["Cawangan Detail Rekod"] ?? [])
+      rekod = (map[supabaseCawanganDetail] ?? [])
           .map((e) => rekodCawanganDetail.fromMap(Map<String, dynamic>.from(e)))
           .toList(),
       rekodHarga = Map<String, dynamic>.from(map["harga Menu"] ?? {}),
-      rekodBayaran = (map["Cawangan Bayaran Rekod"] ?? [])
+      rekodBayaran = (map[supabaseCawanganBayaran] ?? [])
           .map(
             (e) => rekodBayaranCawangan.fromMap(Map<String, dynamic>.from(e)),
           )
@@ -363,9 +424,9 @@ class rekodCawangan {
     return {
       "id": id,
       "nama": nama,
-      "Cawangan Detail Rekod": rekod.map((e) => e.toMap()).toList(),
+      supabaseCawanganDetail: rekod.map((e) => e.toMap()).toList(),
       "harga Menu": rekodHarga,
-      "Cawangan Bayaran Rekod": rekodBayaran.map((e) => e.toMap()).toList(),
+      supabaseCawanganBayaran: rekodBayaran.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -536,10 +597,10 @@ class rekodCucuk {
       epochTime = map["epochTime"],
       tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
       hari = map["hari"],
-      rekod = (map["Cucuk Detail Rekod"] ?? [])
+      rekod = (map[supabaseCucukDetail] ?? [])
           .map((e) => rekodCucukDetail.fromMap(Map<String, dynamic>.from(e)))
           .toList(),
-      jumlahSatayList = (map["Jumlah Cucuk Satay Rekod"] ?? [])
+      jumlahSatayList = (map[supabaseJumlahCucuk] ?? [])
           .map((e) => rekodJumlahCucuk.fromMap(Map<String, dynamic>.from(e)))
           .toList();
 
@@ -550,8 +611,8 @@ class rekodCucuk {
       "epochTime": epochTime,
       "tarikh": tarikh,
       "hari": hari,
-      "Cucuk Detail Rekod": rekod.map((e) => e.toMap()).toList(),
-      "Jumlah Cucuk Satay Rekod": jumlahSatayList
+      supabaseCucukDetail: rekod.map((e) => e.toMap()).toList(),
+      supabaseJumlahCucuk: jumlahSatayList
           .map((e) => e.toMap())
           .toList(),
     };
@@ -742,7 +803,7 @@ class rekodPelanggan {
       BayaranPendahuluan = map["BayaranPendahuluan"],
       baki = map["baki"],
       bayaranPenuh = map["bayaranPenuh"],
-      orderMenu = (map["Pelanggan Detail Rekod"] ?? [])
+      orderMenu = (map[supabasePelangganDetail] ?? [])
           .map(
             (e) => rekodPesananPelanggan.fromMap(Map<String, dynamic>.from(e)),
           )
@@ -766,7 +827,7 @@ class rekodPelanggan {
       "BayaranPendahuluan": BayaranPendahuluan,
       "baki": baki,
       "bayaranPenuh": bayaranPenuh,
-      "Pelanggan Detail Rekod": orderMenu.map((e) => e.toMap()).toList(),
+      supabasePelangganDetail: orderMenu.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -907,7 +968,7 @@ class rekodStok {
       hari = map["hari"],
       jumlahPendapatan = map["Jumlah Pendapatan"],
       kerugian = map["Kerugian"],
-      rekod = (map["Stok Detail Rekod"] ?? [])
+      rekod = (map[supabaseStokDetail] ?? [])
           .map((e) => rekodStokDetail.fromMap(Map<String, dynamic>.from(e)))
           .toList();
 
@@ -920,7 +981,7 @@ class rekodStok {
       "hari": hari,
       "Jumlah Pendapatan": jumlahPendapatan,
       "Kerugian": kerugian,
-      "Stok Detail Rekod": rekod.map((e) => e.toMap()).toList(),
+      supabaseStokDetail: rekod.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -1033,7 +1094,7 @@ class rekodGaji {
       epochTime = map["epochTime"],
       tarikh = map['tarikh'] == null ? '' : formatTarikhToServer(map['tarikh']),
       hari = map["hari"],
-      rekod = (map["Gaji Detail Rekod"] ?? [])
+      rekod = (map[supabaseGajiDetail] ?? [])
           .map((e) => rekodGajiDetail.fromMap(Map<String, dynamic>.from(e)))
           .toList();
 
@@ -1044,7 +1105,7 @@ class rekodGaji {
       "epochTime": epochTime,
       "tarikh": tarikh,
       "hari": hari,
-      "Gaji Detail Rekod": rekod.map((e) => e.toMap()).toList(),
+      supabaseGajiDetail: rekod.map((e) => e.toMap()).toList(),
     };
   }
 
@@ -1204,10 +1265,10 @@ class rekodPembekalList {
     : id = map["id"],
       username = "${map["username"]}_${map["id"]}",
       namaPembekal = map["namaPembekal"],
-      rekod = (map["Pembekal Detail Rekod"] ?? [])
+      rekod = (map[supabasePembekalDetail] ?? [])
           .map((e) => rekodPembekalDetail.fromMap(Map<String, dynamic>.from(e)))
           .toList(),
-      rekodBayaran = (map["Pembekal Bayaran Rekod"] ?? [])
+      rekodBayaran = (map[supabasePembekalBayaran] ?? [])
           .map(
             (e) => rekodBayaranPembekal.fromMap(Map<String, dynamic>.from(e)),
           )
@@ -1218,8 +1279,8 @@ class rekodPembekalList {
     return {
       "id": id,
       "namaPembekal": namaPembekal,
-      "Pembekal Detail Rekod": rekod.map((e) => e.toMap()).toList(),
-      "Pembekal Bayaran Rekod": rekodBayaran.map((e) => e.toMap()).toList(),
+      supabasePembekalDetail: rekod.map((e) => e.toMap()).toList(),
+      supabasePembekalBayaran: rekodBayaran.map((e) => e.toMap()).toList(),
     };
   }
 

@@ -40,7 +40,7 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
       colorBorder = Colors.white;
     }
     NotificationCenter().subscribe('refreshData', _refreshView);
-    loadDataServer();
+    processServerData(supabaseCucuk);
     for (var index = 0; index < rekod_Menu.length; index++) {
       rekodMenu current = rekod_Menu.elementAt(index);
       if (current.jenis.toLowerCase().contains("satay")) {
@@ -71,7 +71,7 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
   void dispose() {
     if (!mounted) return;
     // Clean up the controller when the widget is disposed.
-    loadDataServer();
+    // loadDataServer();
     myController.dispose();
     super.dispose();
   }
@@ -377,7 +377,7 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
   Future<void> insertServer(rekodCucuk usr) async {
     var id = -1;
     if (!rekod_Cucuk.map((item) => item.epochTime).contains(usr.epochTime)) {
-      final result = await insertUpdateTable('Cucuk Rekod', usr.toMapServer());
+      final result = await insertUpdateTable(supabaseCucuk, usr.toMapServer());
       id = rekodCucuk.fromMap(result).id;
       List<dynamic> rekodJumlah = [];
       for (var i = 0; i < menuList.length; i++) {
@@ -386,7 +386,7 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
         if (menu.toLowerCase().contains('satay')) {
           var jumlahCucukRekod = rekodJumlahCucuk(id, menu, 0);
           insertUpdateTable(
-            'Jumlah Cucuk Satay Rekod',
+            supabaseJumlahCucuk,
             jumlahCucukRekod.toMapServer(),
           );
           rekodJumlah.add(jumlahCucukRekod);
@@ -414,7 +414,7 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
   void removeItemInServer(int index) {
     tarikhRekod = rekod_Cucuk[index].tarikh;
     var id = rekod_Cucuk[index].id;
-    deleteRow('Cucuk Rekod', id);
+    deleteRow(supabaseCucuk, id);
     removeItem(index);
   }
 
@@ -443,7 +443,7 @@ class _selectRekodCucukState extends State<selectRekodCucuk> {
   }
 
   void removeAllServer() {
-    deleteAllRecord("Cucuk Rekod");
+    deleteAllRecord(supabaseCucuk);
     saveData();
   }
 

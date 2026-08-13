@@ -108,9 +108,9 @@ class _OrderPageState extends State<OrderPage> {
     NotificationCenter().subscribe('refreshData', _refreshView);
     menuList.clear();
     dropDownList.clear();
-    final menuListData = await selectTable('Menu Rekod');
+    final menuListData = await selectTable(supabaseMenu);
     rekod_Menu = menuListData.map((e) => rekodMenu.fromMap(e)).toList();
-    final kategoriListData = await selectTable('Kategori Menu Rekod');
+    final kategoriListData = await selectTable(supabaseKategoriMenu);
     rekod_Kategori = kategoriListData.map((e) => rekodKategoriMenu.fromMap(e)).toList();
     final list = sortMenuList(rekod_Menu);
 
@@ -1101,7 +1101,7 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
 
   Future<void> insertServer(rekodPelanggan usr) async {
     final result = await insertUpdateTable(
-      'Pelanggan Rekod',
+      supabasePelanggan,
       usr.toMapServer(),
     );
     var resultRekod = rekodPelanggan.fromMap(result);
@@ -1130,7 +1130,7 @@ Sila isi pesanan anda di bawah dan tekan "Hantar Pesanan" apabila selesai.''',
   ) async {
     rekodPesananPelanggan? resultRekod;
     final result = await insertUpdateTable(
-      'Pelanggan Detail Rekod',
+      supabasePelangganDetail,
       pesanan.toMapServer(),
     );
     resultRekod = rekodPesananPelanggan.fromMap(result);

@@ -1086,7 +1086,7 @@ class _selectRekodCawanganDetailState extends State<selectRekodCawanganDetail> {
   }
 
   Future<void> insertServer(rekodCawanganDetail usr) async {
-    await insertUpdateTable('Cawangan Detail Rekod', usr.toMapServer(), id: id);
+    await insertUpdateTable(supabaseCawanganDetail, usr.toMapServer(), id: id);
     var target = rekod_Cawangan.elementAt(
       rekod_Cawangan.indexWhere((e) => e.id == cawanganId),
     );

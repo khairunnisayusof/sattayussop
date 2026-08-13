@@ -364,7 +364,7 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
 
   Future<void> insertServer(rekodPembekalDetail usr) async {
     await insertUpdateTable(
-      'Pembekal Detail Rekod',
+      supabasePembekalDetail,
       usr.toMapServer(),
       id: selectedDetail,
     );

@@ -1023,7 +1023,7 @@ class _selectRekodHarianDetailState extends State<selectRekodHarianDetail> {
   }
 
   Future<void> updateDataTable(rekodHarianDetail detail) async {
-    insertUpdateTable('Harian Detail Rekod', detail.toMapServer(), id: detail.id);
+    insertUpdateTable(supabaseHarianDetail, detail.toMapServer(), id: detail.id);
     setState(() {
       saveData();
     });

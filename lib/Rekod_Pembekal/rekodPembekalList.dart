@@ -315,7 +315,7 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
 
   Future<void> insertServer(rekodPembekalDetail usr) async {
     final result = await insertUpdateTable(
-      'Pembekal Detail Rekod',
+      supabasePembekalDetail,
       usr.toMapServer(),
     );
     usr.id = rekodPembekalDetail.fromMap(result).id;
@@ -337,7 +337,7 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
 
   void removeItemInServer(int index) {
     var id = _rekodBarangDetail[index].id;
-    deleteRow('Pembekal Detail Rekod', id);
+    deleteRow(supabasePembekalDetail, id);
     removeItem(index);
   }
 
@@ -355,7 +355,7 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
 
   void removeAllServer() {
     deleteAllRecordFromForeign(
-      "Pembekal Detail Rekod",
+      supabasePembekalDetail,
       "pembekal id",
       selectedIndex,
     );

@@ -50,7 +50,7 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
     dropDownList.clear();
 
     final list = sortMenuList(rekod_Kategori);
-    print("kategori >> ${list}");
+    print("kategori >> ${list} >> ${rekod_Kategori.length}");
     for (var index = 0; index < list.length; index++) {
       rekodKategoriMenu current = list.elementAt(index);
       var nama = current.jenis;
@@ -755,10 +755,10 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
     if (index >= 0) {
       var id = rekod_Kategori[index].id;
       menu.id = id;
-      insertUpdateTable('Kategori Menu Rekod', menu.toMapServer(), id: id);
+      insertUpdateTable(supabaseKategoriMenu, menu.toMapServer(), id: id);
     } else {
       if (!rekod_Kategori.map((e) => e.jenis).contains(menu.jenis)) {
-        insertUpdateTable('Kategori Menu Rekod', menu.toMapServer());
+        insertUpdateTable(supabaseKategoriMenu, menu.toMapServer());
       }
     }
     addKategoriItem(menu, index);
@@ -779,11 +779,11 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
     if (index >= 0) {
       var id = rekod_Menu[index].id;
       menu.id = id;
-      insertUpdateTable('Menu Rekod', menu.toMapServer(), id: id);
+      insertUpdateTable(supabaseMenu, menu.toMapServer(), id: id);
     } else {
       final index = rekod_Menu.indexWhere((e) => e.jenis == menu.jenis);
       if (index < 0) {
-        insertUpdateTable('Menu Rekod', menu.toMapServer());
+        insertUpdateTable(supabaseMenu, menu.toMapServer());
       }
     }
     addItem(menu, index);
@@ -802,7 +802,7 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
 
   void removeKategoriItem(int index) {
     var id = rekod_Kategori[index].id;
-    deleteRow('Kategori Menu Rekod', id);
+    deleteRow(supabaseKategoriMenu, id);
     removeKategoriInLocal(index);
   }
 
@@ -813,7 +813,7 @@ class _selectRekodMenuState extends State<selectRekodMenu> {
 
   void removeItem(int index) {
     var id = rekod_Menu[index].id;
-    deleteRow('Menu Rekod', id);
+    deleteRow(supabaseMenu, id);
     removeInLocal(index);
   }
 

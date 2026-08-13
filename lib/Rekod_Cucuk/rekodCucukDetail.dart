@@ -107,6 +107,7 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
               )
               as List<rekodJumlahCucuk>;
       _rekodCucukDetail = List<rekodCucukDetail>.from(current.rekod).toList();
+      _rekodCucukDetail.sort((a,b) => a.id.compareTo(b.id));
       jumlahKeseluruhan = 0;
       for (var index = 0; index < jumlahSatay.length; index++) {
         rekodJumlahCucuk current = jumlahSatay.elementAt(index);
@@ -724,7 +725,7 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
         if (refresh) {
           current.jumlah = jumlah;
           insertUpdateTable(
-            "Jumlah Cucuk Satay Rekod",
+            supabaseJumlahCucuk,
             current.toMapServer(),
             id: id,
           );
@@ -754,12 +755,12 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
     print("update insert >>> $index");
     if (index >= 0) {
       insertUpdateTable(
-        'Cucuk Detail Rekod',
+        supabaseCucukDetail,
         detail.toMapServer(),
         id: detail.id,
       );
     } else {
-      insertUpdateTable('Cucuk Detail Rekod', detail.toMapServer());
+      insertUpdateTable(supabaseCucukDetail, detail.toMapServer());
     }
     addItem(detail, index);
   }
@@ -789,7 +790,7 @@ class _selectRekodCucukDetailState extends State<selectRekodCucukDetail> {
 
   void removeItemServer(int index) {
     var id = _rekodCucukDetail.elementAt(index).id;
-    deleteRow('Cucuk Detail Rekod', id);
+    deleteRow(supabaseCucukDetail, id);
     removeItemSelected(index);
   }
 

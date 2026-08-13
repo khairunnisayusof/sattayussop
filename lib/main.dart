@@ -23,6 +23,7 @@ import 'package:share_plus/share_plus.dart';
 import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../supabaseServer.dart';
+import 'databaseLocal.dart';
 import 'login.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -624,7 +625,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                 });
                 await sharedPreferences?.remove(databasePekerja);
                 await sharedPreferences?.remove(databaseRole);
-                await sharedPreferences?.remove(databaseKategori);
                 await sharedPreferences?.remove(databaseKategoriMenu);
                 await sharedPreferences?.remove(databaseMenu);
                 await sharedPreferences?.remove(databaseStok);
