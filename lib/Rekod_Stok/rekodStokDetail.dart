@@ -639,7 +639,6 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
             TextButton(
               child: const Text('Simpan'),
               onPressed: () {
-                Navigator.of(context).pop();
                 int stokSimpan = 0;
                 String stokLama = "";
                 // Handle the submit action
@@ -654,6 +653,7 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
                 if (rekod.simpan != stokSimpan) {
                   rekod.simpanManual = true;
                 }
+                Navigator.of(context).pop();
                 rekod.stokLama = stokLama;
                 rekod.simpan = stokSimpan;
                 // if (stokLama.isNotEmpty) {
@@ -673,8 +673,7 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
                 //     print("rekod simpan >>> ${currentStok.simpan}");
                 //   }
                 // }
-                // selectStokDetail[index] = rekod;
-
+                selectStokDetail[selectStokDetail.indexWhere((element) => element.jenis == rekod.jenis)] = rekod;
                 addItemSelected();
                 // Handle the submit action
               },
@@ -687,10 +686,10 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
 
   // addItem adds our User Class item to list.
   void addItemSelected() {
+    setState(() {
     rekodStok target = rekod_stok.elementAt(
       rekod_stok.indexWhere((e) => e.id == stok_id),
     );
-    setState(() {
       target.rekod = selectStokDetail;
     });
     saveData();

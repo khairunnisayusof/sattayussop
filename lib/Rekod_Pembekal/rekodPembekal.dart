@@ -63,7 +63,7 @@ class _RekodBarangState extends State<RekodBarang> {
       );
     } else {
       setState(() {
-        rekod_Pembekal.sort((a, b) => a.namaPembekal.compareTo(b.namaPembekal));
+        rekod_Pembekal.sort((a, b) => a.username.compareTo(b.username));
       });
     }
   }

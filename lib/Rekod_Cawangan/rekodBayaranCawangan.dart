@@ -547,13 +547,16 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
   }
 
   Future<void> insertServer(rekodBayaranCawangan usr, int index) async {
-    index >= 0
-        ? await insertUpdateTable(
-      supabaseCawanganBayaran,
-            usr.toMapServer(),
-            id: usr.id,
-          )
-        : await insertUpdateTable(supabaseCawanganBayaran, usr.toMapServer());
+    if (index >= 0) {
+      rekodBayaranCawangan currentCawangan = rekodBayaran.elementAt(index);
+      insertUpdateTable(
+        supabaseCawanganBayaran,
+        usr.toMapServer(),
+        id: currentCawangan.id,
+      );
+    }else {
+      insertUpdateTable(supabaseCawanganBayaran, usr.toMapServer());
+    }
     addItem(usr, index);
   }
 
@@ -565,7 +568,6 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
     } else {
       rekodBayaran.add(usr);
     }
-    print("document >>> $index | ${usr.bayaran}");
     kiraJualan();
   }
 
@@ -576,9 +578,6 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
 
     nama = currentCawangan.nama;
 
-    List<rekodCawanganDetail> selectDetail = List<rekodCawanganDetail>.from(
-      currentCawangan.rekod,
-    ).toList();
 
     // Total bayaran
     num jumlahBayaranSemua = 0.0;
@@ -589,8 +588,11 @@ class _RekodBayaranCawanganState extends State<RekodBayaranCawangan> {
     }
 
     num bakiBayaran = jumlahBayaranSemua;
-
-    for (var current in selectDetail) {
+    List<rekodCawanganDetail> selectDetail = List<rekodCawanganDetail>.from(
+      currentCawangan.rekod).toList();
+    selectDetail.sort((a, b) => a.epochTime.compareTo(b.epochTime));
+    for (int i = 0; i < selectDetail.length; i++) {
+      var current = selectDetail[i];
       num jumlahJualan = current.jumlahJualan;
 
       // Bayaran cukup untuk cover full

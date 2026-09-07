@@ -551,10 +551,11 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
 
   Future<void> insertServer(rekodBayaranPembekal usr, int index) async {
     if (index >= 0) {
+      rekodBayaranPembekal current = rekodBayaran.elementAt(index);
       await insertUpdateTable(
         supabasePembekalBayaran,
         usr.toMapServer(),
-        id: selectIndex,
+        id: current.id,
       );
     } else {
       await insertUpdateTable(supabasePembekalBayaran, usr.toMapServer());
