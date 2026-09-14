@@ -105,6 +105,8 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
       selectDetailBarang = List<rekodPembekalDetail>.from(
         currentBarang.rekod,
       ).toList();
+      // selectDetailBarang.sort((a, b) => a.epochTime.compareTo(b.epochTime));
+      print("index pembekal >>> ${selectedDetail}");
       rekodPembekalDetail current = selectDetailBarang.elementAt(
         selectDetailBarang.indexWhere((e) => e.id == selectedDetail),
       );

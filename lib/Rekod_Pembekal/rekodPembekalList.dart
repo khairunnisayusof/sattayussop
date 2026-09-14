@@ -127,13 +127,6 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
               ],
             ),
             onTap: () {
-              rekodPembekalList currentBarang = rekod_Pembekal.elementAt(
-                rekod_Pembekal.indexWhere((e) => e.id == selectedIndex),
-              );
-              var selectDetailBarang = List<rekodPembekalDetail>.from(
-                currentBarang.rekod,
-              ).toList();
-              rekodPembekalDetail current = selectDetailBarang.elementAt(index);
               Navigator.push(
                 context,
                 MaterialPageRoute(
