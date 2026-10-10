@@ -1,43 +1,48 @@
+
 name: Build Flutter Web
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: subosito/flutter-action@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.44.1'
           cache: true
 
-      - run: flutter --version
-      - run: flutter pub get
+      - name: Check Flutter version
+        run: flutter --version
+
+      - name: Install dependencies
+        run: flutter pub get
+
       - name: Create env file
         run: |
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
-          echo "SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" >> .env  
+          echo "SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" >> .env
 
-      - run: |
-          flutter build web --release
+      - name: Build Flutter Web
+        run: flutter build web --release
 
-      - name: Check secrets
+      - name: Verify build output
         run: |
-          echo "Account ID length:"
-          echo -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" | wc -c
-          echo "Token length:"
-          echo -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" | wc -c
+          test -f build/web/index.html
+          echo "Flutter Web build successful"
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v3
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: sattayussop
-          directory: build/web
+          command: pages deploy build/web --project-name=sattayussop --branch=main
