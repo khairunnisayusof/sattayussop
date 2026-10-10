@@ -90,7 +90,8 @@ Future<void> deleteAllRecord(String nameTable) async {
   final name = nameTable.replaceAll(' ', '_').toLowerCase();
 
   await supabase.rpc('truncate_$name');
-  processServerData(nameTable);
+  await processServerData(nameTable);
+  updateStok(rekod_stok[0].tarikh);
 }
 
 Future<void> deleteAllRecordFromForeign(
@@ -103,7 +104,8 @@ Future<void> deleteAllRecordFromForeign(
   }
   try {
     await supabase.from(nameTable).delete().eq(columnName, id);
-    processServerData(nameTable);
+    await processServerData(nameTable);
+    updateStok(rekod_stok[0].tarikh);
   } catch (e) {
     print("Delete gagal: $e");
   }
