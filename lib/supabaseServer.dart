@@ -46,7 +46,7 @@ Future<Map<String, dynamic>> insertUpdateTable(
   Map<String, dynamic> currentRecord, {
   int? id,
 }) async {
-  print("insert record >> $nameTable | $id | $currentRecord");
+  // print("insert record >> $nameTable | $id | $currentRecord");
   if (role.toLowerCase() == "review") {
     return currentRecord;
   }
