@@ -735,7 +735,7 @@ class DataStorage {
     // final directory = await getApplicationDocumentsDirectory();
     final dirInternal = await getApplicationDocumentsDirectory();
     final directory = await getTemporaryDirectory();
-    return directory.path ?? dirInternal.path;
+    return directory.path;
   }
 
   Future _localFile(String FileName) async {
