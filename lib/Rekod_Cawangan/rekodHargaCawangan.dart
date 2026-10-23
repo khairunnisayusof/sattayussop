@@ -224,7 +224,7 @@ class _selectRekodHargaCawanganState extends State<selectRekodHargaCawangan> {
     if (index >= 0) {
       String current = listHarga.keys.elementAt(index);
       num Harga = listHarga[current];
-      myController.text = "$Harga";
+      myController.text = "$current";
       showDialog(
         context: context,
         builder: (BuildContext context) {
