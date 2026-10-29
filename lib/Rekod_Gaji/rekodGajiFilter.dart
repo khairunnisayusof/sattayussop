@@ -607,7 +607,8 @@ class _selectRekodGajiFilterState extends State<selectRekodGajiFilter> {
         actions: <Widget>[settingButton],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
     );
   }
 }

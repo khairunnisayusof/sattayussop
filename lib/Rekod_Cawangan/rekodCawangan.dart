@@ -173,7 +173,8 @@ class _RekodRekodCawanganState extends State<RekodCawangan> {
         actions: <Widget>[settingButton],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
       floatingActionButton:
           write
           ? FloatingActionButton(

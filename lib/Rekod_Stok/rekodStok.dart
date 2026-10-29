@@ -150,7 +150,8 @@ class _RekodStokState extends State<RekodStok> {
         actions: <Widget>[],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
       // floatingActionButton: FloatingActionButton(
       //   backgroundColor: color,
       //   foregroundColor: Colors.white,

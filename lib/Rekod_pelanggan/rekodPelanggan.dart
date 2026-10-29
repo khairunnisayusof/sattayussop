@@ -205,7 +205,8 @@ class _selectRekodPelangganState extends State<RekodPelanggan> {
         actions: <Widget>[],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
       floatingActionButton: FloatingActionButton(
         backgroundColor: color,
         foregroundColor: Colors.white,

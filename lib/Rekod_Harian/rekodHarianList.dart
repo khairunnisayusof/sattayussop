@@ -139,7 +139,8 @@ class _RekodHarianDetailState extends State<RekodHarianDetail> {
         actions: <Widget>[],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
       floatingActionButton: FloatingActionButton(
         backgroundColor: color,
         foregroundColor: Colors.white,

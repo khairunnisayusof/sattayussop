@@ -560,7 +560,8 @@ class _selectRekodStokDetailState extends State<selectRekodStokDetail> {
         actions: <Widget>[],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
     );
   }
 

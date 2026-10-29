@@ -203,7 +203,8 @@ class _selectRekodBarangListState extends State<selectRekodBarangList> {
         actions: <Widget>[settingButton],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
       floatingActionButton:
           write
           ? FloatingActionButton(

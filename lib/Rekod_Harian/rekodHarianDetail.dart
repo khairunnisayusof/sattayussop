@@ -549,7 +549,8 @@ class _selectRekodHarianDetailState extends State<selectRekodHarianDetail> {
         actions: <Widget>[],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
     );
   }
 

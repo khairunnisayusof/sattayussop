@@ -184,7 +184,8 @@ class _selectRekodGajiState extends State<selectRekodGaji> {
         actions: <Widget>[settingButton],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
       floatingActionButton: FloatingActionButton(
         backgroundColor: color,
         foregroundColor: Colors.white,

@@ -459,7 +459,8 @@ class _selectRekodCucukFilterState extends State<selectRekodCucukFilter> {
         actions: <Widget>[settingButton],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
     );
   }
 }

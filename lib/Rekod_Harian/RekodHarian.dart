@@ -152,7 +152,8 @@ class _selectRekodHarianState extends State<selectRekodHarian> {
         actions: <Widget>[settingButton],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
       floatingActionButton: FloatingActionButton(
         backgroundColor: color,
         foregroundColor: Colors.white,

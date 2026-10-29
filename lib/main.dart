@@ -309,7 +309,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
                     width: MediaQuery
                         .of(context)
                         .size
-                        .width - 100.0,
+                        .width - 150.0,
                     height: 30,
                     child: Text(
                       " Tetapan Rekod",
@@ -695,23 +695,59 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     }
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56), // 56 is default height
-        child: <Widget>[
-          AppBar(
-            foregroundColor: Colors.transparent,
-            title: appBarTitle,
-            actions: <Widget>[],
-          ),
-          AppBar(title: appBarSettingTitle, centerTitle: true),
-        ][_selectedIndex],
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: _selectedIndex == 0
+            ? AppBar(
+          title: appBarTitle,
+          actions: <Widget>[],
+        )
+            : AppBar(
+          title: appBarSettingTitle,
+          centerTitle: true,
+        ),
       ),
-      body: Stack(
-        children: [
-          <Widget>[
-            buildCollectionView,
-            buildSettingViewOfDevices,
-          ][_selectedIndex]
-        ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // if (constraints.maxWidth >= 600) {
+          //   // Paparan lebar: tunjuk navigasi dan kandungan serentak
+          //   return Row(
+          //     children: [
+          //       NavigationRail(
+          //         selectedIndex: _selectedIndex,
+          //         onDestinationSelected: _onItemTapped,
+          //         destinations: const [
+          //           NavigationRailDestination(
+          //             icon: Icon(Icons.home_outlined),
+          //             selectedIcon: Icon(Icons.home),
+          //             label: Text('Home'),
+          //           ),
+          //           NavigationRailDestination(
+          //             icon: Icon(Icons.settings_outlined),
+          //             selectedIcon: Icon(Icons.settings),
+          //             label: Text('Tetapan'),
+          //           ),
+          //         ],
+          //       ),
+          //       const VerticalDivider(width: 1),
+          //       Expanded(
+          //         child: _selectedIndex == 0
+          //             ? SafeArea(
+          //         child: buildCollectionView)
+          //             : buildSettingViewOfDevices,
+          //       ),
+          //     ],
+          //   );
+          // }
+
+          // Paparan telefon biasa
+          return _selectedIndex == 0
+              ? SafeArea(
+              child: Center(
+                  child: buildCollectionView))
+              : SafeArea(
+              child: Center(
+                  child: buildSettingViewOfDevices));
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

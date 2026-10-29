@@ -328,7 +328,8 @@ class _RekodBayaranPembekalState extends State<RekodBayaranPembekal> {
         actions: <Widget>[settingButton],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
       floatingActionButton: FloatingActionButton(
         backgroundColor: color,
         foregroundColor: Colors.white,

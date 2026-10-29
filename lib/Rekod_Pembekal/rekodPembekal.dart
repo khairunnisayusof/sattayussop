@@ -149,7 +149,8 @@ class _RekodBarangState extends State<RekodBarang> {
         actions: <Widget>[],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
       floatingActionButton: write
           ? FloatingActionButton(
               backgroundColor: color,

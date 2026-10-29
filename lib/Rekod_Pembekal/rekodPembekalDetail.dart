@@ -739,7 +739,8 @@ class _selectRekodBarangDetailState extends State<selectRekodBarangDetail> {
         actions: <Widget>[settingButton],
         centerTitle: true,
       ),
-      body: buildCollectionView,
+      body: SafeArea(
+        child: buildCollectionView),
       floatingActionButton:
           write
           ? FloatingActionButton(
