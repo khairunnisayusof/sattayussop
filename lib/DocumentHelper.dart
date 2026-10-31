@@ -314,7 +314,9 @@ Future<void> updateStok(String tarikh) async {
     if (rekod_List.isNotEmpty) {
       for (var index = 0; index < rekod_List.length; index++) {
         rekodList harianList = rekod_List.elementAt(index);
+        if (!tarikhRekod.contains(harianList.tarikh)) {
         tarikhRekod.add(harianList.tarikh);
+        }
         if (harianList.tarikh == tarikh) {
           allEmpty = false;
           List<rekodHarianDetail> stokHarian = List<rekodHarianDetail>.from(
@@ -363,7 +365,9 @@ Future<void> updateStok(String tarikh) async {
     if (rekod_Cucuk.isNotEmpty) {
       for (var index = 0; index < rekod_Cucuk.length; index++) {
         rekodCucuk cucukList = rekod_Cucuk.elementAt(index);
-        tarikhRekod.add(cucukList.tarikh);
+        if (!tarikhRekod.contains(cucukList.tarikh)) {
+          tarikhRekod.add(cucukList.tarikh);
+        }
         if (cucukList.tarikh == tarikh) {
           allEmpty = false;
           List<rekodJumlahCucuk> stokCucuk = List<rekodJumlahCucuk>.from(
@@ -393,7 +397,9 @@ Future<void> updateStok(String tarikh) async {
     if (rekod_Pelanggan.isNotEmpty) {
       for (var index = 0; index < rekod_Pelanggan.length; index++) {
         rekodPelanggan pelangganList = rekod_Pelanggan.elementAt(index);
-        tarikhRekod.add(pelangganList.tarikh);
+        if (!tarikhRekod.contains(pelangganList.tarikh)) {
+          tarikhRekod.add(pelangganList.tarikh);
+        }
         if (pelangganList.tarikh == tarikh) {
           allEmpty = false;
           List<rekodPesananPelanggan> pesananPelanggan =
@@ -448,7 +454,9 @@ Future<void> updateStok(String tarikh) async {
           rekodCawanganDetail currentCawangan = cawanganDetail.elementAt(k);
           if (currentCawangan.tarikh == tarikh) {
             allEmpty = false;
-            tarikhRekod.add(currentCawangan.tarikh);
+            if (!tarikhRekod.contains(currentCawangan.tarikh)) {
+              tarikhRekod.add(currentCawangan.tarikh);
+            }
             Map<String, dynamic> rekodMenu = currentCawangan.rekodMenu;
             for (var menu in rekodMenu.keys) {
               if (menu.toLowerCase().contains("satay") ||
@@ -493,21 +501,18 @@ Future<void> updateStok(String tarikh) async {
 
   try {
     if (stokCurrent.isNotEmpty) {
-      final currentDate = DateFormat("yyyy/MM/dd").parse(tarikh);
+      final currentDate = parseServerDate(tarikh);
       final currentEpoch = currentDate.millisecondsSinceEpoch;
       // Previous stock dates
       final previousDates = rekod_stok
           .where(
-            (e) =>
-                DateFormat(
-                  "yyyy/MM/dd",
-                ).parse(e.tarikh).millisecondsSinceEpoch <
+            (e) => parseServerDate(e.tarikh).millisecondsSinceEpoch <
                 currentEpoch,
           )
           .map((e) => e.tarikh)
           .toList();
 
-      print("stok show >>> $currentDate | $currentEpoch >> $previousDates");
+      print("stok show >>> $tarikh >>> $currentDate | $currentEpoch >> $previousDates");
       final list = sortMenuList(stokCurrent);
       for (final currentStok in list) {
         final menu = currentStok.jenis;
@@ -560,7 +565,7 @@ Future<void> updateStok(String tarikh) async {
             .clamp(0, double.infinity);
 
         print(
-          "rekod stok >>> $tarikh >> $menu >> ${currentStok.id} >> ${currentStok.stokId} >> ${currentStok.keluar} $jumlahStok | ${currentStok.simpanManual}",
+          "rekod stok >>> $tarikh >> $menu >> ${currentStok.id} >>> ${currentStok.stokLama} >> ${currentStok.stokId} >> ${currentStok.keluar} $jumlahStok | ${currentStok.simpanManual}",
         );
         if (id >= 0) {
           await insertUpdateTable(
@@ -669,20 +674,39 @@ List<dynamic> sortMenuList(List<dynamic> list) {
   return list;
 }
 
+DateTime parseServerDate(String value) {
+  final formats = [
+    'dd/MM/yyyy',
+    'yyyy/MM/dd',
+    'yyyy-MM-dd',
+  ];
+
+  for (final format in formats) {
+    try {
+      return DateFormat(format).parseStrict(value);
+    } catch (_) {}
+  }
+
+  throw FormatException('Invalid date format: $value');
+}
+
 String formatTarikh(String tarikh) {
+  if (tarikh.trim().isEmpty) {
+    return '';
+  }
+
   try {
-    return DateFormat(
-      "yyyy/MM/dd",
-    ).format(DateFormat("dd/MM/yyyy").parseStrict(tarikh));
-  } catch (_) {
-    // Sudah dalam format lain, terus pulangkan
+    final date = parseServerDate(tarikh);
+    return DateFormat('yyyy/MM/dd').format(date);
+  } catch (e) {
+    print('formatTarikh error: $e');
     return tarikh;
   }
 }
 
 String formatTarikhToServer(String tarikh) {
   try {
-    return DateFormat('dd/MM/yyyy').format(DateTime.parse(tarikh.toString()));
+    return DateFormat('dd/MM/yyyy').format(parseServerDate(tarikh.toString()));
   } catch (_) {
     // Sudah dalam format lain, terus pulangkan
     return tarikh;
